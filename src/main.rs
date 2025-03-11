@@ -1,29 +1,16 @@
 use::sdl2::event::Event;
 use::sdl2::keyboard::Keycode;
 use::sdl2::pixels::Color;
-use sdl2::{rect::{Point, Rect}, render::{Texture, WindowCanvas}, sys::CapButt};
+use sdl2::{rect::{Point, Rect}, render::{Texture, WindowCanvas}};
 use::std::time::Duration;
 use sdl2::image::{self, InitFlag, LoadTexture};
 
 const CARD_HEIGHT: u32 = 100;
 const CARD_WIDTH: u32 = 80;
-const SCREEN_HEIGHT: u32 = 1000;
-const SCREEN_WIDTH: u32 = 1500;
+const SCREEN_HEIGHT: u32 = 900;
+const SCREEN_WIDTH: u32 = 1800;
 
-enum CardNumber {
-    // označeno R kot rang karte, to sem si izmislil
-    // nevem če je to izraz
-    N2, N3, N4, N5, N6, N7,
-    N8, N9, N10, NJ, RQ, NK, NA    
-}
-enum CardColor {
-    Hearts, Spades, Diamonds, Clubs 
-}
-
-struct Card {
-    color: CardColor,
-    number: CardNumber
-}
+const PLAYER1_CARDS: (i32, i32) = (-775, 0);
 
 fn render(canvas: &mut WindowCanvas, 
     color: Color, 
@@ -36,9 +23,12 @@ fn render(canvas: &mut WindowCanvas,
     let (width, height) = canvas.output_size()?;
 
     let screen_position = position + Point::new(width as i32 / 2, height as i32 / 2);
-    let screen_rect = Rect::from_center(screen_position, CARD_WIDTH, CARD_HEIGHT);
+    let screen_rect_card1 = Rect::from_center(screen_position, CARD_WIDTH, CARD_HEIGHT);
+    let screen_position2 = screen_position + Point::new(CARD_WIDTH as i32 - 30, 0);
+    let screen_rect_card2 = Rect::from_center(screen_position2, CARD_WIDTH, CARD_HEIGHT);
 
-    canvas.copy(texture, None, screen_rect)?;
+    canvas.copy(texture, None, screen_rect_card1)?;
+    canvas.copy(texture, None, screen_rect_card2)?;
 
     canvas.present();
 
@@ -51,7 +41,7 @@ fn main() -> Result<(), String> {
 
     let _image_context = image::init(InitFlag::PNG | InitFlag::JPG)?;
 
-    let window = video_subsystem.window("POKEEEER", 1200, 600)
+    let window = video_subsystem.window("POKEEEER", SCREEN_WIDTH, SCREEN_HEIGHT)
     .position_centered()
     .opengl()
     .build()
@@ -64,7 +54,7 @@ fn main() -> Result<(), String> {
 
     let texture_creator = canvas.texture_creator();
     let texture = texture_creator.load_texture("assets/2_of_clubs.png")?;
-    let position = Point::new(0, 0);
+    let position = Point::new(PLAYER1_CARDS.0, PLAYER1_CARDS.1);
 
     let mut event_pump = sdl_context.event_pump().unwrap();
 
