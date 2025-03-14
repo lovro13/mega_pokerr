@@ -2,7 +2,7 @@ use sdl2::event::Event;
 use sdl2::keyboard::Keycode;
 use sdl2::pixels::Color;
 use sdl2::rect::{Point, Rect};
-use sdl2::render::{Texture, WindowCanvas};
+use sdl2::render::WindowCanvas;
 use std::time::Duration;
 use sdl2::image::{self, InitFlag, LoadTexture};
 mod card;
@@ -12,6 +12,13 @@ const CARD_WIDTH: u32 = 95;
 const SCREEN_HEIGHT: u32 = 900;
 const SCREEN_WIDTH: u32 = 1800;
 
+pub enum Streets {
+    PreFlop,
+    Flop,
+    Turn,
+    River,
+    Showdown
+}
 
 fn render(canvas: &mut WindowCanvas, 
     background_color: Color, 
@@ -52,6 +59,8 @@ fn render(canvas: &mut WindowCanvas,
 fn main() -> Result<(), String> {
     let sdl_context = sdl2::init()?;
     let video_subsystem = sdl_context.video()?;
+
+    // let ttf_context = sdl2::ttf::init().map_err(|e| e.to_string())?;
 
     let _image_context = image::init(InitFlag::PNG | InitFlag::JPG)?;
 

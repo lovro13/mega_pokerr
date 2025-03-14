@@ -1,3 +1,4 @@
+#[derive(Clone)]
 pub enum CardNumber {
     // označeno R kot rang karte, to sem si izmislil
     // nevem če je to izraz
@@ -5,6 +6,8 @@ pub enum CardNumber {
     N8, N9, N10, NJ, NQ, NK, NA,
     Empty
 }
+
+#[derive(Clone)]
 pub enum CardColor {
     Hearts, Spades, Diamonds, Clubs, Empty 
 }
@@ -12,6 +15,32 @@ pub enum CardColor {
 pub struct Card {
     pub color: CardColor,
     pub number: CardNumber
+}
+
+
+impl Card {
+    pub fn all_colors() -> Vec<CardColor> {
+        vec![CardColor::Hearts, CardColor::Spades, 
+        CardColor::Diamonds, CardColor::Clubs]
+    }
+
+    pub fn all_numbers() -> Vec<CardNumber> {
+        vec![CardNumber::N2, CardNumber::N3, CardNumber::N4, 
+        CardNumber::N5, CardNumber::N6, CardNumber::N7,
+        CardNumber::N8, CardNumber::N9, CardNumber::N10, 
+        CardNumber::NJ, CardNumber::NQ, CardNumber::NK, CardNumber::NA
+        ]
+    }
+
+    pub fn make_ordered_deck() -> Vec<Card> {
+        let mut all = Vec::new();
+        for number in Self::all_numbers() {
+            for color in Self::all_colors() {
+                all.push(Card {number: number.clone(), color: color.clone()})
+            }
+        }
+        all
+    }
 }
 
 impl Card {
@@ -55,11 +84,18 @@ pub enum CardState {
     Opened, Closed
 }
 
+pub enum PlayerPosition {
+    Dealer, SmallBlind, BigBlind, UnderTheGun, 
+    UnderTheGun1, MiddlePosition, Hijack, Cutoff,
+    NotPlaying
+}
+
 pub struct Player {
     pub name: Names,
     pub card: Card,
     pub card_position: (i32, i32),
-    pub card_state: CardState
+    pub card_state: CardState,
+    pub position: PlayerPosition
     // later to be finished
 }
 
@@ -69,8 +105,6 @@ impl Names {
         Names::Player5, Names::Player6, Names::Player7, Names::Player8]
     } 
 }
-
-
 
 impl Player {
     const PLAYER1_CARDS: (i32, i32) = (-775, 0);
@@ -92,7 +126,8 @@ impl Player {
                     color: CardColor::Empty,
                     number: CardNumber::Empty
                 },
-                card_state: CardState::Opened
+                card_state: CardState::Opened,
+                position: PlayerPosition::NotPlaying
             };
             list_of_players.push(curr_player);
         }
