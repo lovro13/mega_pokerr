@@ -1,11 +1,13 @@
+use card::Player;
 use sdl2::event::Event;
 use sdl2::keyboard::Keycode;
 use sdl2::pixels::Color;
 use sdl2::rect::{Point, Rect};
 use sdl2::render::{Texture, WindowCanvas};
+use std::io::Empty;
 use std::time::Duration;
 use sdl2::image::{self, InitFlag, LoadTexture};
-mod models;
+mod card;
 
 const CARD_HEIGHT: u32 = 120;
 const CARD_WIDTH: u32 = 95;
@@ -20,6 +22,61 @@ const PLAYER5_CARDS: (i32, i32) = (-50, 275);
 const PLAYER6_CARDS: (i32, i32) = (-50, -300);
 const PLAYER7_CARDS: (i32, i32) = (-500, -300);
 const PLAYER8_CARDS: (i32, i32) = (500, -300);
+
+const EMPTY_CARD: card::Card = card::Card {
+    number: card::CardNumber::Empty,
+    color: card::CardColor::Empty
+};
+
+static mut PLAYER1: Player = Player {
+    name: card::Names::Player1,
+    card: EMPTY_CARD,
+    card_position: PLAYER1_CARDS,
+    card_state: card::CardState::Opened
+};
+static mut PLAYER2: Player = Player {
+    name: card::Names::Player2,
+    card: EMPTY_CARD,
+    card_position: PLAYER2_CARDS,
+    card_state: card::CardState::Opened
+};
+static mut PLAYER3: Player = Player {
+    name: card::Names::Player3,
+    card: EMPTY_CARD,
+    card_position: PLAYER3_CARDS,
+    card_state: card::CardState::Opened
+};
+static mut PLAYER4: Player = Player {
+    name: card::Names::Player4,
+    card: EMPTY_CARD,
+    card_position: PLAYER4_CARDS,
+    card_state: card::CardState::Opened
+};
+static mut PLAYER5: Player = Player {
+    name: card::Names::Player5,
+    card: EMPTY_CARD,
+    card_position: PLAYER5_CARDS,
+    card_state: card::CardState::Opened
+};
+static mut PLAYER6: Player = Player {
+    name: card::Names::Player6,
+    card: EMPTY_CARD,
+    card_position: PLAYER6_CARDS,
+    card_state: card::CardState::Opened
+};
+static mut PLAYER7: Player = Player {
+    name: card::Names::Player7,
+    card: EMPTY_CARD,
+    card_position: PLAYER8_CARDS,
+    card_state: card::CardState::Opened
+};
+static mut PLAYER8: Player = Player {
+    name: card::Names::Player8,
+    card: EMPTY_CARD,
+    card_position: PLAYER8_CARDS,
+    card_state: card::CardState::Opened
+};// to bo moral se drgac nrdit, pomoje da najbol v  main, pa da render uzame player_list
+// pa pol dela s temu, ka te se bojo povsod rabl
 
 fn render(canvas: &mut WindowCanvas, 
     color: Color, 
@@ -66,11 +123,11 @@ fn main() -> Result<(), String> {
     .expect("could not make canvas");
 
     let texture_creator = canvas.texture_creator();
-    let card: models::card::Card = models::card::Card {
-        color: models::card::CardColor::Spades,
-        number: models::card::CardNumber::N2
+    let card: card::Card = card::Card {
+        color: card::CardColor::Spades,
+        number: card::CardNumber::N2
     };
-    let filename = models::card::Card::card_to_file(card);
+    let filename = card::Card::card_to_file(card);
     let texture = texture_creator.load_texture(filename)?;
     // let position = Point::new(PLAYER1_CARDS.0, PLAYER1_CARDS.1);
 

@@ -1,12 +1,12 @@
-
 pub enum CardNumber {
     // označeno R kot rang karte, to sem si izmislil
     // nevem če je to izraz
     N2, N3, N4, N5, N6, N7,
-    N8, N9, N10, NJ, NQ, NK, NA    
+    N8, N9, N10, NJ, NQ, NK, NA,
+    Empty
 }
 pub enum CardColor {
-    Hearts, Spades, Diamonds, Clubs 
+    Hearts, Spades, Diamonds, Clubs, Empty 
 }
 
 pub struct Card {
@@ -22,7 +22,8 @@ impl Card {
             CardColor::Hearts => String::from("_of_hearts.png"),
             CardColor::Spades => String::from("_of_spades.png"),
             CardColor::Diamonds => String::from("_of_diamonds.png"),
-            CardColor::Clubs => String::from("_of_clubs.png")
+            CardColor::Clubs => String::from("_of_clubs.png"),
+            CardColor::Empty => String::from("red_")
         };
         let string1 = match card_num  {
             CardNumber::N2 => String::from("2"),
@@ -37,8 +38,26 @@ impl Card {
             CardNumber::NJ => String::from("jack"),
             CardNumber::NQ => String::from("queen"),
             CardNumber::NK => String::from("king"),
-            CardNumber::NA => String::from("ace")
+            CardNumber::NA => String::from("ace"),
+            CardNumber::Empty => String::from("joker.png")
         };
         String::from("assets/") + &string1 + &string2
     }
+}
+
+pub enum Names {
+    Player1, Player2, Player3, Player4, 
+    Player5, Player6, Player7, Player8
+}
+
+pub enum CardState {
+    Opened, Closed
+}
+
+pub struct Player {
+    pub name: Names,
+    pub card: Card,
+    pub card_position: (i32, i32),
+    pub card_state: CardState
+    // later to be finished
 }
