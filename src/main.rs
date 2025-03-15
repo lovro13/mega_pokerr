@@ -2,7 +2,8 @@ use sdl2::event::Event;
 use sdl2::keyboard::Keycode;
 use sdl2::pixels::Color;
 use sdl2::rect::{Point, Rect};
-use sdl2::render::WindowCanvas;
+use sdl2::render::{TargetRenderError, WindowCanvas};
+use sdl2::sys::Font;
 use std::time::Duration;
 use sdl2::image::{self, InitFlag, LoadTexture};
 mod card;
@@ -22,18 +23,19 @@ pub enum Streets {
 
 fn render(canvas: &mut WindowCanvas, 
     background_color: Color, 
-    players_list: &Vec<card::Player>
+    players_list: &Vec<card::Player>,
+    font: &sdl2::ttf::Font
 ) -> Result<(), String> {
 
     canvas.set_draw_color(background_color);
     canvas.clear();
 
     let (width, height) = canvas.output_size()?;
+    let texture_creator = canvas.texture_creator();
 
     for player in players_list {
 
         
-        let texture_creator = canvas.texture_creator();
         let filename = card::Card::card_to_file(&player.card);
         
         let texture = 
@@ -51,8 +53,25 @@ fn render(canvas: &mut WindowCanvas,
         canvas.copy(&texture, None, screen_rect_card2)?;
     }
 
-    canvas.present();
 
+    // text printer on screen
+    let text_color = Color::RGB(0 , 0, 0);
+    let test_text = "Player1".to_string();
+    let surface = font
+    .render(&test_text)
+    .blended(text_color)
+    .map_err(|e| e.to_string())?;
+
+    let text_texture = texture_creator
+    .create_texture_from_surface(&surface)
+    .map_err(|e| e.to_string())?;
+
+    let text_target= Rect::new(10 as i32, 0 as i32, 200 as u32, 100 as u32);
+    canvas.copy(&text_texture, None, Some(text_target))?;
+
+    // TODO: for every player make a name above their cards
+
+    canvas.present();
     Ok(())
 }
 
@@ -60,7 +79,9 @@ fn main() -> Result<(), String> {
     let sdl_context = sdl2::init()?;
     let video_subsystem = sdl_context.video()?;
 
-    // let ttf_context = sdl2::ttf::init().map_err(|e| e.to_string())?;
+    let ttf_context = sdl2::ttf::init().map_err(|e| e.to_string())?;
+    let mut font = ttf_context.load_font("font/Poppins-Black.ttf", 32).unwrap();
+    font.set_style(sdl2::ttf::FontStyle::BOLD);
 
     let _image_context = image::init(InitFlag::PNG | InitFlag::JPG)?;
 
@@ -93,7 +114,7 @@ fn main() -> Result<(), String> {
         }
         
 
-        render(&mut canvas, Color::RGB(200, 200, 255), &player_list)?;
+        render(&mut canvas, Color::RGB(200, 200, 255), &player_list, &font)?;
         ::std::thread::sleep(Duration::new(0, 1_000_000_000u32 / 30))
     }
 
