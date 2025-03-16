@@ -1,14 +1,15 @@
-use sdl2::get_platform;
 use sdl2::render::WindowCanvas;
 use sdl2::rect::{Point, Rect};
-use sdl2::image::{self, InitFlag, LoadTexture};
+use sdl2::image::LoadTexture;
 use sdl2::pixels::Color;
+use rand::seq::SliceRandom;
+use rand::thread_rng;
 
 pub const CARD_HEIGHT: u32 = 120;
 pub const CARD_WIDTH: u32 = 95;
 
 
-#[derive(Clone)]
+#[derive(Clone)] // rabim clone da lahko naredim več kart, z istimi številkami
 pub enum CardNumber {
     // označeno R kot rang karte, to sem si izmislil
     // nevem če je to izraz
@@ -17,7 +18,7 @@ pub enum CardNumber {
     Empty
 }
 
-#[derive(Clone)]
+#[derive(Clone)] // rabim clone da lahko naredim več kart, z istimi barvami
 pub enum CardColor {
     Hearts, Spades, Diamonds, Clubs, Empty 
 }
@@ -51,6 +52,15 @@ impl Card {
         }
         all
     }
+
+    pub fn scramble_deck(deck: Vec<Card>) -> Vec<Card> {
+        let mut rng = thread_rng();
+        let mut shuffled_deck = deck;
+        shuffled_deck.shuffle(&mut rng);
+        shuffled_deck
+    }
+
+
 }
 
 impl Card {
@@ -102,7 +112,7 @@ pub enum PlayerPosition {
 
 pub struct Player {
     pub name: Names,
-    pub card: Card,
+    pub cards: (Card, Card),
     pub card_position: (i32, i32),
     pub card_state: CardState,
     pub position: PlayerPosition
@@ -132,10 +142,13 @@ impl Player {
             let curr_player = Player {
                 card_position: Self::get_card_position(&name),
                 name,
-                card: Card {
+                cards: (Card {
                     color: CardColor::Empty,
                     number: CardNumber::Empty
-                },
+                }, Card {
+                    color: CardColor::Empty,
+                    number: CardNumber::Empty
+                }),
                 card_state: CardState::Opened,
                 position: PlayerPosition::NotPlaying
             };
@@ -159,15 +172,17 @@ impl Player {
 
     pub fn render_player_info(canvas: &mut WindowCanvas, player: &Player, font: &sdl2::ttf::Font) -> Result<(), String>{
         let texture_creator = canvas.texture_creator();
-        let filename = Card::card_to_file(&player.card);
+        let filename1 = Card::card_to_file(&player.cards.0);
+        let filename2 = Card::card_to_file(&player.cards.1);
         let (width, height) = canvas.output_size()?;
         
 
         // draw cards for player
-        let texture = 
+        let (texture1, texture2) = 
         match player.card_state {
-            CardState::Closed => texture_creator.load_texture("assets/card_back.png")?,
-            CardState::Opened => texture_creator.load_texture(filename)?
+            CardState::Closed => (texture_creator.load_texture("assets/card_back.png")?, 
+            texture_creator.load_texture("assets/card_back.png")?),
+            CardState::Opened => (texture_creator.load_texture(filename1)?, texture_creator.load_texture(filename2)?)
         };
         let position = player.card_position;
         let screen_position = 
@@ -175,16 +190,14 @@ impl Player {
         let screen_rect_card1 = Rect::from_center(screen_position, CARD_WIDTH, CARD_HEIGHT);
         let screen_position2 = screen_position + Point::new(CARD_WIDTH as i32 - 30, 0);
         let screen_rect_card2 = Rect::from_center(screen_position2, CARD_WIDTH, CARD_HEIGHT);
-        canvas.copy(&texture, None, screen_rect_card1)?;
-        canvas.copy(&texture, None, screen_rect_card2)?;
-
-
+        canvas.copy(&texture1, None, screen_rect_card1)?;
+        canvas.copy(&texture2, None, screen_rect_card2)?;
 
         // write player name near the player cards
         let text_color = Color::RGB(0 , 0, 0);
-        let test_text = Self::get_player_name(player);
+        let print_text = Self::get_player_name(player);
         let surface = font
-        .render(&test_text)
+        .render(&print_text)
         .blended(text_color)
         .map_err(|e| e.to_string())?;
 

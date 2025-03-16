@@ -1,10 +1,11 @@
-use sdl2::event::Event;
+use card::PlayerPosition;
+use sdl2::{event::Event, sys::KeyCode};
 use sdl2::keyboard::Keycode;
 use sdl2::pixels::Color;
-use sdl2::rect::{Point, Rect};
 use sdl2::render::WindowCanvas;
 use std::time::Duration;
 use sdl2::image::{self, InitFlag};
+
 mod card;
 
 const SCREEN_HEIGHT: u32 = 900;
@@ -18,26 +19,57 @@ pub enum Streets {
     Showdown
 }
 
+pub enum GameState {
+    Paused,
+    Played(card::Player)
+}
+
+fn next_player_position(player_position: &PlayerPosition) -> PlayerPosition {
+    match player_position {
+        PlayerPosition::Dealer => PlayerPosition::SmallBlind,
+        PlayerPosition::SmallBlind => PlayerPosition::BigBlind,
+        PlayerPosition::BigBlind => PlayerPosition::UnderTheGun,
+        PlayerPosition::UnderTheGun => PlayerPosition::UnderTheGun1,
+        PlayerPosition::UnderTheGun1 => PlayerPosition::MiddlePosition,
+        PlayerPosition::MiddlePosition => PlayerPosition::Hijack,
+        PlayerPosition::Hijack => PlayerPosition::Cutoff,
+        PlayerPosition::Cutoff => PlayerPosition::Dealer,
+        PlayerPosition::NotPlaying => PlayerPosition::NotPlaying 
+    }
+}
+
+fn begin_round(player_list: &mut Vec<card::Player>) {
+    let deck = card::Card::make_ordered_deck();
+    let mut deck = card::Card::scramble_deck(deck);
+
+    for player in player_list {
+        player.position = next_player_position(&player.position);
+        let card1 = match deck.pop() {
+            None => card::Card {color: card::CardColor::Empty, number: card::CardNumber::Empty}, 
+            Some(card) => card
+    };
+    let card2 = match deck.pop() {
+        None => card::Card {color: card::CardColor::Empty, number: card::CardNumber::Empty}, 
+        Some(card) => card
+    };
+        player.cards = (card1, card2)
+    }
+
+}
+
 fn render(canvas: &mut WindowCanvas, 
     background_color: Color, 
     players_list: &Vec<card::Player>,
     font: &sdl2::ttf::Font
 ) -> Result<(), String> {
-
+    
     canvas.set_draw_color(background_color);
     canvas.clear();
 
-    let texture_creator = canvas.texture_creator();
-
     for player in players_list {
+        //naprinta ime in karte igralca
         card::Player::render_player_info(canvas, player, font)?;
     }
-
-
-    // text printer on screen
-
-    // TODO: for every player make a name above their cards
-
     canvas.present();
     Ok(())
 }
@@ -69,6 +101,8 @@ fn main() -> Result<(), String> {
 
     canvas.clear();
     canvas.present();
+    begin_round(&mut player_list);
+
     'running: loop {
         for event in event_pump.poll_iter(){
             match event {
@@ -76,6 +110,7 @@ fn main() -> Result<(), String> {
                 | Event::KeyDown {keycode: Some(Keycode::Escape), ..} => {
                     break 'running;
                 },
+                Event::KeyDown {keycode: Some(Keycode::D), .. } => begin_round(&mut player_list),
                 _ => {}
             }
         }
@@ -84,6 +119,7 @@ fn main() -> Result<(), String> {
         render(&mut canvas, Color::RGB(200, 200, 255), &player_list, &font)?;
         ::std::thread::sleep(Duration::new(0, 1_000_000_000u32 / 30))
     }
+
 
     Ok(())    
 }
