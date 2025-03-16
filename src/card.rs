@@ -1,3 +1,13 @@
+use sdl2::get_platform;
+use sdl2::render::WindowCanvas;
+use sdl2::rect::{Point, Rect};
+use sdl2::image::{self, InitFlag, LoadTexture};
+use sdl2::pixels::Color;
+
+pub const CARD_HEIGHT: u32 = 120;
+pub const CARD_WIDTH: u32 = 95;
+
+
 #[derive(Clone)]
 pub enum CardNumber {
     // označeno R kot rang karte, to sem si izmislil
@@ -107,14 +117,14 @@ impl Names {
 }
 
 impl Player {
-    const PLAYER1_CARDS: (i32, i32) = (-775, 0);
-    const PLAYER2_CARDS: (i32, i32) = (-500, 275);
-    const PLAYER3_CARDS: (i32, i32) = (700, 0);
-    const PLAYER4_CARDS: (i32, i32) = (500, 275);
-    const PLAYER5_CARDS: (i32, i32) = (-50, 275);
-    const PLAYER6_CARDS: (i32, i32) = (-50, -300);
-    const PLAYER7_CARDS: (i32, i32) = (-500, -300);
-    const PLAYER8_CARDS: (i32, i32) = (500, -300);
+    const PLAYER4_CARDS: (i32, i32) = (-775, 0);
+    const PLAYER5_CARDS: (i32, i32) = (-500, 275);
+    const PLAYER6_CARDS: (i32, i32) = (700, 0);
+    const PLAYER7_CARDS: (i32, i32) = (500, 275);
+    const PLAYER8_CARDS: (i32, i32) = (-50, 275);
+    const PLAYER1_CARDS: (i32, i32) = (-50, -300);
+    const PLAYER2_CARDS: (i32, i32) = (-500, -300);
+    const PLAYER3_CARDS: (i32, i32) = (500, -300);
 
     pub fn init_players() -> Vec<Player> {
         let mut list_of_players = Vec::new();
@@ -144,6 +154,60 @@ impl Player {
             Names::Player6 => Self::PLAYER6_CARDS,
             Names::Player7 => Self::PLAYER7_CARDS,
             Names::Player8 => Self::PLAYER8_CARDS,
+        }
+    }
+
+    pub fn render_player_info(canvas: &mut WindowCanvas, player: &Player, font: &sdl2::ttf::Font) -> Result<(), String>{
+        let texture_creator = canvas.texture_creator();
+        let filename = Card::card_to_file(&player.card);
+        let (width, height) = canvas.output_size()?;
+        
+
+        // draw cards for player
+        let texture = 
+        match player.card_state {
+            CardState::Closed => texture_creator.load_texture("assets/card_back.png")?,
+            CardState::Opened => texture_creator.load_texture(filename)?
+        };
+        let position = player.card_position;
+        let screen_position = 
+        Point::new(position.0, -position.1) + Point::new(width as i32 / 2, height as i32 / 2);
+        let screen_rect_card1 = Rect::from_center(screen_position, CARD_WIDTH, CARD_HEIGHT);
+        let screen_position2 = screen_position + Point::new(CARD_WIDTH as i32 - 30, 0);
+        let screen_rect_card2 = Rect::from_center(screen_position2, CARD_WIDTH, CARD_HEIGHT);
+        canvas.copy(&texture, None, screen_rect_card1)?;
+        canvas.copy(&texture, None, screen_rect_card2)?;
+
+
+
+        // write player name near the player cards
+        let text_color = Color::RGB(0 , 0, 0);
+        let test_text = Self::get_player_name(player);
+        let surface = font
+        .render(&test_text)
+        .blended(text_color)
+        .map_err(|e| e.to_string())?;
+
+        let text_texture = texture_creator
+        .create_texture_from_surface(&surface)
+        .map_err(|e| e.to_string())?;
+
+        let screen_position3 = screen_position + Point::new(0, 50);
+        let text_target= Rect::from_center(screen_position3, 200 as u32, 100 as u32);
+        canvas.copy(&text_texture, None, Some(text_target))?;
+        Ok(())
+    }
+
+    fn get_player_name(player: &Player) -> String {
+        match player.name {
+            Names::Player1 => String::from("Player1"),
+            Names::Player2 => String::from("Player2"),
+            Names::Player3 => String::from("Player3"),
+            Names::Player4 => String::from("Player4"),
+            Names::Player5 => String::from("Player5"),
+            Names::Player6 => String::from("Player6"),
+            Names::Player7 => String::from("Player7"),
+            Names::Player8 => String::from("Player8"),
         }
     }
 }

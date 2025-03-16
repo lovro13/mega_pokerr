@@ -2,14 +2,11 @@ use sdl2::event::Event;
 use sdl2::keyboard::Keycode;
 use sdl2::pixels::Color;
 use sdl2::rect::{Point, Rect};
-use sdl2::render::{TargetRenderError, WindowCanvas};
-use sdl2::sys::Font;
+use sdl2::render::WindowCanvas;
 use std::time::Duration;
-use sdl2::image::{self, InitFlag, LoadTexture};
+use sdl2::image::{self, InitFlag};
 mod card;
 
-const CARD_HEIGHT: u32 = 120;
-const CARD_WIDTH: u32 = 95;
 const SCREEN_HEIGHT: u32 = 900;
 const SCREEN_WIDTH: u32 = 1800;
 
@@ -30,44 +27,14 @@ fn render(canvas: &mut WindowCanvas,
     canvas.set_draw_color(background_color);
     canvas.clear();
 
-    let (width, height) = canvas.output_size()?;
     let texture_creator = canvas.texture_creator();
 
     for player in players_list {
-
-        
-        let filename = card::Card::card_to_file(&player.card);
-        
-        let texture = 
-        match player.card_state {
-            card::CardState::Closed => texture_creator.load_texture("assets/card_back.png")?,
-            card::CardState::Opened => texture_creator.load_texture(filename)?
-        };
-        let position = player.card_position;
-        let screen_position = 
-        Point::new(position.0, -position.1) + Point::new(width as i32 / 2, height as i32 / 2);
-        let screen_rect_card1 = Rect::from_center(screen_position, CARD_WIDTH, CARD_HEIGHT);
-        let screen_position2 = screen_position + Point::new(CARD_WIDTH as i32 - 30, 0);
-        let screen_rect_card2 = Rect::from_center(screen_position2, CARD_WIDTH, CARD_HEIGHT);
-        canvas.copy(&texture, None, screen_rect_card1)?;
-        canvas.copy(&texture, None, screen_rect_card2)?;
+        card::Player::render_player_info(canvas, player, font)?;
     }
 
 
     // text printer on screen
-    let text_color = Color::RGB(0 , 0, 0);
-    let test_text = "Player1".to_string();
-    let surface = font
-    .render(&test_text)
-    .blended(text_color)
-    .map_err(|e| e.to_string())?;
-
-    let text_texture = texture_creator
-    .create_texture_from_surface(&surface)
-    .map_err(|e| e.to_string())?;
-
-    let text_target= Rect::new(10 as i32, 0 as i32, 200 as u32, 100 as u32);
-    canvas.copy(&text_texture, None, Some(text_target))?;
 
     // TODO: for every player make a name above their cards
 
@@ -80,8 +47,8 @@ fn main() -> Result<(), String> {
     let video_subsystem = sdl_context.video()?;
 
     let ttf_context = sdl2::ttf::init().map_err(|e| e.to_string())?;
-    let mut font = ttf_context.load_font("font/Poppins-Black.ttf", 32).unwrap();
-    font.set_style(sdl2::ttf::FontStyle::BOLD);
+    let mut font = ttf_context.load_font("font/Poppins-Black.ttf", 120).unwrap();
+    font.set_style(sdl2::ttf::FontStyle::NORMAL);
 
     let _image_context = image::init(InitFlag::PNG | InitFlag::JPG)?;
 
