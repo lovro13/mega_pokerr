@@ -1,5 +1,5 @@
 use card::PlayerPosition;
-use sdl2::{event::Event, sys::KeyCode};
+use sdl2::event::Event;
 use sdl2::keyboard::Keycode;
 use sdl2::pixels::Color;
 use sdl2::render::WindowCanvas;
@@ -39,8 +39,10 @@ fn next_player_position(player_position: &PlayerPosition) -> PlayerPosition {
 }
 
 fn begin_round(player_list: &mut Vec<card::Player>) {
+    let _curr_street = Streets::PreFlop;
     let deck = card::Card::make_ordered_deck();
     let mut deck = card::Card::scramble_deck(deck);
+
 
     for player in player_list {
         player.position = next_player_position(&player.position);
@@ -68,7 +70,7 @@ fn render(canvas: &mut WindowCanvas,
 
     for player in players_list {
         //naprinta ime in karte igralca
-        card::Player::render_player_info(canvas, player, font)?;
+        let _ = card::Player::render_player_info(canvas, player, font);
     }
     canvas.present();
     Ok(())
@@ -116,6 +118,7 @@ fn main() -> Result<(), String> {
         }
         
 
+        
         render(&mut canvas, Color::RGB(200, 200, 255), &player_list, &font)?;
         ::std::thread::sleep(Duration::new(0, 1_000_000_000u32 / 30))
     }

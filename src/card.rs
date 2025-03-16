@@ -5,6 +5,8 @@ use sdl2::pixels::Color;
 use rand::seq::SliceRandom;
 use rand::thread_rng;
 
+use crate::next_player_position;
+
 pub const CARD_HEIGHT: u32 = 120;
 pub const CARD_WIDTH: u32 = 95;
 
@@ -104,6 +106,7 @@ pub enum CardState {
     Opened, Closed
 }
 
+#[derive(PartialEq, Debug, Clone)]
 pub enum PlayerPosition {
     Dealer, SmallBlind, BigBlind, UnderTheGun, 
     UnderTheGun1, MiddlePosition, Hijack, Cutoff,
@@ -115,7 +118,8 @@ pub struct Player {
     pub cards: (Card, Card),
     pub card_position: (i32, i32),
     pub card_state: CardState,
-    pub position: PlayerPosition
+    pub position: PlayerPosition,
+    pub money: u32
     // later to be finished
 }
 
@@ -127,18 +131,21 @@ impl Names {
 }
 
 impl Player {
-    const PLAYER4_CARDS: (i32, i32) = (-775, 0);
-    const PLAYER5_CARDS: (i32, i32) = (-500, 275);
-    const PLAYER6_CARDS: (i32, i32) = (700, 0);
-    const PLAYER7_CARDS: (i32, i32) = (500, 275);
-    const PLAYER8_CARDS: (i32, i32) = (-50, 275);
     const PLAYER1_CARDS: (i32, i32) = (-50, -300);
     const PLAYER2_CARDS: (i32, i32) = (-500, -300);
-    const PLAYER3_CARDS: (i32, i32) = (500, -300);
+    const PLAYER3_CARDS: (i32, i32) = (-775, 0);
+    const PLAYER4_CARDS: (i32, i32) = (-500, 275);
+    const PLAYER5_CARDS: (i32, i32) = (-50, 275);
+    const PLAYER6_CARDS: (i32, i32) = (500, 275);
+    const PLAYER7_CARDS: (i32, i32) = (700, 0);
+    const PLAYER8_CARDS: (i32, i32) = (500, -300);
 
     pub fn init_players() -> Vec<Player> {
         let mut list_of_players = Vec::new();
+        let mut last_position = PlayerPosition::Dealer;
         for name in Names::all_names() {
+            let curr_position = next_player_position(&last_position);
+            last_position = curr_position.clone();
             let curr_player = Player {
                 card_position: Self::get_card_position(&name),
                 name,
@@ -150,7 +157,8 @@ impl Player {
                     number: CardNumber::Empty
                 }),
                 card_state: CardState::Opened,
-                position: PlayerPosition::NotPlaying
+                position: curr_position,
+                money: 1000
             };
             list_of_players.push(curr_player);
         }
@@ -186,7 +194,7 @@ impl Player {
         };
         let position = player.card_position;
         let screen_position = 
-        Point::new(position.0, -position.1) + Point::new(width as i32 / 2, height as i32 / 2);
+        Point::new(position.0, -position.1) + Point::new(width as i32 / 2, height as i32 / 2 - 100);
         let screen_rect_card1 = Rect::from_center(screen_position, CARD_WIDTH, CARD_HEIGHT);
         let screen_position2 = screen_position + Point::new(CARD_WIDTH as i32 - 30, 0);
         let screen_rect_card2 = Rect::from_center(screen_position2, CARD_WIDTH, CARD_HEIGHT);
@@ -195,19 +203,45 @@ impl Player {
 
         // write player name near the player cards
         let text_color = Color::RGB(0 , 0, 0);
-        let print_text = Self::get_player_name(player);
-        let surface = font
-        .render(&print_text)
+        let name_text = Self::get_player_name(player);
+        let name_surface = font
+        .render(&name_text)
         .blended(text_color)
         .map_err(|e| e.to_string())?;
 
         let text_texture = texture_creator
-        .create_texture_from_surface(&surface)
+        .create_texture_from_surface(&name_surface)
         .map_err(|e| e.to_string())?;
 
-        let screen_position3 = screen_position + Point::new(0, 50);
-        let text_target= Rect::from_center(screen_position3, 200 as u32, 100 as u32);
+        let screen_position3 = screen_position + Point::new(30, 70);
+        let text_target= Rect::from_center(screen_position3, 150 as u32, 75 as u32);
         canvas.copy(&text_texture, None, Some(text_target))?;
+
+        let balance_color = Color::RGB(0 , 0, 10);
+        let balance_text = format!("Balance: {}", player.money);
+        let balance_surface = font
+        .render(&balance_text)
+        .blended(balance_color)
+        .map_err(|e| e.to_string())?;
+
+        let text_texture = texture_creator
+        .create_texture_from_surface(&balance_surface)
+        .map_err(|e| e.to_string())?;
+
+        let screen_position3 = screen_position + Point::new(30, 120);
+        let text_target= Rect::from_center(screen_position3, 150 as u32, 75 as u32);
+        canvas.copy(&text_texture, None, Some(text_target))?;
+
+        if player.position == PlayerPosition::Dealer {
+            let texture = texture_creator
+            .load_texture("assets/dealer_token.png")?;
+            let screen_position4 = 
+            screen_position + Point::new(150, 100);
+            let screen_rect_dealer = Rect::from_center(screen_position4, 70, 70);
+            canvas.copy(&texture, None, screen_rect_dealer)?;
+        }
+        println!("player.position: {:?}", player.position);
+
         Ok(())
     }
 
