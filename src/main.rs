@@ -1,4 +1,3 @@
-use card::PlayerPosition;
 use sdl2::event::Event;
 use sdl2::keyboard::Keycode;
 use sdl2::pixels::Color;
@@ -7,61 +6,21 @@ use std::time::Duration;
 use sdl2::image::{self, InitFlag};
 
 mod card;
+mod player;
+mod round;
 
 const SCREEN_HEIGHT: u32 = 900;
 const SCREEN_WIDTH: u32 = 1800;
 
-pub enum Streets {
-    PreFlop,
-    Flop,
-    Turn,
-    River,
-    Showdown
-}
-
 pub enum GameState {
     Paused,
-    Played(card::Player)
+    Played(player::Player)
 }
 
-fn next_player_position(player_position: &PlayerPosition) -> PlayerPosition {
-    match player_position {
-        PlayerPosition::Dealer => PlayerPosition::SmallBlind,
-        PlayerPosition::SmallBlind => PlayerPosition::BigBlind,
-        PlayerPosition::BigBlind => PlayerPosition::UnderTheGun,
-        PlayerPosition::UnderTheGun => PlayerPosition::UnderTheGun1,
-        PlayerPosition::UnderTheGun1 => PlayerPosition::MiddlePosition,
-        PlayerPosition::MiddlePosition => PlayerPosition::Hijack,
-        PlayerPosition::Hijack => PlayerPosition::Cutoff,
-        PlayerPosition::Cutoff => PlayerPosition::Dealer,
-        PlayerPosition::NotPlaying => PlayerPosition::NotPlaying 
-    }
-}
-
-fn begin_round(player_list: &mut Vec<card::Player>) {
-    let _curr_street = Streets::PreFlop;
-    let deck = card::Card::make_ordered_deck();
-    let mut deck = card::Card::scramble_deck(deck);
-
-
-    for player in player_list {
-        player.position = next_player_position(&player.position);
-        let card1 = match deck.pop() {
-            None => card::Card {color: card::CardColor::Empty, number: card::CardNumber::Empty}, 
-            Some(card) => card
-    };
-    let card2 = match deck.pop() {
-        None => card::Card {color: card::CardColor::Empty, number: card::CardNumber::Empty}, 
-        Some(card) => card
-    };
-        player.cards = (card1, card2)
-    }
-
-}
 
 fn render(canvas: &mut WindowCanvas, 
     background_color: Color, 
-    players_list: &Vec<card::Player>,
+    players_list: &Vec<player::Player>,
     font: &sdl2::ttf::Font
 ) -> Result<(), String> {
     
@@ -70,7 +29,7 @@ fn render(canvas: &mut WindowCanvas,
 
     for player in players_list {
         //naprinta ime in karte igralca
-        let _ = card::Player::render_player_info(canvas, player, font);
+        let _ = player::Player::render_player_info(canvas, player, font);
     }
     canvas.present();
     Ok(())
@@ -98,12 +57,12 @@ fn main() -> Result<(), String> {
     .expect("could not make canvas");
     
     // let position = Point::new(PLAYER1_CARDS.0, PLAYER1_CARDS.1);
-    let mut player_list = card::Player::init_players();
+    let mut player_list = player::Player::init_players();
     let mut event_pump = sdl_context.event_pump().unwrap();
 
     canvas.clear();
     canvas.present();
-    begin_round(&mut player_list);
+    round::begin_round(&mut player_list);
 
     'running: loop {
         for event in event_pump.poll_iter(){
@@ -112,7 +71,7 @@ fn main() -> Result<(), String> {
                 | Event::KeyDown {keycode: Some(Keycode::Escape), ..} => {
                     break 'running;
                 },
-                Event::KeyDown {keycode: Some(Keycode::D), .. } => begin_round(&mut player_list),
+                Event::KeyDown {keycode: Some(Keycode::D), .. } => round::begin_round(&mut player_list),
                 _ => {}
             }
         }
