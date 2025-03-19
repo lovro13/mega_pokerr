@@ -1,7 +1,6 @@
 use rand::seq::SliceRandom;
 use rand::thread_rng;
 
-
 pub const CARD_HEIGHT: u32 = 120;
 pub const CARD_WIDTH: u32 = 95;
 

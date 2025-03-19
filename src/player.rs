@@ -1,10 +1,8 @@
 use crate::card;
-
-use sdl2::render::WindowCanvas;
 use sdl2::image::LoadTexture;
 use sdl2::pixels::Color;
 use sdl2::rect::{Point, Rect};
-
+use sdl2::render::WindowCanvas;
 
 pub enum Names {
     Player1,
@@ -31,7 +29,6 @@ pub enum PlayerPosition {
 }
 
 impl PlayerPosition {
-
     pub fn next_player_position(player_position: &PlayerPosition) -> PlayerPosition {
         match player_position {
             PlayerPosition::Dealer => PlayerPosition::Cutoff,
@@ -42,7 +39,7 @@ impl PlayerPosition {
             PlayerPosition::MiddlePosition => PlayerPosition::UnderTheGun1,
             PlayerPosition::Hijack => PlayerPosition::MiddlePosition,
             PlayerPosition::Cutoff => PlayerPosition::Hijack,
-            PlayerPosition::NotPlaying => PlayerPosition::NotPlaying 
+            PlayerPosition::NotPlaying => PlayerPosition::NotPlaying,
         }
     }
 }
@@ -53,6 +50,7 @@ pub struct Player {
     pub card_state: card::CardState,
     pub position: PlayerPosition,
     pub money: u32, // later to be finished
+    pub his_turn: bool
 }
 
 impl Names {
@@ -104,6 +102,7 @@ impl Player {
                 card_state: card::CardState::Opened,
                 position: curr_position,
                 money: 1000,
+                his_turn: false
             };
             list_of_players.push(curr_player);
         }
@@ -123,7 +122,7 @@ impl Player {
         }
     }
 
-    fn get_player_name(player: &Player) -> String {
+    pub fn get_player_name(player: &Player) -> String {
         match player.name {
             Names::Player1 => String::from("Player1"),
             Names::Player2 => String::from("Player2"),
@@ -206,5 +205,4 @@ impl Player {
 
         Ok(())
     }
-
 }
