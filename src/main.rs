@@ -24,7 +24,8 @@ fn render(
     background_color: Color,
     players_list: &Vec<player::Player>,
     font: &sdl2::ttf::Font,
-    test_button: &render::Button,
+    buttons: &render::Button, // zaenkrat en, nakoncu bojo 3
+    users_turn: bool,
 ) -> Result<(), String> {
     canvas.set_draw_color(background_color);
     canvas.clear();
@@ -34,9 +35,10 @@ fn render(
         // let _ = player::Player::render_player_info(canvas, player, font);
         let _ = render::render_player_info(canvas, player, font);
     }
-
-    render::Button::draw_button(&test_button, canvas, &font)?;
-    canvas.present();   
+    if users_turn {
+        render::Button::draw_button(&buttons, canvas, &font)?;
+    }
+    canvas.present();
     Ok(())
 }
 
@@ -62,9 +64,9 @@ fn main() -> Result<(), String> {
 
     let mut canvas = window.into_canvas().build().expect("could not make canvas");
 
-    // let position = Point::new(PLAYER1_CARDS.0, PLAYER1_CARDS.1);
+    let mut fold_button = render::Button::init_fold_button(&mut canvas);
     let mut player_list = player::Player::init_players();
-    let mut test_button = render::Button::new(50, 50, 100, 100, String::from("fold"));
+    let mut users_turn = true;
     let mut event_pump = sdl_context.event_pump().unwrap();
 
     canvas.clear();
@@ -73,7 +75,8 @@ fn main() -> Result<(), String> {
 
     'running: loop {
         for event in event_pump.poll_iter() {
-            Button::handle_button_events(&event, &mut test_button);
+            Button::handle_button_events(&event, &mut fold_button);
+
             match event {
                 Event::Quit { .. }
                 | Event::KeyDown {
@@ -90,7 +93,14 @@ fn main() -> Result<(), String> {
             }
         }
 
-        render(&mut canvas, Color::RGB(200, 200, 255), &player_list, &font, &test_button)?;
+        render(
+            &mut canvas,
+            Color::RGB(200, 200, 255),
+            &player_list,
+            &font,
+            &fold_button,
+            users_turn,
+        )?;
         ::std::thread::sleep(Duration::new(0, 1_000_000_000u32 / 30))
     }
 

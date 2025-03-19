@@ -65,7 +65,7 @@ impl Names {
 }
 
 impl Player {
-    const PLAYER1_CARDS: (i32, i32) = (-50, -300);
+    pub const PLAYER1_CARDS: (i32, i32) = (-50, -300);
     const PLAYER2_CARDS: (i32, i32) = (-500, -300);
     const PLAYER3_CARDS: (i32, i32) = (-775, 0);
     const PLAYER4_CARDS: (i32, i32) = (-500, 275);

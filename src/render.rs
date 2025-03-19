@@ -9,6 +9,8 @@ use sdl2::mouse::MouseButton;
 
 pub const CARD_HEIGHT: u32 = 120;
 pub const CARD_WIDTH: u32 = 95;
+pub const FOLD_BUTTON: (i32, i32) = (0, 0);
+
 
 pub fn draw_text(
     canvas: &mut WindowCanvas,
@@ -38,9 +40,9 @@ pub struct Button {
 }
 
 impl Button {
-    pub fn new(x: i32, y: i32, height: u32, width: u32, text: String) -> Self {
+    pub fn new(center: &Point, height: u32, width: u32, text: String) -> Self {
         Button {
-            rect: Rect::new(x, y, width, height),
+            rect: Rect::from_center(*center, width, height),
             text,
             is_clicked: false,
         }
@@ -85,6 +87,21 @@ impl Button {
                 button.is_clicked = false;
             }
             _ => {}
+        }
+    }
+
+
+    // soon this will make a list of all buttons [FOLD; CALL; RAISE]
+    pub fn init_fold_button(canvas: &mut WindowCanvas) ->  Self {
+        let (width, heigth) = canvas.output_size().unwrap();
+        let screen_center = Point::new((width as i32) / 2, (heigth as i32) / 2 + 100);
+        let button_position = screen_center + Point::new(player::Player::PLAYER1_CARDS.0, -player::Player::PLAYER1_CARDS.1)
+        + Point::new(0, 0);
+        let button_target = Rect::from_center(button_position, 100, 50);
+        Button {
+            rect: button_target,
+            text: String::from("FOLD"),
+            is_clicked: false
         }
     }
 }
