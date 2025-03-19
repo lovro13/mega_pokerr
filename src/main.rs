@@ -1,3 +1,4 @@
+use render::Button;
 use sdl2::event::Event;
 use sdl2::image::{self, InitFlag};
 use sdl2::keyboard::Keycode;
@@ -23,6 +24,7 @@ fn render(
     background_color: Color,
     players_list: &Vec<player::Player>,
     font: &sdl2::ttf::Font,
+    test_button: &render::Button,
 ) -> Result<(), String> {
     canvas.set_draw_color(background_color);
     canvas.clear();
@@ -32,7 +34,9 @@ fn render(
         // let _ = player::Player::render_player_info(canvas, player, font);
         let _ = render::render_player_info(canvas, player, font);
     }
-    canvas.present();
+
+    render::Button::draw_button(&test_button, canvas, &font)?;
+    canvas.present();   
     Ok(())
 }
 
@@ -60,6 +64,7 @@ fn main() -> Result<(), String> {
 
     // let position = Point::new(PLAYER1_CARDS.0, PLAYER1_CARDS.1);
     let mut player_list = player::Player::init_players();
+    let mut test_button = render::Button::new(50, 50, 100, 100, String::from("fold"));
     let mut event_pump = sdl_context.event_pump().unwrap();
 
     canvas.clear();
@@ -68,6 +73,7 @@ fn main() -> Result<(), String> {
 
     'running: loop {
         for event in event_pump.poll_iter() {
+            Button::handle_button_events(&event, &mut test_button);
             match event {
                 Event::Quit { .. }
                 | Event::KeyDown {
@@ -84,7 +90,7 @@ fn main() -> Result<(), String> {
             }
         }
 
-        render(&mut canvas, Color::RGB(200, 200, 255), &player_list, &font)?;
+        render(&mut canvas, Color::RGB(200, 200, 255), &player_list, &font, &test_button)?;
         ::std::thread::sleep(Duration::new(0, 1_000_000_000u32 / 30))
     }
 

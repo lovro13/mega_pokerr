@@ -1,9 +1,6 @@
 use rand::seq::SliceRandom;
 use rand::thread_rng;
 
-pub const CARD_HEIGHT: u32 = 120;
-pub const CARD_WIDTH: u32 = 95;
-
 #[derive(Clone)] // rabim clone da lahko naredim več kart, z istimi številkami
 pub enum CardNumber {
     // označeno R kot rang karte, to sem si izmislil

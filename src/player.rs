@@ -1,8 +1,4 @@
 use crate::card;
-use sdl2::image::LoadTexture;
-use sdl2::pixels::Color;
-use sdl2::rect::{Point, Rect};
-use sdl2::render::WindowCanvas;
 
 pub enum Names {
     Player1,
@@ -133,76 +129,5 @@ impl Player {
             Names::Player7 => String::from("Player7"),
             Names::Player8 => String::from("Player8"),
         }
-    }
-
-    pub fn render_player_info(
-        canvas: &mut WindowCanvas,
-        player: &Player,
-        font: &sdl2::ttf::Font,
-    ) -> Result<(), String> {
-        let texture_creator = canvas.texture_creator();
-        let filename1 = card::Card::card_to_file(&player.cards.0);
-        let filename2 = card::Card::card_to_file(&player.cards.1);
-        let (width, height) = canvas.output_size()?;
-
-        // draw cards for player
-        let (texture1, texture2) = match player.card_state {
-            card::CardState::Closed => (
-                texture_creator.load_texture("assets/card_back.png")?,
-                texture_creator.load_texture("assets/card_back.png")?,
-            ),
-            card::CardState::Opened => (
-                texture_creator.load_texture(filename1)?,
-                texture_creator.load_texture(filename2)?,
-            ),
-        };
-        let position = player.card_position;
-        let screen_position = Point::new(position.0, -position.1)
-            + Point::new(width as i32 / 2, height as i32 / 2 - 100);
-        let screen_rect_card1 = Rect::from_center(screen_position, card::CARD_WIDTH, card::CARD_HEIGHT);
-        let screen_position2 = screen_position + Point::new(card::CARD_WIDTH as i32 - 30, 0);
-        let screen_rect_card2 = Rect::from_center(screen_position2, card::CARD_WIDTH, card::CARD_HEIGHT);
-        canvas.copy(&texture1, None, screen_rect_card1)?;
-        canvas.copy(&texture2, None, screen_rect_card2)?;
-
-        // write player name near the player cards
-        let text_color = Color::RGB(0, 0, 0);
-        let name_text = Self::get_player_name(player);
-        let name_surface = font
-            .render(&name_text)
-            .blended(text_color)
-            .map_err(|e| e.to_string())?;
-
-        let text_texture = texture_creator
-            .create_texture_from_surface(&name_surface)
-            .map_err(|e| e.to_string())?;
-
-        let screen_position3 = screen_position + Point::new(30, 70);
-        let text_target = Rect::from_center(screen_position3, 150 as u32, 75 as u32);
-        canvas.copy(&text_texture, None, Some(text_target))?;
-
-        let balance_color = Color::RGB(0, 0, 10);
-        let balance_text = format!("Balance: {}", player.money);
-        let balance_surface = font
-            .render(&balance_text)
-            .blended(balance_color)
-            .map_err(|e| e.to_string())?;
-
-        let text_texture = texture_creator
-            .create_texture_from_surface(&balance_surface)
-            .map_err(|e| e.to_string())?;
-
-        let screen_position3 = screen_position + Point::new(30, 120);
-        let text_target = Rect::from_center(screen_position3, 150 as u32, 75 as u32);
-        canvas.copy(&text_texture, None, Some(text_target))?;
-
-        if player.position == PlayerPosition::Dealer {
-            let texture = texture_creator.load_texture("assets/dealer_token.png")?;
-            let screen_position4 = screen_position + Point::new(150, 100);
-            let screen_rect_dealer = Rect::from_center(screen_position4, 70, 70);
-            canvas.copy(&texture, None, screen_rect_dealer)?;
-        }
-
-        Ok(())
     }
 }
