@@ -1,0 +1,15 @@
+NAREJENO:
+- osnovna grafika
+- strukture player in card
+- začetek delanja round, beign round dela, samo bo postal init_round
+
+TRENUNTNI PLANI:
+- ločiti konstante
+- buttons, naresti se ostale, torej call, raise, slider za raise
+- round skonsturiati
+
+
+(lahko tudi ne)
+KASNEJE:
+- bote skonsturiati
+- server

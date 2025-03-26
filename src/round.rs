@@ -1,7 +1,7 @@
 use crate::card;
 use crate::player;
 
-enum Round {
+enum Round { // zelooo popraviti
     UsersTurn,
     BotsTurn(player::Player),
 }

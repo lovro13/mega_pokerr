@@ -86,6 +86,7 @@ impl Card {
 
 impl Card {
     pub fn card_to_file(card: &Card) -> String {
+        // sprejme karto in vrne ime fila
         let Card { color, number } = card;
         let string2 = match color {
             CardColor::Hearts => String::from("_of_hearts.png"),
