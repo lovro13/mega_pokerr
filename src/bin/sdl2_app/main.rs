@@ -2,16 +2,14 @@ use sdl2::event::Event;
 use sdl2::image::{self, InitFlag};
 use sdl2::keyboard::Keycode;
 use sdl2::pixels::Color;
-use sdl2::render::WindowCanvas;
 use std::time::Duration;
 
-mod logic;
-use logic::card;
-use logic::player;
-use logic::round;
+use projektna_prog_2::logic::card;
+use projektna_prog_2::logic::player;
+use projektna_prog_2::logic::round;
 
-mod sdl2_app;
-use sdl2_app::render;
+use projektna_prog_2::sdl2_app::render_screen::render_screen;
+use projektna_prog_2::sdl2_app::render_button::Button;
 
 
 
@@ -23,31 +21,7 @@ pub enum GameState {
     Played(player::Player),
 }
 
-fn render(
-    canvas: &mut WindowCanvas,
-    background_color: Color,
-    players_list: &Vec<player::Player>, // tega tudi mogoče dobi iz player lista
-    font: &sdl2::ttf::Font,
-    buttons: &render::Button, // zaenkrat en, nakoncu bojo 3
-    users_turn: bool, // mi ni ušeč da sprejme button, bolš je če bi ga naredu
-    // verjetn bo moug sprejet struct Round, ki še ni implemetniran, in bo tam users_turn dubu
-) -> Result<(), String> {
-    canvas.set_draw_color(background_color);
-    canvas.clear();
 
-    for player in players_list {
-        //naprinta ime in karte igralca
-        // let _ = player::Player::render_player_info(canvas, player, font);
-        let _ = render::render_player_info(canvas, player, font);
-        // nariše karte, imena, balance
-    }
-    if users_turn {
-        render::Button::draw_button(&buttons, canvas, &font)?;
-        // TODO usi gumbi torej fold, call, raise, mogoče slider
-    }
-    canvas.present();
-    Ok(())
-}
 
 fn main() -> Result<(), String> {
     let sdl_context = sdl2::init()?;
@@ -73,7 +47,7 @@ fn main() -> Result<(), String> {
     // canvas.copy(...), texture -> riše slike, ali tekst
     // canvas.present() ... predstavi spremembe, ki so jih nardil .copy(), .clear()
 
-    let mut fold_button = render::Button::init_fold_button(&mut canvas);
+    let mut fold_button = Button::init_fold_button(&mut canvas);
     let mut player_list = player::Player::init_players(); 
     // ta bi lahko bi del strccut Round
     // ki bo kmalu implemenitran
@@ -89,7 +63,7 @@ fn main() -> Result<(), String> {
     // GLAVNA ZANKA
     'running: loop {
         for event in event_pump.poll_iter() { // se sprehodi cez use evente
-            render::Button::handle_button_events(&event, &mut fold_button);
+            Button::handle_button_events(&event, &mut fold_button);
 
             match event {
                 Event::Quit { .. }
@@ -107,7 +81,7 @@ fn main() -> Result<(), String> {
             }
         }
 
-        render(
+        render_screen(
             &mut canvas,
             Color::RGB(200, 200, 255),
             &player_list,

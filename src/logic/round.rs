@@ -1,5 +1,5 @@
-use crate::card;
-use crate::player;
+use crate::logic::card;
+use crate::logic::player;
 
 enum Round { // zelooo popraviti
     UsersTurn,

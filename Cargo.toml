@@ -10,3 +10,8 @@ rand = "0.8"
 version = "0.32.1"
 default-features = false
 features = ["image", "ttf"]
+
+
+[[bin]]
+name = "sdl2_app"
+path = "src/bin/sdl2_app/main.rs"

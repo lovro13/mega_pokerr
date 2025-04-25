@@ -1,4 +1,4 @@
-use crate::card;
+use crate::logic::card;
 
 pub enum Names {
     Player1,
