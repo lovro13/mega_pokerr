@@ -4,17 +4,12 @@ use sdl2::keyboard::Keycode;
 use sdl2::pixels::Color;
 use std::time::Duration;
 
-use projektna_prog_2::logic::card;
 use projektna_prog_2::logic::player;
 use projektna_prog_2::logic::round;
 
 use projektna_prog_2::sdl2_app::render_screen::render_screen;
 use projektna_prog_2::sdl2_app::render_button::Button;
-
-
-
-const SCREEN_HEIGHT: u32 = 900;
-const SCREEN_WIDTH: u32 = 1800;
+use projektna_prog_2::sdl2_app::constants::{SCREEN_WIDTH, SCREEN_HEIGHT};
 
 pub enum GameState {
     Paused,
@@ -51,7 +46,7 @@ fn main() -> Result<(), String> {
     let mut player_list = player::Player::init_players(); 
     // ta bi lahko bi del strccut Round
     // ki bo kmalu implemenitran
-    let mut users_turn = true;
+    let users_turn = true;
     
     canvas.clear();
     canvas.present();

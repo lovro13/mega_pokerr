@@ -3,15 +3,23 @@ name = "projektna_prog_2"
 version = "0.1.0"
 edition = "2021"
 
-[dependencies]
+[features]
+default = []
+run_with_sdl2 = ["sdl2"]
 
+[dependencies]
 rand = "0.8"
+
 [dependencies.sdl2]
 version = "0.32.1"
 default-features = false
 features = ["image", "ttf"]
-
+optional = true
 
 [[bin]]
 name = "sdl2_app"
 path = "src/bin/sdl2_app/main.rs"
+
+[[bin]]
+name = "terminal_app"
+path = "src/bin/terminal_app/main.rs"

@@ -3,10 +3,14 @@ NAREJENO:
 - strukture player in card
 - začetek delanja round, beign round dela, samo bo postal init_round
 
+ŠE BOLJ TRENUNTNI PLANI:
+- pomanjšati main
+
 TRENUNTNI PLANI:
-- ločiti konstante
 - buttons, naresti se ostale, torej call, raise, slider za raise
-- round skonsturiati
+- round skonsturiati in do konca narediti backend
+- narediti termnal app
+
 
 
 (lahko tudi ne)

@@ -3,8 +3,6 @@ use sdl2::image::LoadTexture;
 use sdl2::pixels::Color;
 use sdl2::rect::{Point, Rect};
 use sdl2::render::WindowCanvas;
-use sdl2::event::Event;
-use sdl2::mouse::MouseButton;
 
 use crate::sdl2_app::render_cards;
 use crate::sdl2_app::constants::{CARD_HEIGHT, CARD_WIDTH};

@@ -1,10 +1,6 @@
 use crate::logic::card;
 use crate::logic::player;
-
-enum Round { // zelooo popraviti
-    UsersTurn,
-    BotsTurn(player::Player),
-}
+// TODO: ta cel file urihtat
 
 pub enum Streets {
     PreFlop,
@@ -15,7 +11,6 @@ pub enum Streets {
 }
 
 pub fn begin_round(player_list: &mut Vec<player::Player>) {
-    let curr_street = Streets::PreFlop;
     let deck = card::Card::make_ordered_deck();
     let mut deck = card::Card::scramble_deck(deck);
 
