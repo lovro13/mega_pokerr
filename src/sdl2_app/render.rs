@@ -1,5 +1,5 @@
-use crate::card;
-use crate::player;
+use crate::logic::card;
+use crate::logic::player;
 use sdl2::image::LoadTexture;
 use sdl2::pixels::Color;
 use sdl2::rect::{Point, Rect};

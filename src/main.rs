@@ -1,4 +1,3 @@
-use render::Button;
 use sdl2::event::Event;
 use sdl2::image::{self, InitFlag};
 use sdl2::keyboard::Keycode;
@@ -6,10 +5,15 @@ use sdl2::pixels::Color;
 use sdl2::render::WindowCanvas;
 use std::time::Duration;
 
-mod card;
-mod player;
-mod render;
-mod round;
+mod logic;
+use logic::card;
+use logic::player;
+use logic::round;
+
+mod sdl2_app;
+use sdl2_app::render;
+
+
 
 const SCREEN_HEIGHT: u32 = 900;
 const SCREEN_WIDTH: u32 = 1800;
@@ -85,7 +89,7 @@ fn main() -> Result<(), String> {
     // GLAVNA ZANKA
     'running: loop {
         for event in event_pump.poll_iter() { // se sprehodi cez use evente
-            Button::handle_button_events(&event, &mut fold_button);
+            render::Button::handle_button_events(&event, &mut fold_button);
 
             match event {
                 Event::Quit { .. }
