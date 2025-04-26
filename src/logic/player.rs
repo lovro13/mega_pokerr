@@ -49,7 +49,8 @@ pub struct Player {
     pub card_position: (i32, i32),
     pub position: PlayerPosition,
     pub money: u32,
-    pub playing: bool
+    pub playing: bool,
+    pub current_bet: u32
 }
 
 impl Names {
@@ -100,7 +101,8 @@ impl Player {
                 ),
                 position: curr_position,
                 money: BUY_IN,
-                playing: true
+                playing: true,
+                current_bet: 0,
             };
             list_of_players.push(curr_player);
         }
