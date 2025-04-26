@@ -1,4 +1,5 @@
 use crate::logic::player;
+use crate::logic::round::Game;
 use sdl2::image::LoadTexture;
 use sdl2::pixels::Color;
 use sdl2::rect::{Point, Rect};
@@ -7,7 +8,6 @@ use sdl2::render::WindowCanvas;
 use crate::sdl2_app::render_cards;
 use crate::sdl2_app::constants::{CARD_HEIGHT, CARD_WIDTH};
 use crate::sdl2_app::render_text::draw_text;
-use crate::sdl2_app::render_button::Button;
 
 pub fn render_player_info(
     canvas: &mut WindowCanvas,
@@ -71,24 +71,18 @@ pub fn render_player_info(
 pub fn render_screen(
     canvas: &mut WindowCanvas,
     background_color: Color,
-    players_list: &Vec<player::Player>, // tega tudi mogoče dobi iz player lista
+    game: &Game, // tega tudi mogoče dobi iz player lista
     font: &sdl2::ttf::Font,
-    buttons: &Button, // zaenkrat en, nakoncu bojo 3
-    users_turn: bool, // mi ni ušeč da sprejme button, bolš je če bi ga naredu
-    // verjetn bo moug sprejet struct Round, ki še ni implemetniran, in bo tam users_turn dubu
 ) -> Result<(), String> {
     canvas.set_draw_color(background_color);
     canvas.clear();
 
+    let players_list = &game.players;
     for player in players_list {
         //naprinta ime in karte igralca
         // let _ = player::Player::render_player_info(canvas, player, font);
         let _ = render_player_info(canvas, player, font);
         // nariše karte, imena, balance
-    }
-    if users_turn {
-        Button::draw_button(&buttons, canvas, &font)?;
-        // TODO usi gumbi torej fold, call, raise, mogoče slider
     }
     canvas.present();
     Ok(())

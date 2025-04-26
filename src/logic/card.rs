@@ -21,6 +21,27 @@ pub enum CardNumber {
     Empty,
 }
 
+impl std::fmt::Display for CardNumber {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            CardNumber::N2 => write!(f, "2"),
+            CardNumber::N3 => write!(f, "3"),
+            CardNumber::N4 => write!(f, "4"),
+            CardNumber::N5 => write!(f, "5"),
+            CardNumber::N6 => write!(f, "6"),
+            CardNumber::N7 => write!(f, "7"),
+            CardNumber::N8 => write!(f, "8"),
+            CardNumber::N9 => write!(f, "9"),
+            CardNumber::N10 => write!(f, "10"),
+            CardNumber::NJ => write!(f, "J"),
+            CardNumber::NQ => write!(f, "Q"),
+            CardNumber::NK => write!(f, "K"),
+            CardNumber::NA => write!(f, "A"),
+            CardNumber::Empty => write!(f, "EMPTY!!!"),
+        }
+    }
+}
+
 #[derive(Clone)] // rabim clone da lahko naredim več kart, z istimi barvami
 pub enum CardColor {
     Hearts,
@@ -30,9 +51,27 @@ pub enum CardColor {
     Empty,
 }
 
+impl std::fmt::Display for CardColor {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            CardColor::Hearts => write!(f, "♥"),
+            CardColor::Spades => write!(f, "♠"),
+            CardColor::Diamonds => write!(f, "♦"),
+            CardColor::Clubs => write!(f, "♣"),
+            CardColor::Empty => write!(f, "EMPTY!!!"),
+        }
+    }
+}
+
 pub struct Card {
     pub color: CardColor,
     pub number: CardNumber,
+}
+
+impl std::fmt::Display for Card {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{} {}", self.number, self.color)
+    }
 }
 
 impl Card {
@@ -76,15 +115,12 @@ impl Card {
         all
     }
 
+
+    // mogoče struct deck, in impl deck, da lahko definiramo metodo na decku
     pub fn scramble_deck(deck: Vec<Card>) -> Vec<Card> {
         let mut rng = thread_rng();
         let mut shuffled_deck = deck;
         shuffled_deck.shuffle(&mut rng);
         shuffled_deck
     }
-}
-
-pub enum CardState {
-    Opened,
-    Closed,
 }

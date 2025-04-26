@@ -43,14 +43,11 @@ fn main() -> Result<(), String> {
     // canvas.present() ... predstavi spremembe, ki so jih nardil .copy(), .clear()
 
     let mut fold_button = Button::init_fold_button(&mut canvas);
-    let mut player_list = player::Player::init_players(); 
-    // ta bi lahko bi del strccut Round
-    // ki bo kmalu implemenitran
-    let users_turn = true;
-    
+    let player_list = player::Player::init_players(); 
+
     canvas.clear();
     canvas.present();
-    round::begin_round(&mut player_list);
+    let mut game  = round::init_game(player_list);
     
     let mut event_pump = sdl_context.event_pump().unwrap();
     // zazna inpute
@@ -71,7 +68,7 @@ fn main() -> Result<(), String> {
                 Event::KeyDown {
                     keycode: Some(Keycode::D),
                     ..
-                } => round::begin_round(&mut player_list),
+                } => {round::begin_round(&mut game);},
                 _ => {}
             }
         }
@@ -79,10 +76,8 @@ fn main() -> Result<(), String> {
         render_screen(
             &mut canvas,
             Color::RGB(200, 200, 255),
-            &player_list,
+            &game,
             &font,
-            &fold_button,
-            users_turn,
         )?; // nariše use kar vidiš
         ::std::thread::sleep(Duration::new(0, 1_000_000_000u32 / 30))
         // nastavi na cca 30 FPS

@@ -1,5 +1,7 @@
 use crate::logic::card;
+use crate::logic::constants::BUY_IN;    
 
+#[derive(Debug, Clone)]
 pub enum Names {
     Player1,
     Player2,
@@ -39,14 +41,15 @@ impl PlayerPosition {
         }
     }
 }
+
+
 pub struct Player {
     pub name: Names,
     pub cards: (card::Card, card::Card),
     pub card_position: (i32, i32),
-    pub card_state: card::CardState,
     pub position: PlayerPosition,
-    pub money: u32, // later to be finished
-    pub his_turn: bool
+    pub money: u32,
+    pub playing: bool
 }
 
 impl Names {
@@ -95,10 +98,9 @@ impl Player {
                         number: card::CardNumber::Empty,
                     },
                 ),
-                card_state: card::CardState::Opened,
                 position: curr_position,
-                money: 1000,
-                his_turn: false
+                money: BUY_IN,
+                playing: true
             };
             list_of_players.push(curr_player);
         }
