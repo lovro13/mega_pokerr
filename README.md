@@ -9,7 +9,7 @@ vzpostavi server na katerem bo možno igrati igrico proti drugim igralcem.
 
 # Usage
 ## 1. Namestitev SDL2 knjižnic
-Odprite terminal in zaženite:
+Odprite terminal in zaženite na linux debian:
 ```bash
 sudo apt update
 sudo apt install -y \
@@ -22,7 +22,11 @@ sudo apt install -y \
 Imamo 2 frontenda, prvi za sdl2 app, drugi za terminal app, sauron web app je še v nastajanju. Vse je še v nastajanju.
 
 Terminal app:
+```bash
 cargo run --bin terminal_app
+```
 
 Sdl2 app:
+```bash
 cargo run --bin sdl2_app --features run_with_sdl2
+```
