@@ -1,46 +1,49 @@
 #[cfg(test)]
 mod tests {
-    use projektna_prog_2::logic::choose_winner;
+    use projektna_prog_2::logic::combinations;
 	use projektna_prog_2::logic::card::Card;
 
-    use choose_winner::*;
+    use combinations::{is_royal_flush, is_straight_flush, is_four_of_a_kind, is_full_house, is_flush, is_straight, is_three_of_a_kind, is_two_pair, is_one_pair};
     #[test]
+
+    // ROYAL FLUSH =============================================================
     fn test_is_royal_flush_true() {
         // Assuming `is_royal_flush` takes a hand as input and returns a boolean
-        let hand = vec![
+        let mut hand = vec![
             Card::new("10", "H"),
             Card::new("J", "H"),
             Card::new("Q", "H"),
             Card::new("K", "H"),
             Card::new("A", "H"),
         ]; // Example royal flush in hearts
-        assert!(is_royal_flush(&hand));
+        assert!(is_royal_flush(&mut hand));
     }
 
     #[test]
     fn test_is_royal_flush_false() {
-        let hand = vec![
+        let mut hand = vec![
             Card::new("9", "H"),
             Card::new("J", "H"),
             Card::new("Q", "H"),
             Card::new("K", "H"),
             Card::new("A", "H"),
         ]; // Not a royal flush
-        assert!(!is_royal_flush(&hand));
+        assert!(!is_royal_flush(&mut hand));
     }
 
     #[test]
     fn test_is_royal_flush_mixed_suits() {
-        let hand = vec![
+        let mut hand = vec![
             Card::new("10", "H"),
             Card::new("J", "H"),
             Card::new("Q", "H"),
             Card::new("K", "H"),
             Card::new("A", "S"),
         ]; // Mixed suits
-        assert!(!is_royal_flush(&hand));
+        assert!(!is_royal_flush(&mut hand));
     }
-
+    // =========================================================================
+    // STRAIGHT FLUSH ==========================================================
     #[test]
     fn test_is_straight_flush_true() {
         let hand = vec![
@@ -65,6 +68,8 @@ mod tests {
         assert!(!is_straight_flush(&hand));
     }
 
+    // =========================================================================
+    // FOUR OF A KIND ==========================================================
     #[test]
     fn test_is_four_of_kind_true() {
         let hand = vec![
@@ -89,6 +94,8 @@ mod tests {
         assert!(!is_four_of_a_kind(&hand));
     }
 
+    // =========================================================================
+    // FULL HOUSE ==============================================================
     #[test]
     fn test_is_full_house_true() {
         let hand = vec![
@@ -113,6 +120,8 @@ mod tests {
         assert!(!is_full_house(&hand));
     }
 
+    // =========================================================================
+    // FLUSH ===================================================================
     #[test]
     fn test_is_flush_true() {
         let hand = vec![
@@ -136,31 +145,54 @@ mod tests {
         ]; // Not a flush
         assert!(!is_flush(&hand));
     }
+    
+    // =========================================================================
+    // STRAIGHT ================================================================
+    #[test]
+    fn next_ace_is_two() {
+        let card = Card::new("A", "H");
+        let next_card = card.next_in_straight();
+        assert_eq!(next_card, Card::new("2", "H"));
+        }
 
     #[test]
-    fn test_is_straight_true() {
-        let hand = vec![
+    fn test_is_straight_true_ace_low() {
+            let mut hand = vec![
+                Card::new("A", "H"),
+                Card::new("2", "D"),
+                Card::new("3", "S"),
+                Card::new("4", "C"),
+                Card::new("5", "H"),
+            ]; // Straight with Ace as low
+            assert!(is_straight(&mut hand));
+        }
+
+    #[test]
+    fn test_is_straight_false_duplicate_cards() {
+        let mut hand = vec![
             Card::new("9", "H"),
             Card::new("10", "D"),
             Card::new("J", "S"),
-            Card::new("Q", "C"),
+            Card::new("J", "C"),
             Card::new("K", "H"),
-        ]; // Straight
-        assert!(is_straight(&hand));
+        ]; // Not a straight due to duplicate cards
+        assert!(!is_straight(&mut hand));
     }
 
     #[test]
     fn test_is_straight_false() {
-        let hand = vec![
+        let mut hand = vec![
             Card::new("9", "H"),
             Card::new("10", "D"),
             Card::new("J", "S"),
             Card::new("Q", "C"),
             Card::new("A", "H"),
         ]; // Not a straight
-        assert!(!is_straight(&hand));
+        assert!(!is_straight(&mut hand));
     }
 
+    // =========================================================================
+    // THREE OF A KIND =========================================================
     #[test]
     fn test_is_three_of_kind_true() {
         let hand = vec![
@@ -185,6 +217,8 @@ mod tests {
         assert!(!is_three_of_a_kind(&hand));
     }
 
+    // =========================================================================
+    // TWO PAIR ================================================================
     #[test]
     fn test_is_two_pair_true() {
         let hand = vec![
@@ -209,6 +243,8 @@ mod tests {
         assert!(!is_two_pair(&hand));
     }
 
+    // =========================================================================
+    // ONE PAIR ================================================================
     #[test]
     fn test_is_pair_true() {
         let hand = vec![

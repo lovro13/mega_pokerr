@@ -1,7 +1,7 @@
 use rand::seq::SliceRandom;
 use rand::thread_rng;
 
-#[derive(Clone, Debug)] // rabim clone da lahko naredim več kart, z istimi številkami
+#[derive(Clone, Debug, PartialEq, Eq)] // rabim clone da lahko naredim več kart, z istimi številkami
 pub enum CardNumber {
     // označeno R kot rang karte, to sem si izmislil
     // nevem če je to izraz
@@ -42,7 +42,6 @@ impl std::fmt::Display for CardNumber {
     }
 }
 
-
 impl CardNumber {
     pub fn evaluate_to_int(&self) -> u32 {
         match self {
@@ -59,15 +58,29 @@ impl CardNumber {
             Self::NQ => 12,
             Self::NK => 13,
             Self::NA => 14,
-            Self::Empty => {panic!("Empty card number, ko hočemo evaluirati CardNumber");},
-        };
-        return 0;
+            Self::Empty => {
+                panic!("Empty card number, ko hočemo evaluirati CardNumber");
+            }
+        }
     }
-}
 
-impl PartialEq for CardNumber {
-    fn eq(&self, other: &Self) -> bool {
-        self.evaluate_to_int() == other.evaluate_to_int()
+    pub fn int_to_card_number(i: u32) -> CardNumber {
+        match i {
+            2 => CardNumber::N2,
+            3 => CardNumber::N3,
+            4 => CardNumber::N4,
+            5 => CardNumber::N5,
+            6 => CardNumber::N6,
+            7 => CardNumber::N7,
+            8 => CardNumber::N8,
+            9 => CardNumber::N9,
+            10 => CardNumber::N10,
+            11 => CardNumber::NJ,
+            12 => CardNumber::NQ,
+            13 => CardNumber::NK,
+            14 => CardNumber::NA,
+            a => panic!("Invalid card number {}!", a),
+        }
     }
 }
 
@@ -75,11 +88,8 @@ impl PartialOrd for CardNumber {
     fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
         Some(self.evaluate_to_int().cmp(&other.evaluate_to_int()))
     }
-
-
 }
 
-impl Eq for CardNumber  {}
 impl Ord for CardNumber {
     fn cmp(&self, other: &Self) -> std::cmp::Ordering {
         self.evaluate_to_int().cmp(&other.evaluate_to_int())
@@ -102,11 +112,18 @@ impl std::fmt::Display for CardColor {
             CardColor::Spades => write!(f, "♠"),
             CardColor::Diamonds => write!(f, "♦"),
             CardColor::Clubs => write!(f, "♣"),
-            CardColor::Empty => write!(f, "EMPTY!!!"),
+            CardColor::Empty => panic!("Empty card printed"),
         }
     }
 }
 
+impl std::fmt::Debug for CardColor {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        std::fmt::Display::fmt(self, f)
+    }
+}
+
+#[derive(Debug, PartialEq, Clone)]
 pub struct Card {
     pub color: CardColor,
     pub number: CardNumber,
@@ -119,7 +136,6 @@ impl std::fmt::Display for Card {
 }
 
 impl Card {
-
     pub fn new(number: &str, color: &str) -> Card {
         let number = match number {
             "2" => CardNumber::N2,
@@ -188,12 +204,32 @@ impl Card {
         all
     }
 
-
     // mogoče struct deck, in impl deck, da lahko definiramo metodo na decku
     pub fn scramble_deck(deck: Vec<Card>) -> Vec<Card> {
         let mut rng = thread_rng();
         let mut shuffled_deck = deck;
         shuffled_deck.shuffle(&mut rng);
         shuffled_deck
+    }
+
+    pub fn sort_card_vec(vec: &mut Vec<Card>) {
+        // na mestu sortira
+        vec.sort_by(|a, b| a.number.cmp(&b.number));
+    }
+
+    pub fn next_in_straight(self) -> Card {
+        if self.number == CardNumber::NA {
+            Card {
+                number: CardNumber::N2,
+                color: self.color.clone(),
+            }
+        } else {
+            println!("Card number: {}", CardNumber::int_to_card_number(self.number.evaluate_to_int()));
+            let card_number = CardNumber::int_to_card_number(self.number.evaluate_to_int() + 1);
+            Card {
+                number: card_number,
+                color: self.color.clone(),
+            }
+        }
     }
 }
