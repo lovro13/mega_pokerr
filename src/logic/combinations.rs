@@ -56,7 +56,7 @@ pub fn is_royal_flush(cards: &mut Vec<Card>) -> bool {
 		&& cards[4].number == CardNumber::NA
 }
 
-pub fn is_straight_flush(cards: &Vec<Card>) -> bool {
+pub fn is_straight_flush(cards: &mut Vec<Card>) -> bool {
     assert!(
         cards.len() == 5,
         "Kart na mizi ni 5, ko hočemo določiti zmagovalca (is_straight_flush)"
@@ -68,15 +68,7 @@ pub fn is_straight_flush(cards: &Vec<Card>) -> bool {
         }
     }
 
-    let mut card_numbers = Vec::new();
-    for card in cards.iter() {
-        card_numbers.push(&card.number);
-    }
-    // TODO TODO TODO
-    // TODO TODO TODO
-    // TODO TODO TODO
-    // TODO TODO TODO
-    true
+    is_straight(cards)
 }
 
 pub fn is_four_of_a_kind(cards: &Vec<Card>) -> bool {
@@ -88,11 +80,12 @@ pub fn is_four_of_a_kind(cards: &Vec<Card>) -> bool {
     for card in cards.iter() {
         values.push(&card.number);
     }
-    // TODO TODO TODO
-    // TODO TODO TODO
-    // TODO TODO TODO
-    // TODO TODO TODO
-    true
+	for value in values.iter() {
+		if values.iter().filter(|&v| v == value).count() == 4 {
+			return true;
+		}
+	}
+	false
 }
 
 pub fn is_full_house(cards: &Vec<Card>) -> bool {

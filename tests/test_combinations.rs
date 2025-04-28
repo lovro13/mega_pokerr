@@ -46,28 +46,50 @@ mod tests {
     // STRAIGHT FLUSH ==========================================================
     #[test]
     fn test_is_straight_flush_true() {
-        let hand = vec![
+        let mut hand = vec![
             Card::new("9", "H"),
             Card::new("10", "H"),
             Card::new("J", "H"),
             Card::new("Q", "H"),
             Card::new("K", "H"),
         ]; // Example straight flush in hearts
-        assert!(is_straight_flush(&hand));
+        assert!(is_straight_flush(&mut hand));
     }
 
     #[test]
     fn test_is_straight_flush_false() {
-        let hand = vec![
+        let mut hand = vec![
             Card::new("9", "H"),
             Card::new("10", "H"),
             Card::new("J", "H"),
             Card::new("Q", "H"),
             Card::new("A", "H"),
         ]; // Not a straight flush
-        assert!(!is_straight_flush(&hand));
+        assert!(!is_straight_flush(&mut hand));
+    }
+    #[test]
+    fn test_is_straight_flush_true_ace_low() {
+        let mut hand = vec![
+            Card::new("A", "H"),
+            Card::new("2", "H"),
+            Card::new("3", "H"),
+            Card::new("4", "H"),
+            Card::new("5", "H"),
+        ]; // Straight flush with Ace as low
+        assert!(is_straight_flush(&mut hand));
     }
 
+    #[test]
+    fn test_is_straight_flush_false_mixed_suits() {
+        let mut hand = vec![
+            Card::new("9", "H"),
+            Card::new("10", "H"),
+            Card::new("J", "H"),
+            Card::new("Q", "H"),
+            Card::new("K", "S"),
+        ]; // Not a straight flush due to mixed suits
+        assert!(!is_straight_flush(&mut hand));
+    }
     // =========================================================================
     // FOUR OF A KIND ==========================================================
     #[test]
@@ -91,6 +113,29 @@ mod tests {
             Card::new("K", "C"),
             Card::new("K", "H"),
         ]; // Not four of a kind
+        assert!(!is_four_of_a_kind(&hand));
+    }
+    #[test]
+    fn test_is_four_of_kind_true_with_low_cards() {
+        let hand = vec![
+            Card::new("2", "H"),
+            Card::new("2", "D"),
+            Card::new("2", "S"),
+            Card::new("2", "C"),
+            Card::new("3", "H"),
+        ]; // Four of a kind with low cards
+        assert!(is_four_of_a_kind(&hand));
+    }
+
+    #[test]
+    fn test_is_four_of_kind_false_with_three_of_a_kind() {
+        let hand = vec![
+            Card::new("7", "H"),
+            Card::new("7", "D"),
+            Card::new("7", "S"),
+            Card::new("8", "C"),
+            Card::new("9", "H"),
+        ]; // Not four of a kind, only three of a kind
         assert!(!is_four_of_a_kind(&hand));
     }
 
