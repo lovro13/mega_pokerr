@@ -1,15 +1,18 @@
 use crate::logic::card;
 use crate::logic::player;
-// TODO: ta cel file urihtat
+use crate::logic::choose_winner::choose_winner;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq, Clone)]
 pub enum Streets {
     PreFlop,
     Flop,
     Turn,
     River,
-    Showdown,
+    Showdown
 }
+
+
+
 
 pub struct Game {
     pub street: Streets,
@@ -19,6 +22,18 @@ pub struct Game {
     pub table_cards: Vec<card::Card>,
     pub player_on_turn: player::PlayerPosition,
     pub round_number: u32,
+}
+
+impl Game {
+    pub fn next_street(game: &mut Game) {
+        game.street = match game.street {
+            Streets::PreFlop => Streets::Flop,
+            Streets::Flop => Streets::Turn,
+            Streets::Turn => Streets::River,
+            Streets::River => Streets::Showdown,
+            Streets::Showdown => Streets::PreFlop
+        }
+    }
 }
 
 pub fn init_game(player_list: Vec<player::Player>) -> Game {
@@ -65,7 +80,8 @@ pub fn begin_round(game : &mut Game) {
 }
 
 pub fn make_bets<'a>(round: &mut Game, get_bet: fn(&mut player::Player) -> Option<u32>) -> Vec<(player::Names, u32)> {
-    // TODO: return list of players that made bets
+    // TODO: narediti loop, da se bo stavilo toliko časa dokler ne zmanka denarja ali pa dajo vsi isto stavoi
+
     let mut bets = Vec::new();
     for player in round.players.iter_mut() {
         if player.playing {
@@ -83,29 +99,36 @@ pub fn make_bets<'a>(round: &mut Game, get_bet: fn(&mut player::Player) -> Optio
                     round.pot += bet;
                     bets.push((player.name.clone(), bet));
                 }
-                Some(_) => {
-                    panic!("Nekaj je šlo narobe pri stavah");
-                }
+                Some(_) => panic!("nekaj narobe pri stavah")
             }
         }
     }
-    return bets;
+    bets
 }
 
-pub fn make_flop(round: &mut Game) {
-    for _ in 0..3 {
-        let card = match round.deck.pop() {
-            None => {panic!("Deck is empty")},
-            Some(card) => card,
-        };
-        round.table_cards.push(card);
-    }
-}
-
-pub fn make_turn(round: &mut Game) {
-    let card = match round.deck.pop() {
-        None => panic!("Deck is empty"),
-        Some(card) => card,
+pub fn next_turn(game: &mut Game)  {
+    // gre na naslednji street in "položi karte na mizo kolikor je treba"
+    let _ = match game.street.clone() {
+        Streets::PreFlop => {}
+        Streets::Flop => 
+        {
+            for _ in 0..2 {
+                let card = match game.deck.pop() {
+                    None => panic!("Deck is empty"),
+                    Some(card) => card,
+                };
+                game.table_cards.push(card);
+            }
+        }
+        Streets::River | Streets::Turn => 
+        {
+            let card = match game.deck.pop() {
+                None => panic!("Deck is empty"),
+                Some(card) => card,
+            };
+            game.table_cards.push(card);
+        }
+        Streets::Showdown => {choose_winner(game);}
     };
-    round.table_cards.push(card);
+    Game::next_street(game);
 }

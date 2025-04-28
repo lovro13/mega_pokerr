@@ -14,5 +14,3 @@ fn main() {
     
     print_round(&game);
 }
-
-// po pavzi folding sistem, avtomatizirati se pomoje še ne splača

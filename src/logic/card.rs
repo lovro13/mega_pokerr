@@ -1,7 +1,7 @@
 use rand::seq::SliceRandom;
 use rand::thread_rng;
 
-#[derive(Clone)] // rabim clone da lahko naredim več kart, z istimi številkami
+#[derive(Clone, Debug)] // rabim clone da lahko naredim več kart, z istimi številkami
 pub enum CardNumber {
     // označeno R kot rang karte, to sem si izmislil
     // nevem če je to izraz
@@ -42,7 +42,51 @@ impl std::fmt::Display for CardNumber {
     }
 }
 
-#[derive(Clone)] // rabim clone da lahko naredim več kart, z istimi barvami
+
+impl CardNumber {
+    pub fn evaluate_to_int(&self) -> u32 {
+        match self {
+            Self::N2 => 2,
+            Self::N3 => 3,
+            Self::N4 => 4,
+            Self::N5 => 5,
+            Self::N6 => 6,
+            Self::N7 => 7,
+            Self::N8 => 8,
+            Self::N9 => 9,
+            Self::N10 => 10,
+            Self::NJ => 11,
+            Self::NQ => 12,
+            Self::NK => 13,
+            Self::NA => 14,
+            Self::Empty => {panic!("Empty card number, ko hočemo evaluirati CardNumber");},
+        };
+        return 0;
+    }
+}
+
+impl PartialEq for CardNumber {
+    fn eq(&self, other: &Self) -> bool {
+        self.evaluate_to_int() == other.evaluate_to_int()
+    }
+}
+
+impl PartialOrd for CardNumber {
+    fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
+        Some(self.evaluate_to_int().cmp(&other.evaluate_to_int()))
+    }
+
+
+}
+
+impl Eq for CardNumber  {}
+impl Ord for CardNumber {
+    fn cmp(&self, other: &Self) -> std::cmp::Ordering {
+        self.evaluate_to_int().cmp(&other.evaluate_to_int())
+    }
+}
+
+#[derive(Clone, PartialEq)] // rabim clone da lahko naredim več kart, z istimi barvami
 pub enum CardColor {
     Hearts,
     Spades,
@@ -75,6 +119,35 @@ impl std::fmt::Display for Card {
 }
 
 impl Card {
+
+    pub fn new(number: &str, color: &str) -> Card {
+        let number = match number {
+            "2" => CardNumber::N2,
+            "3" => CardNumber::N3,
+            "4" => CardNumber::N4,
+            "5" => CardNumber::N5,
+            "6" => CardNumber::N6,
+            "7" => CardNumber::N7,
+            "8" => CardNumber::N8,
+            "9" => CardNumber::N9,
+            "10" => CardNumber::N10,
+            "J" => CardNumber::NJ,
+            "Q" => CardNumber::NQ,
+            "K" => CardNumber::NK,
+            "A" => CardNumber::NA,
+            _ => CardNumber::Empty,
+        };
+
+        let color = match color {
+            "H" => CardColor::Hearts,
+            "S" => CardColor::Spades,
+            "D" => CardColor::Diamonds,
+            "C" => CardColor::Clubs,
+            _ => CardColor::Empty,
+        };
+
+        Card { number, color }
+    }
     pub fn all_colors() -> Vec<CardColor> {
         vec![
             CardColor::Hearts,
