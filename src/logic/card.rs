@@ -3,7 +3,7 @@ use rand::thread_rng;
 
 #[derive(Clone, Debug, PartialEq, Eq)] // rabim clone da lahko naredim več kart, z istimi številkami
 pub enum CardNumber {
-    // označeno R kot rang karte, to sem si izmislil
+    // označeno N ker je večini številk-Number, to sem si izmislil
     // nevem če je to izraz
     N2,
     N3,
@@ -22,6 +22,8 @@ pub enum CardNumber {
 }
 
 impl std::fmt::Display for CardNumber {
+    // mogoče ta del prestaviti v terminal_app ali pa mogoče res spada pod logiko, nisem se še odločil
+    // mogoče bi bilo bolje da je v terminal_app, isto velja za karto in ostale std::fmt::Display
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
             CardNumber::N2 => write!(f, "2"),
@@ -37,7 +39,7 @@ impl std::fmt::Display for CardNumber {
             CardNumber::NQ => write!(f, "Q"),
             CardNumber::NK => write!(f, "K"),
             CardNumber::NA => write!(f, "A"),
-            CardNumber::Empty => write!(f, "EMPTY!!!"),
+            CardNumber::Empty => panic!("trying to print EMPTY card!!!"),
         }
     }
 }

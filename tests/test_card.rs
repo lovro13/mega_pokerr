@@ -1,5 +1,7 @@
 // File: src/logic/choose_winner.rs
 // tests sorting CardNumber
+
+// cargo test
 use projektna_prog_2::logic::card::CardNumber;
 use projektna_prog_2::logic::card::Card;
 use projektna_prog_2::logic::card::CardColor;
