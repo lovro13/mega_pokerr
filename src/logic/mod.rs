@@ -1,3 +1,4 @@
+pub mod betting_system;
 pub mod card;
 pub mod choose_winner;
 pub mod combinations;

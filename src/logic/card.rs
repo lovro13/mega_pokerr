@@ -208,6 +208,7 @@ impl Card {
 
     // mogoče struct deck, in impl deck, da lahko definiramo metodo na decku
     pub fn scramble_deck(deck: Vec<Card>) -> Vec<Card> {
+        // mogoče še en file ki bo delal z deckom
         let mut rng = thread_rng();
         let mut shuffled_deck = deck;
         shuffled_deck.shuffle(&mut rng);

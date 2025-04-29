@@ -1,7 +1,8 @@
 use crate::logic::player;
 use std::io;
 
-pub fn get_bet(player: &mut player::Player) -> Option<u32> {
+pub fn get_bet(player: &player::Player) -> Option<u32> {
+    // vrne u32, če je pravilno vnešeno in None če hoče foldat
     loop {
         let mut buffer = String::new();
         println!(

@@ -25,10 +25,17 @@ pub enum PlayerPosition {
     Cutoff,
     NotPlaying,
 }
+impl Iterator for PlayerPosition {
+    type Item = PlayerPosition;
 
+    fn next(&mut self) -> Option<Self::Item> {
+        let next_pos = self.next_player_position();
+        Some(std::mem::replace(self, next_pos))
+    }
+}
 impl PlayerPosition {
-    pub fn next_player_position(player_position: &PlayerPosition) -> PlayerPosition {
-        match player_position {
+    pub fn next_player_position(&self) -> PlayerPosition {
+        match self {
             PlayerPosition::Dealer => PlayerPosition::Cutoff,
             PlayerPosition::SmallBlind => PlayerPosition::Dealer,
             PlayerPosition::BigBlind => PlayerPosition::SmallBlind,
@@ -38,6 +45,34 @@ impl PlayerPosition {
             PlayerPosition::Hijack => PlayerPosition::MiddlePosition,
             PlayerPosition::Cutoff => PlayerPosition::Hijack,
             PlayerPosition::NotPlaying => PlayerPosition::NotPlaying,
+        }
+    }
+
+    pub fn eval_to_int(&self) -> u32 {
+        match self {
+            PlayerPosition::Dealer => 0,
+            PlayerPosition::SmallBlind => 1,
+            PlayerPosition::BigBlind => 2,
+            PlayerPosition::UnderTheGun => 3,
+            PlayerPosition::UnderTheGun1 => 4,
+            PlayerPosition::MiddlePosition => 5,
+            PlayerPosition::Hijack => 6,
+            PlayerPosition::Cutoff => 7,
+            PlayerPosition::NotPlaying => panic!("NotPlaying position should not be evaluated to int"),
+        }
+    }
+
+    pub fn eval_from_int_to_position(num: u32) -> PlayerPosition {
+        match num {
+            0 => PlayerPosition::Dealer,
+            1 => PlayerPosition::SmallBlind,
+            2 => PlayerPosition::BigBlind,
+            3 => PlayerPosition::UnderTheGun,
+            4 => PlayerPosition::UnderTheGun1,
+            5 => PlayerPosition::MiddlePosition,
+            6 => PlayerPosition::Hijack,
+            7 => PlayerPosition::Cutoff,
+            _ => panic!("Invalid player position"),
         }
     }
 }

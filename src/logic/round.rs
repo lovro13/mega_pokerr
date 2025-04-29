@@ -1,7 +1,11 @@
+use core::panic;
+
 // treba bolj organizirati med round in game
 use crate::logic::card;
 use crate::logic::choose_winner::choose_winner;
 use crate::logic::player;
+
+use super::player::Player;
 
 #[derive(Debug, PartialEq, Clone)]
 pub enum Streets {
@@ -12,31 +16,63 @@ pub enum Streets {
     Showdown,
 }
 
-pub struct Game {
-    pub street: Streets,
-    pub pot: u32,
-    pub players: Vec<player::Player>,
-    pub deck: Vec<card::Card>,
-    pub table_cards: Vec<card::Card>,
-    pub player_on_turn: player::PlayerPosition,
-    pub round_number: u32,
-}
-
-impl Game {
-    pub fn next_street(game: &mut Game) {
-        game.street = match game.street {
+impl Streets {
+    pub fn next(&self) -> Streets {
+        match self {
             Streets::PreFlop => Streets::Flop,
             Streets::Flop => Streets::Turn,
             Streets::Turn => Streets::River,
             Streets::River => Streets::Showdown,
-            Streets::Showdown => Streets::PreFlop,
+            Streets::Showdown => panic!("Game is over"),
         }
+    }
+}
+pub struct Game {
+    pub street: Streets,              // v bistvu pove koliko kart je na mizi
+    pub pot: u32,                     // koliko je stav na mizi
+    pub players: Vec<player::Player>, // seznam igralcev
+    pub deck: Vec<card::Card>,        // seznam kart
+    pub table_cards: Vec<card::Card>, // katere karte so na mizi
+    pub position_on_turn: player::PlayerPosition, // kateri igralec je na vrsti, imamo poziicijo, torej kje sedi
+    pub round_number: u32,                      // okrasek, koliko rund smo že odigrali
+    pub players_in_game: Vec<player::Names>,    // koliko igralcev še ni foldalo
+}
+
+impl Game {
+    pub fn go_to_next_street(&mut self) {
+        self.street = self.street.next()
+    }
+
+    pub fn go_to_next_player(&mut self) {
+        self.position_on_turn = self.position_on_turn.next_player_position();
+    }
+
+    pub fn player_on_turn(&mut self) -> &mut Player {
+        for player in self.players.iter_mut() {
+            if player.position == self.position_on_turn {
+                return player;
+            }
+        }
+        panic!("Player not found (go_to_next_street)");
+    }
+
+    pub fn get_player_from_pos(&mut self, pos: &player::PlayerPosition) -> &mut Player {
+        for player in self.players.iter_mut() {
+            if player.position == *pos {
+                return player
+            }
+        }
+        panic!("Pozicija manjka (get_player_from_pos)")
     }
 }
 
 pub fn init_game(player_list: Vec<player::Player>) -> Game {
     let deck = card::Card::make_ordered_deck();
     let deck = card::Card::scramble_deck(deck);
+    let mut players_in_game = vec![];
+    for player in player_list.iter() {
+        players_in_game.push(player.name.clone());
+    }
     let mut_player_list = player_list;
     Game {
         street: Streets::PreFlop,
@@ -44,28 +80,24 @@ pub fn init_game(player_list: Vec<player::Player>) -> Game {
         players: mut_player_list,
         deck,
         table_cards: Vec::new(),
-        player_on_turn: player::PlayerPosition::UnderTheGun,
+        position_on_turn: player::PlayerPosition::UnderTheGun,
         round_number: 0,
+        players_in_game: players_in_game,
     }
 }
 
 pub fn begin_round(game: &mut Game) {
+    // razdeli karte igralcem
     let deck = card::Card::make_ordered_deck();
     let mut deck = card::Card::scramble_deck(deck);
     for player in game.players.iter_mut() {
         player.position = player::PlayerPosition::next_player_position(&player.position);
         let card1 = match deck.pop() {
-            None => card::Card {
-                color: card::CardColor::Empty,
-                number: card::CardNumber::Empty,
-            },
+            None => panic!("Deck is empty (begin_round)"),
             Some(card) => card,
         };
         let card2 = match deck.pop() {
-            None => card::Card {
-                color: card::CardColor::Empty,
-                number: card::CardNumber::Empty,
-            },
+            None => panic!("Deck is empty (begin_round)"),
             Some(card) => card,
         };
         if player.position == player::PlayerPosition::SmallBlind {
@@ -75,36 +107,16 @@ pub fn begin_round(game: &mut Game) {
         }
         player.cards = (card1, card2)
     }
-}
-
-pub fn make_bets<'a>(
-    game: &mut Game,
-    get_bet: fn(&mut player::Player) -> Option<u32>,
-) -> Vec<(player::Names, u32)> {
-    // TODO: narediti loop, da se bo stavilo toliko časa dokler ne zmanka denarja ali pa dajo vsi isto stavoi
-
-    let mut bets = Vec::new();
-    for player in game.players.iter_mut() {
-        if player.playing {
-            match get_bet(player) {
-                None => {
-                    player.playing = false;
-                }
-                Some(bet) if bet <= player.money => {
-                    player.money -= bet;
-                    game.pot += bet;
-                    bets.push((player.name.clone(), bet));
-                }
-                Some(bet) if bet > player.money => {
-                    player.money = 0;
-                    game.pot += bet;
-                    bets.push((player.name.clone(), bet));
-                }
-                Some(_) => panic!("nekaj narobe pri stavah"),
-            }
-        }
+    game.street = Streets::PreFlop;
+    game.deck = deck;
+    game.table_cards = Vec::new();
+    game.position_on_turn = player::PlayerPosition::UnderTheGun;
+    game.round_number += 1;
+    game.pot = 30;
+    game.players_in_game = vec![];
+    for player in game.players.iter() {
+        game.players_in_game.push(player.name.clone());
     }
-    bets
 }
 
 pub fn next_turn(game: &mut Game) {
@@ -131,5 +143,5 @@ pub fn next_turn(game: &mut Game) {
             choose_winner(game);
         }
     };
-    Game::next_street(game);
+    game.go_to_next_street();
 }
