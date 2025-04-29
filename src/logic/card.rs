@@ -226,7 +226,10 @@ impl Card {
                 color: self.color.clone(),
             }
         } else {
-            println!("Card number: {}", CardNumber::int_to_card_number(self.number.evaluate_to_int()));
+            println!(
+                "Card number: {}",
+                CardNumber::int_to_card_number(self.number.evaluate_to_int())
+            );
             let card_number = CardNumber::int_to_card_number(self.number.evaluate_to_int() + 1);
             Card {
                 number: card_number,

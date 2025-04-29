@@ -1,5 +1,5 @@
 use crate::logic::card;
-use crate::logic::constants::BUY_IN;    
+use crate::logic::constants::BUY_IN;
 
 #[derive(Debug, Clone)]
 pub enum Names {
@@ -42,7 +42,6 @@ impl PlayerPosition {
     }
 }
 
-
 pub struct Player {
     pub name: Names,
     pub cards: (card::Card, card::Card),
@@ -50,7 +49,7 @@ pub struct Player {
     pub position: PlayerPosition,
     pub money: u32,
     pub playing: bool,
-    pub current_bet: u32
+    pub current_bet: u32,
 }
 
 impl Names {

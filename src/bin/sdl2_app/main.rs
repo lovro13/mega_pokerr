@@ -7,16 +7,14 @@ use std::time::Duration;
 use projektna_prog_2::logic::player;
 use projektna_prog_2::logic::round;
 
-use projektna_prog_2::sdl2_app::render_screen::render_screen;
+use projektna_prog_2::sdl2_app::constants::{SCREEN_HEIGHT, SCREEN_WIDTH};
 use projektna_prog_2::sdl2_app::render_button::Button;
-use projektna_prog_2::sdl2_app::constants::{SCREEN_WIDTH, SCREEN_HEIGHT};
+use projektna_prog_2::sdl2_app::render_screen::render_screen;
 
 pub enum GameState {
     Paused,
     Played(player::Player),
 }
-
-
 
 fn main() -> Result<(), String> {
     let sdl_context = sdl2::init()?;
@@ -35,26 +33,25 @@ fn main() -> Result<(), String> {
         .unwrap();
     font.set_style(sdl2::ttf::FontStyle::NORMAL);
 
-
-
     let mut canvas = window.into_canvas().build().expect("could not make canvas");
     // dobiš platno !! POMEMBNO, canvas.set_color(); canvas.clear() - zaslon v eno bravo
     // canvas.copy(...), texture -> riše slike, ali tekst
     // canvas.present() ... predstavi spremembe, ki so jih nardil .copy(), .clear()
 
     let mut fold_button = Button::init_fold_button(&mut canvas);
-    let player_list = player::Player::init_players(); 
+    let player_list = player::Player::init_players();
 
     canvas.clear();
     canvas.present();
-    let mut game  = round::init_game(player_list);
-    
+    let mut game = round::init_game(player_list);
+
     let mut event_pump = sdl_context.event_pump().unwrap();
     // zazna inpute
 
     // GLAVNA ZANKA
     'running: loop {
-        for event in event_pump.poll_iter() { // se sprehodi cez use evente
+        for event in event_pump.poll_iter() {
+            // se sprehodi cez use evente
             Button::handle_button_events(&event, &mut fold_button);
 
             match event {
@@ -68,17 +65,14 @@ fn main() -> Result<(), String> {
                 Event::KeyDown {
                     keycode: Some(Keycode::D),
                     ..
-                } => {round::begin_round(&mut game);},
+                } => {
+                    round::begin_round(&mut game);
+                }
                 _ => {}
             }
         }
 
-        render_screen(
-            &mut canvas,
-            Color::RGB(200, 200, 255),
-            &game,
-            &font,
-        )?; // nariše use kar vidiš
+        render_screen(&mut canvas, Color::RGB(200, 200, 255), &game, &font)?; // nariše use kar vidiš
         ::std::thread::sleep(Duration::new(0, 1_000_000_000u32 / 30))
         // nastavi na cca 30 FPS
     }

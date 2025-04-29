@@ -1,18 +1,5 @@
 use crate::logic::card::{Card, CardNumber};
 
-pub enum RankOfHands {
-    RoyalFlush,
-    StraightFlush,
-    FourOfAKind,
-    FullHouse,
-    Flush,
-    Straight,
-    ThreeOfAKind,
-    TwoPair,
-    OnePair,
-    HighCard,
-}
-
 pub fn is_one_pair(cards: &Vec<Card>) -> bool {
     assert!(
         cards.len() == 5,
@@ -160,7 +147,7 @@ pub fn is_three_of_a_kind(cards: &Vec<Card>) -> bool {
     for card in cards.iter() {
         values.push(&card.number);
     }
-    
+
     for value in values.iter() {
         let matching_numbers = values.iter().filter(|&v| v == value);
         if matching_numbers.count() == 3 {
@@ -186,9 +173,8 @@ pub fn is_two_pair(cards: &Vec<Card>) -> bool {
             remaining_values.retain(|&v| *v != **value);
             if remaining_values.len() == 3 {
                 for second_value in remaining_values.iter() {
-                    let second_matching_numbers = remaining_values
-                        .iter()
-                        .filter(|&&v| *v == **second_value);
+                    let second_matching_numbers =
+                        remaining_values.iter().filter(|&&v| *v == **second_value);
                     if second_matching_numbers.count() == 2 {
                         return true;
                     }

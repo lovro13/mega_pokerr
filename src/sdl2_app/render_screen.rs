@@ -5,8 +5,8 @@ use sdl2::pixels::Color;
 use sdl2::rect::{Point, Rect};
 use sdl2::render::WindowCanvas;
 
-use crate::sdl2_app::render_cards;
 use crate::sdl2_app::constants::{CARD_HEIGHT, CARD_WIDTH};
+use crate::sdl2_app::render_cards;
 use crate::sdl2_app::render_text::draw_text;
 
 pub fn render_player_info(
