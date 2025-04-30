@@ -54,8 +54,8 @@ pub fn is_royal_flush(cards: &mut Vec<Card>) -> bool {
         }
     }
 
-    is_straight(cards)
-        && cards[0].number == CardNumber::N10
+
+        cards[0].number == CardNumber::N10
         && cards[1].number == CardNumber::NJ
         && cards[2].number == CardNumber::NQ
         && cards[3].number == CardNumber::NK
