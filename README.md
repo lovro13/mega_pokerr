@@ -17,7 +17,7 @@ sudo apt install -y \
   libsdl2-image-dev \    # Podpora za slike (PNG, JPG itd.)
   libsdl2-ttf-dev        # Podpora za TrueType font
 ```
-
+Na macu podobno lahko (treba pogooglat), na Windowsih pa mi ni uspelo namestiti SDL2
 ## 2. Grajenje projekta
 Imamo 2 frontenda, prvi za sdl2 app, drugi za terminal app, sauron web app je še v nastajanju. Vse je še v nastajanju.
 
