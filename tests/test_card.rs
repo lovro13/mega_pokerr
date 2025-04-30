@@ -2,9 +2,9 @@
 // tests sorting CardNumber
 
 // cargo test --test test_card --features run_with_sdl2
-use projektna_prog_2::logic::card::Card;
-use projektna_prog_2::logic::card::CardColor;
-use projektna_prog_2::logic::card::CardNumber;
+use mega_pokerr::logic::card::Card;
+use mega_pokerr::logic::card::CardColor;
+use mega_pokerr::logic::card::CardNumber;
 
 #[cfg(test)]
 mod tests {

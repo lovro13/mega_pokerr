@@ -3,10 +3,11 @@ use crate::logic::round::Game;
 
 pub fn make_bets(game: &mut Game, get_bet: impl Fn(&player::Player) -> Option<u32>) {
     // ta funkcija naj bi v grobem na pravilen način zmanjšala player.money v game.players in povečala game.pot
-    // če je treba še kaj več vrniti ni problema
+    // če je treba kaj več vrniti, da bo koda v main
+    // ali kje drugje bolj tekla ni nobenega problema
 
     // game.street ne bo spreminjala
-    // current postion bo zelo spreminjača
+    // current postion bo zelo spreminjača, zato bom z assert večkrat preveril da se pravilno spremnija
 
     // TODO: narediti loop, da se bo stavilo toliko časa dokler ne zmanka denarja ali pa dajo vsi isto stavoi
     // get_bet naj deluje tako,
@@ -15,12 +16,13 @@ pub fn make_bets(game: &mut Game, get_bet: impl Fn(&player::Player) -> Option<u3
     // če naredi check naj vrne Some(0)
 
     // zanka, ki bo šla dokler vsi ne staivijo isto ali pa so vsi brez denarja, ali pa če je samo še en, ki ni foldal
-    // sprehoditi se moram po player position, zato bi bilo dobro iz tega narediti iterator
 
+    // fino bi bilo da se testi napišejo, drugače pa če na hitro na roke poženem dela urede
     let start_position = game.position_on_turn.clone();
     let mut players_playing = vec![];
     let mut current_bet: u32 = 0;
     let mut pot: u32 = game.pot;
+    let mut first_bet = true;
     loop {
         players_playing.push(game.position_on_turn.clone());
         game.go_to_next_player();
@@ -37,17 +39,15 @@ pub fn make_bets(game: &mut Game, get_bet: impl Fn(&player::Player) -> Option<u3
         let bet = get_bet(&player);
         match bet {
             Some(bet) => {
-                if bet > current_bet {
-                    current_bet = bet;
-                }
                 if bet + player.current_bet >= current_bet {
                     player.money -= bet; // tukaj naj get_bet function poskrbi da ne bo negativnih vrednosti
                     pot += bet;
                     player.current_bet += bet;
-                } else if player.current_bet + player.money < current_bet {
+                    current_bet = player.current_bet;
+                } else if player.current_bet + player.money + bet < current_bet {
                     player.money -= bet; // tukaj naj get_bet function poskrbi da ne bo negativnih vrednosti
                     pot += bet;
-                    player.current_bet += bet;
+                    player.current_bet = bet + player.current_bet;
                 } else {
                     continue;
                 }
@@ -57,16 +57,21 @@ pub fn make_bets(game: &mut Game, get_bet: impl Fn(&player::Player) -> Option<u3
                 player.playing = false;
             }
         }
-
         game.pot = pot;
         game.go_to_next_player();
         if start_position == game.position_on_turn {
+            first_bet = false;
+        }
+
+        let mut go_again = false;
+        if !first_bet {
             for pos in players_playing.iter() {
                 if game.get_player_from_pos(pos).current_bet != current_bet {
-                    continue;
-                } else {
-                    return;
+                    go_again = true;
                 }
+            }
+            if !go_again {
+                return;
             }
         }
     }

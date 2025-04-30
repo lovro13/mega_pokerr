@@ -102,8 +102,10 @@ pub fn begin_round(game: &mut Game) {
         };
         if player.position == player::PlayerPosition::SmallBlind {
             player.money -= 10;
+            player.current_bet += 10;
         } else if player.position == player::PlayerPosition::BigBlind {
             player.money -= 20;
+            player.current_bet += 20;
         }
         player.cards = (card1, card2)
     }

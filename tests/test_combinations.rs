@@ -2,8 +2,8 @@
 
 #[cfg(test)]
 mod tests {
-    use projektna_prog_2::logic::card::Card;
-    use projektna_prog_2::logic::combinations;
+    use mega_pokerr::logic::card::Card;
+    use mega_pokerr::logic::combinations;
 
     use combinations::{
         is_flush, is_four_of_a_kind, is_full_house, is_one_pair, is_royal_flush, is_straight,

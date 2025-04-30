@@ -36,15 +36,15 @@ impl Iterator for PlayerPosition {
 impl PlayerPosition {
     pub fn next_player_position(&self) -> PlayerPosition {
         match self {
-            PlayerPosition::Dealer => PlayerPosition::Cutoff,
-            PlayerPosition::SmallBlind => PlayerPosition::Dealer,
-            PlayerPosition::BigBlind => PlayerPosition::SmallBlind,
-            PlayerPosition::UnderTheGun => PlayerPosition::BigBlind,
-            PlayerPosition::UnderTheGun1 => PlayerPosition::UnderTheGun,
-            PlayerPosition::MiddlePosition => PlayerPosition::UnderTheGun1,
-            PlayerPosition::Hijack => PlayerPosition::MiddlePosition,
-            PlayerPosition::Cutoff => PlayerPosition::Hijack,
-            PlayerPosition::NotPlaying => PlayerPosition::NotPlaying,
+            PlayerPosition::Dealer => PlayerPosition::SmallBlind,
+            PlayerPosition::SmallBlind => PlayerPosition::BigBlind,
+            PlayerPosition::BigBlind => PlayerPosition::UnderTheGun,
+            PlayerPosition::UnderTheGun => PlayerPosition::UnderTheGun1,
+            PlayerPosition::UnderTheGun1 => PlayerPosition::MiddlePosition,
+            PlayerPosition::MiddlePosition => PlayerPosition::Hijack,
+            PlayerPosition::Hijack => PlayerPosition::Cutoff,
+            PlayerPosition::Cutoff => PlayerPosition::Dealer,
+            PlayerPosition::NotPlaying => panic!("NotPlaying position should not be evaluated (next_player_position)"),
         }
     }
 

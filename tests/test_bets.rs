@@ -1,10 +1,10 @@
-#[cfg(test)]
 
-// cargo test --test test_bets --features run_with_sdl2
+#[cfg(test)]
 mod tests {
-    use projektna_prog_2::logic::betting_system::make_bets;
-    use projektna_prog_2::logic::player::Player;
-    use projektna_prog_2::logic::round::init_game;
+    // cargo test --test test_bets --features run_with_sdl2
+    use mega_pokerr::logic::betting_system::make_bets;
+    use mega_pokerr::logic::player::Player;
+    use mega_pokerr::logic::round::init_game;
 
     #[test]
     fn test_of_betting_function_runs() {

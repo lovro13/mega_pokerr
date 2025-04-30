@@ -4,12 +4,11 @@ use sdl2::keyboard::Keycode;
 use sdl2::pixels::Color;
 use std::time::Duration;
 
-use projektna_prog_2::logic::player;
-use projektna_prog_2::logic::round;
-
-use projektna_prog_2::sdl2_app::constants::{SCREEN_HEIGHT, SCREEN_WIDTH};
-use projektna_prog_2::sdl2_app::render_button::Button;
-use projektna_prog_2::sdl2_app::render_screen::render_screen;
+use mega_pokerr::logic::player;
+use mega_pokerr::logic::round;
+use mega_pokerr::sdl2_app::constants::{SCREEN_HEIGHT, SCREEN_WIDTH};
+use mega_pokerr::sdl2_app::render_button::Button;
+use mega_pokerr::sdl2_app::render_screen::render_screen;
 
 pub enum GameState {
     Paused,
