@@ -1,6 +1,7 @@
 #[cfg(test)]
 mod tests {
-    use mega_pokerr::logic::best_combination::{best_combination, HandRanking};
+    use mega_pokerr::logic::best_combination::best_combination;
+	use mega_pokerr::logic::hand_ranking::HandRanking;
     use mega_pokerr::logic::card::{Card, CardNumber};
 
 	#[test]

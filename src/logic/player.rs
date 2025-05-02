@@ -79,7 +79,7 @@ impl PlayerPosition {
 
 pub struct Player {
     pub name: Names,
-    pub cards: (card::Card, card::Card),
+    pub hand_cards: (card::Card, card::Card),
     pub card_position: (i32, i32),
     pub position: PlayerPosition,
     pub money: u32,
@@ -123,7 +123,7 @@ impl Player {
             let curr_player = Player {
                 card_position: Self::get_card_position(&name),
                 name,
-                cards: (
+                hand_cards: (
                     card::Card {
                         color: card::CardColor::Empty,
                         number: card::CardNumber::Empty,

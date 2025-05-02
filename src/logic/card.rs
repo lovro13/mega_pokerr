@@ -86,17 +86,18 @@ impl CardNumber {
     }
 }
 
+impl Ord for CardNumber {
+    fn cmp(&self, other: &Self) -> std::cmp::Ordering {
+        self.evaluate_to_int().cmp(&other.evaluate_to_int())
+    }
+}
+
 impl PartialOrd for CardNumber {
     fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
         Some(self.evaluate_to_int().cmp(&other.evaluate_to_int()))
     }
 }
 
-impl Ord for CardNumber {
-    fn cmp(&self, other: &Self) -> std::cmp::Ordering {
-        self.evaluate_to_int().cmp(&other.evaluate_to_int())
-    }
-}
 
 #[derive(Clone, PartialEq)] // rabim clone da lahko naredim več kart, z istimi barvami
 pub enum CardColor {

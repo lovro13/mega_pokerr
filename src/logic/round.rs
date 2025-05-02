@@ -32,7 +32,7 @@ pub struct Game {
     pub pot: u32,                     // koliko je stav na mizi
     pub players: Vec<player::Player>, // seznam igralcev
     pub deck: Vec<card::Card>,        // seznam kart
-    pub table_cards: Vec<card::Card>, // katere karte so na mizi
+    pub board_cards: Vec<card::Card>, // katere karte so na mizi
     pub position_on_turn: player::PlayerPosition, // kateri igralec je na vrsti, imamo poziicijo, torej kje sedi
     pub round_number: u32,                      // okrasek, koliko rund smo že odigrali
     pub players_in_game: Vec<player::Names>,    // koliko igralcev še ni foldalo
@@ -79,7 +79,7 @@ pub fn init_game(player_list: Vec<player::Player>) -> Game {
         pot: 30,
         players: mut_player_list,
         deck,
-        table_cards: Vec::new(),
+        board_cards: Vec::new(),
         position_on_turn: player::PlayerPosition::UnderTheGun,
         round_number: 0,
         players_in_game: players_in_game,
@@ -107,11 +107,11 @@ pub fn begin_round(game: &mut Game) {
             player.money -= 20;
             player.current_bet += 20;
         }
-        player.cards = (card1, card2)
+        player.hand_cards = (card1, card2)
     }
     game.street = Streets::PreFlop;
     game.deck = deck;
-    game.table_cards = Vec::new();
+    game.board_cards = Vec::new();
     game.position_on_turn = player::PlayerPosition::UnderTheGun;
     game.round_number += 1;
     game.pot = 30;
@@ -131,7 +131,7 @@ pub fn next_turn(game: &mut Game) {
                     None => panic!("Deck is empty"),
                     Some(card) => card,
                 };
-                game.table_cards.push(card);
+                game.board_cards.push(card);
             }
         }
         Streets::River | Streets::Turn => {
@@ -139,7 +139,7 @@ pub fn next_turn(game: &mut Game) {
                 None => panic!("Deck is empty"),
                 Some(card) => card,
             };
-            game.table_cards.push(card);
+            game.board_cards.push(card);
         }
         Streets::Showdown => {
             choose_winner(game);

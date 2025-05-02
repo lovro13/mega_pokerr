@@ -1,20 +1,6 @@
 use crate::logic::combinations::*;
-use super::card::{Card, CardNumber};
-
-
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub enum HandRanking {
-    RoyalFlush(Vec<CardNumber>),
-    StraightFlush(Vec<CardNumber>),
-    FourOfAKind(Vec<CardNumber>), // prva karta je karte ki so 4 iste, druga pa tista ki je ostala
-    FullHouse(Vec<CardNumber>),
-    Flush(Vec<CardNumber>),
-    Straight(Vec<CardNumber>),
-    ThreeOfAKind(Vec<CardNumber>),
-    TwoPair(Vec<CardNumber>),
-    OnePair(Vec<CardNumber>),
-    HighCard(Vec<CardNumber>),
-}
+use super::card::Card;
+use super::hand_ranking::HandRanking;
 
 // treba rangirati karte
 pub fn best_combination(cards: &mut Vec<Card>) -> HandRanking {

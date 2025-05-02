@@ -9,6 +9,7 @@ run_with_sdl2 = ["sdl2"]
 
 [dependencies]
 rand = "0.8"
+itertools = "0.14.0"
 
 [dependencies.sdl2]
 version = "0.32.1"

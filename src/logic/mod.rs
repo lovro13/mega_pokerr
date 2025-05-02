@@ -6,3 +6,4 @@ pub mod combinations;
 pub mod constants;
 pub mod player;
 pub mod round;
+pub mod hand_ranking;

@@ -25,8 +25,8 @@ pub fn render_player_info(
     let screen_position2 = player_center + Point::new(30, 0);
     let card_target2 = Rect::from_center(screen_position2, CARD_WIDTH, CARD_HEIGHT);
     let texture_creator = canvas.texture_creator();
-    let filename1 = render_cards::card_to_file(&player.cards.0);
-    let filename2 = render_cards::card_to_file(&player.cards.1);
+    let filename1 = render_cards::card_to_file(&player.hand_cards.0);
+    let filename2 = render_cards::card_to_file(&player.hand_cards.1);
     let texture1 = texture_creator.load_texture(filename1)?;
     let texture2 = texture_creator.load_texture(filename2)?;
     canvas.copy(&texture1, None, card_target1)?;
