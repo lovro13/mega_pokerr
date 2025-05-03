@@ -1,5 +1,5 @@
 use crate::logic::player;
-use crate::logic::round::Game;
+use crate::logic::game::Game;
 
 pub fn make_bets(game: &mut Game, get_bet: impl Fn(&player::Player) -> Option<u32>) {
     // ta funkcija naj bi v grobem na pravilen način zmanjšala player.money v game.players in povečala game.pot

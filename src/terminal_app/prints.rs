@@ -1,9 +1,10 @@
-use crate::logic::round;
+use crate::logic::game;
 
-pub fn print_game_info(game: &round::Game) {
+pub fn print_game_info(game: &game::Game) {
     println!("============GAME INFO===========");
     println!("Round: {}", game.round_number);
     println!("Current Street: {:?}", game.street);
+    println!("Pot: {}", game.pot);
     
     for player in game.players.iter() {
         println!("===========Player {:?}==========", player.name);

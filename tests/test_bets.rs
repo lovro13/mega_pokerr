@@ -4,7 +4,7 @@ mod tests {
     // cargo test --test test_bets --features run_with_sdl2
     use mega_pokerr::logic::betting_system::make_bets;
     use mega_pokerr::logic::player::Player;
-    use mega_pokerr::logic::round::init_game;
+    use mega_pokerr::logic::game::init_game;
 
     #[test]
     fn test_of_betting_function_runs() {

@@ -1,5 +1,5 @@
 use crate::logic::player;
-use crate::logic::round::Game;
+use crate::logic::game::Game;
 use sdl2::image::LoadTexture;
 use sdl2::pixels::Color;
 use sdl2::rect::{Point, Rect};

@@ -4,6 +4,7 @@ use sdl2::keyboard::Keycode;
 use sdl2::pixels::Color;
 use std::time::Duration;
 
+use mega_pokerr::logic::game;
 use mega_pokerr::logic::player;
 use mega_pokerr::logic::round;
 use mega_pokerr::sdl2_app::constants::{SCREEN_HEIGHT, SCREEN_WIDTH};
@@ -42,7 +43,7 @@ fn main() -> Result<(), String> {
 
     canvas.clear();
     canvas.present();
-    let mut game = round::init_game(player_list);
+    let mut game = game::init_game(player_list);
 
     let mut event_pump = sdl_context.event_pump().unwrap();
     // zazna inpute
