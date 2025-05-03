@@ -5,27 +5,7 @@ use crate::logic::card;
 use crate::logic::choose_winner::choose_winner;
 use crate::logic::player;
 use crate::logic::game::Game;
-
-#[derive(Debug, PartialEq, Clone)]
-pub enum Streets {
-    PreFlop,
-    Flop,
-    Turn,
-    River,
-    Showdown,
-}
-
-impl Streets {
-    pub fn next(&self) -> Streets {
-        match self {
-            Streets::PreFlop => Streets::Flop,
-            Streets::Flop => Streets::Turn,
-            Streets::Turn => Streets::River,
-            Streets::River => Streets::Showdown,
-            Streets::Showdown => panic!("Game is over"),
-        }
-    }
-}
+use crate::logic::game::Streets;
 
 
 pub fn begin_round(game: &mut Game) {

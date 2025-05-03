@@ -1,7 +1,10 @@
+use crate::logic::constants::BIG_BLIND;
 use crate::logic::player;
 use crate::logic::game::Game;
 
 pub fn make_bets(game: &mut Game, get_bet: impl Fn(&player::Player) -> Option<u32>) {
+    // pomoje bo to treba še enkrat napisati skor complete
+
     // ta funkcija naj bi v grobem na pravilen način zmanjšala player.money v game.players in povečala game.pot
     // če je treba kaj več vrniti, da bo koda v main
     // ali kje drugje bolj tekla ni nobenega problema
@@ -18,9 +21,13 @@ pub fn make_bets(game: &mut Game, get_bet: impl Fn(&player::Player) -> Option<u3
     // zanka, ki bo šla dokler vsi ne staivijo isto ali pa so vsi brez denarja, ali pa če je samo še en, ki ni foldal
 
     // fino bi bilo da se testi napišejo, drugače pa če na hitro na roke poženem dela urede
+
+    // DEBUG delete later
+
+
     let start_position = game.position_on_turn.clone();
     let mut players_playing = vec![];
-    let mut current_bet: u32 = 0;
+    let mut current_bet: u32 = BIG_BLIND;
     let mut pot: u32 = game.pot;
     let mut first_bet = true;
     loop {
@@ -30,12 +37,21 @@ pub fn make_bets(game: &mut Game, get_bet: impl Fn(&player::Player) -> Option<u3
             break;
         }
     }
+
     assert!(start_position == game.position_on_turn);
     assert!(!players_playing.is_empty());
     assert!(players_playing[0] == start_position);
 
     loop {
+        println!("===========DEBUG START============");
+        println!("CURRENT POSITION: {:?}", game.position_on_turn);
+        println!("PLAYERS PLAYING: {:?}", game.players_in_game);
+        println!("POSITIONS PLAYING: {:?}", players_playing);
         let player = game.player_on_turn();
+        assert!(player.playing == true);
+        println!("player on turn: {:?}", player);
+        println!("===========DEBUG END============\n");
+        println!("TUKAJ SEM DEBUG 1");
         let bet = get_bet(&player);
         match bet {
             Some(bet) => {
@@ -59,6 +75,7 @@ pub fn make_bets(game: &mut Game, get_bet: impl Fn(&player::Player) -> Option<u3
         }
         game.pot = pot;
         game.go_to_next_player();
+        println!("Naslednji igralec: {:?}", game.position_on_turn);
         if start_position == game.position_on_turn {
             first_bet = false;
         }

@@ -77,6 +77,7 @@ impl PlayerPosition {
     }
 }
 
+#[derive(Debug)]
 pub struct Player {
     pub name: Names,
     pub hand_cards: (card::Card, card::Card),

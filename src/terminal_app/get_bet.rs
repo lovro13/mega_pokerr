@@ -15,6 +15,7 @@ pub fn get_bet(player: &player::Player) -> Option<u32> {
             Ok(_) => {
                 let input = buffer.trim();
                 if input.is_empty() {
+                    println!("Player {:?} {:?} folded", player.name, player.position);
                     return None;
                 }
                 // Poskusi pretvoriti vnos v število
