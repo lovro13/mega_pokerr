@@ -32,8 +32,7 @@ pub struct Game {
     pub deck: Vec<card::Card>,        // seznam kart
     pub board_cards: Vec<card::Card>, // katere karte so na mizi
     pub position_on_turn: player::PlayerPosition, // kateri igralec je na vrsti, imamo poziicijo, torej kje sedi
-    pub round_number: u32,                        // okrasek, koliko rund smo že odigrali
-    pub players_in_game: Vec<player::Names>,      // koliko igralcev še ni foldalo
+    pub round_number: u32                        // okrasek, koliko rund smo že odigral
 }
 
 impl Game {
@@ -44,20 +43,13 @@ impl Game {
     pub fn go_to_next_player(&mut self) {
         // uporablja se v make_bets v while true loopu namesto for zanka
         // ker je vsakič drugi začetni igralec
-        // igralce ki ne igrajo preskoči TODO
     
-        let next_player = self.position_on_turn.next_player_position().clone();
-        loop {
-            let next_pos = self.position_on_turn.next_player_position();
-            let next_player = self.get_player_from_pos(&next_pos);
-            if next_player.playing == true {
-                break;
-            }
-        }
+        let next_player = self.position_on_turn.next_player_position();
         self.position_on_turn = next_player;
     }
 
     pub fn player_on_turn(&mut self) -> &mut Player {
+        // isto se uporablja samo v make_bets
         for player in self.players.iter_mut() {
             if player.playing == false {
                 panic!("Player is not playing (player_on_turn)");
@@ -70,6 +62,7 @@ impl Game {
     }
 
     pub fn get_player_from_pos(&mut self, pos: &player::PlayerPosition) -> &mut Player {
+        // isto se uporablja samo v make_bets
         for player in self.players.iter_mut() {
             if player.position == *pos {
                 return player;
@@ -94,7 +87,6 @@ pub fn init_game(player_list: Vec<player::Player>) -> Game {
         deck,
         board_cards: Vec::new(),
         position_on_turn: player::PlayerPosition::UnderTheGun,
-        round_number: 0,
-        players_in_game: players_in_game,
+        round_number: 0
     }
 }

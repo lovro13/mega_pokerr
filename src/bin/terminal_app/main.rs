@@ -12,25 +12,7 @@ fn main() {
     let mut game = init_game(players);
     begin_round(&mut game);
     print_game_info(&game);
-    println!("====================MAKING BETS====================");
     make_bets(&mut game, get_bet); // PREFLOP
     print_game_info(&game);
     next_turn(&mut game);
-    print_game_info(&game);
-    make_bets(&mut game, get_bet); // FLOP
-    print_game_info(&game);
-    next_turn(&mut game);
-    print_game_info(&game);
-    make_bets(&mut game, get_bet); // TURN
-    print_game_info(&game);
-    next_turn(&mut game);
-    print_game_info(&game);
-    make_bets(&mut game, get_bet); // RIVER
-    print_game_info(&game);
-    next_turn(&mut game);
-    print_game_info(&game);
-    make_bets(&mut game, get_bet); // SHOWDOWN
-    print_game_info(&game);
-    next_turn(&mut game);
-    print_game_info(&game);
 }

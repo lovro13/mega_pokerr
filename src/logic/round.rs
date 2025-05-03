@@ -37,10 +37,6 @@ pub fn begin_round(game: &mut Game) {
     game.position_on_turn = player::PlayerPosition::UnderTheGun;
     game.round_number += 1;
     game.pot = 30;
-    game.players_in_game = vec![];
-    for player in game.players.iter() {
-        game.players_in_game.push(player.name.clone());
-    }
 }
 
 pub fn next_turn(game: &mut Game) {

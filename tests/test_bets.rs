@@ -10,7 +10,7 @@ mod tests {
     fn test_of_betting_function_runs() {
         let player_list = Player::init_players();
         let mut game = init_game(player_list);
-        let get_bet = |player: &Player| {
+        let get_bet = |player: &Player, bet: u32| {
             if player.playing {
                 Some(0)
             } else {

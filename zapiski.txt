@@ -1,0 +1,12 @@
+PRAVILA, ki jih pozabljam:
+- kdor je že foldal se preverja samo v betting_system
+
+PRAVILA za funkcijo get_bet, ki je pri vsakem prikazu seveda različna:
+vzame &player in u32 -> Option<u32>
+// vrne Some(u32), če je pravilno vnešeno in če je prazno vrne None ko hoče foldat
+// ne dovoli staviti več denarja kot ga ima player
+// če je vnešeno karkoli razen u32 ali prazno je treba vnesti ponovno
+// treba še preveriti kakšno stavo mora staviti da ne stavi premalo 
+// player ki ga vzame mora igrati!!!! , torej player.playing = true!!!!
+
+- določiti moram kako bo izgledal glavni game loop, da bosta skupaj delovala logika in prikaz

@@ -1,8 +1,11 @@
 use crate::logic::constants::BIG_BLIND;
+use crate::logic::constants::SMALL_BLIND;
 use crate::logic::player;
 use crate::logic::game::Game;
+use crate::logic::game::Streets;
+use crate::logic::player::PlayerPosition;
 
-pub fn make_bets(game: &mut Game, get_bet: impl Fn(&player::Player) -> Option<u32>) {
+pub fn make_bets(game: &mut Game, get_bet: impl Fn(&player::Player, u32) -> Option<u32>) {
     // pomoje bo to treba še enkrat napisati skor complete
 
     // ta funkcija naj bi v grobem na pravilen način zmanjšala player.money v game.players in povečala game.pot
@@ -10,86 +13,82 @@ pub fn make_bets(game: &mut Game, get_bet: impl Fn(&player::Player) -> Option<u3
     // ali kje drugje bolj tekla ni nobenega problema
 
     // game.street ne bo spreminjala
-    // current postion bo zelo spreminjača, zato bom z assert večkrat preveril da se pravilno spremnija
+    // plan:
+    // - najprej dobi vse igralci ki so v igri, seznam game.players_in_game
+    // - določi začetnega igralca
+    // - določimo tak loop da se funkcija get_bet izvede za vsakega igralca, in to od začetnega <-
+    // - in naslednji bo tisti, ki ima next player_position
+    // - vsak igralec stavi enkrat, oziroma lahko folda, kar pomeni da ga izloči iz seznama igralcev, ki igrajo
+    // - če je kdo stavil več kot ostali, je treba vse ostale igralce prisiliti, da stavijo še enkrat
+    // - torej moramo vedeti koliko je največji bet
 
-    // TODO: narediti loop, da se bo stavilo toliko časa dokler ne zmanka denarja ali pa dajo vsi isto stavoi
-    // get_bet naj deluje tako,
-    // če player stavi(izenači ali poviša), naj vrne Some<u32>,
-    // če pa noče folda naj vrne None,
-    // če naredi check naj vrne Some(0)
+    for player in game.players.iter() {
+        if player.position == PlayerPosition::BigBlind {
+            assert!(player.current_bet == BIG_BLIND)
+        } else if player.position == PlayerPosition::SmallBlind {
+            assert!(player.current_bet == SMALL_BLIND)
+        } else {
+            assert!(player.current_bet == 0);
+        }
+    }
+    
+    if game.street == Streets::PreFlop {
+        game.position_on_turn = player::PlayerPosition::UnderTheGun;
+    } else {
+        game.position_on_turn = player::PlayerPosition::SmallBlind;
+    }
 
-    // zanka, ki bo šla dokler vsi ne staivijo isto ali pa so vsi brez denarja, ali pa če je samo še en, ki ni foldal
-
-    // fino bi bilo da se testi napišejo, drugače pa če na hitro na roke poženem dela urede
-
-    // DEBUG delete later
-
-
-    let start_position = game.position_on_turn.clone();
-    let mut players_playing = vec![];
-    let mut current_bet: u32 = BIG_BLIND;
-    let mut pot: u32 = game.pot;
-    let mut first_bet = true;
+    let first_starting_player = game.player_on_turn().position.clone();
+    let mut betting_players_pos = vec![first_starting_player.clone()];
+    
+    println!("\nDEBUG betting_system betting_players_pos: {:?}\n", betting_players_pos);
+    
+    let mut curr_highest_bet = BIG_BLIND;
+    let mut need_another_round = false;
+    let mut curr_start_player = first_starting_player.clone();
     loop {
-        players_playing.push(game.position_on_turn.clone());
         game.go_to_next_player();
-        if game.position_on_turn == start_position {
+        while game.player_on_turn().position != curr_start_player {
+            if game.player_on_turn().playing {
+                betting_players_pos.push(game.player_on_turn().position.clone())
+            }
+            game.go_to_next_player();
+        }
+        let mut not_playing_players = vec![];
+        betting_players_pos.retain(|pos| !not_playing_players.contains(pos));
+        assert!(curr_start_player == game.position_on_turn);
+        for player_pos in betting_players_pos.iter() {
+            let curr_player = game.get_player_from_pos(&player_pos);
+            let needed_bet = curr_highest_bet - curr_player.current_bet;
+            let bet = get_bet(curr_player, needed_bet);
+            match bet {
+                None => { // player folded
+                    curr_player.current_bet = 0;
+                    game.get_player_from_pos(&player_pos).playing = false;
+                    not_playing_players.push(player_pos.clone());
+                }
+                Some(amount) if amount + curr_player.current_bet > curr_highest_bet => { // player raised
+                    curr_highest_bet = amount + curr_player.current_bet;
+                    curr_player.current_bet += amount;
+                    game.pot += amount; 
+                    need_another_round = true;
+                    curr_start_player = player_pos.clone();
+                    break;
+                }
+                Some(amount) => { // player called
+                    curr_player.money -= amount;
+                    curr_player.current_bet += amount;
+                    game.pot += amount;
+                }
+            }
+        }
+
+        betting_players_pos.retain(|pos| !not_playing_players.contains(pos));
+        if !need_another_round {
             break;
         }
+        need_another_round = false;
+
     }
-
-    assert!(start_position == game.position_on_turn);
-    assert!(!players_playing.is_empty());
-    assert!(players_playing[0] == start_position);
-
-    loop {
-        println!("===========DEBUG START============");
-        println!("CURRENT POSITION: {:?}", game.position_on_turn);
-        println!("PLAYERS PLAYING: {:?}", game.players_in_game);
-        println!("POSITIONS PLAYING: {:?}", players_playing);
-        let player = game.player_on_turn();
-        assert!(player.playing == true);
-        println!("player on turn: {:?}", player);
-        println!("===========DEBUG END============\n");
-        println!("TUKAJ SEM DEBUG 1");
-        let bet = get_bet(&player);
-        match bet {
-            Some(bet) => {
-                if bet + player.current_bet >= current_bet {
-                    player.money -= bet; // tukaj naj get_bet function poskrbi da ne bo negativnih vrednosti
-                    pot += bet;
-                    player.current_bet += bet;
-                    current_bet = player.current_bet;
-                } else if player.current_bet + player.money + bet < current_bet {
-                    player.money -= bet; // tukaj naj get_bet function poskrbi da ne bo negativnih vrednosti
-                    pot += bet;
-                    player.current_bet = bet + player.current_bet;
-                } else {
-                    continue;
-                }
-            }
-            None => {
-                // fold
-                player.playing = false;
-            }
-        }
-        game.pot = pot;
-        game.go_to_next_player();
-        println!("Naslednji igralec: {:?}", game.position_on_turn);
-        if start_position == game.position_on_turn {
-            first_bet = false;
-        }
-
-        let mut go_again = false;
-        if !first_bet {
-            for pos in players_playing.iter() {
-                if game.get_player_from_pos(pos).current_bet != current_bet {
-                    go_again = true;
-                }
-            }
-            if !go_again {
-                return;
-            }
-        }
-    }
+    // zdaj imam seznam igralcev ki igrajo
 }
