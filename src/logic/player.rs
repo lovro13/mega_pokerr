@@ -83,7 +83,7 @@ pub struct Player {
     pub hand_cards: (card::Card, card::Card),
     pub card_position: (i32, i32),
     pub position: PlayerPosition,
-    pub money: u32,
+    pub chips: u32,
     pub playing: bool,
     pub current_bet: u32,
 }
@@ -135,7 +135,7 @@ impl Player {
                     },
                 ),
                 position: curr_position,
-                money: BUY_IN,
+                chips: BUY_IN,
                 playing: true,
                 current_bet: 0,
             };

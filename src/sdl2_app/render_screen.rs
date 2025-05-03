@@ -42,7 +42,7 @@ pub fn render_player_info(
     let _ = draw_text(canvas, &name_text, &text_target, font, text_color);
 
     let balance_color = Color::RGB(0, 0, 10);
-    let balance_text = format!("Balance: {}", player.money);
+    let balance_text = format!("Balance: {}", player.chips);
 
     let balance_screen_position = player_name_position + Point::new(0, 50);
     let balance_text_target = Rect::from_center(balance_screen_position, 150 as u32, 75 as u32);

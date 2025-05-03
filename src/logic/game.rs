@@ -51,9 +51,6 @@ impl Game {
     pub fn player_on_turn(&mut self) -> &mut Player {
         // isto se uporablja samo v make_bets
         for player in self.players.iter_mut() {
-            if player.playing == false {
-                panic!("Player is not playing (player_on_turn)");
-            }
             if player.position == self.position_on_turn {
                 return player;
             }
@@ -82,7 +79,7 @@ pub fn init_game(player_list: Vec<player::Player>) -> Game {
     let mut_player_list = player_list;
     Game {
         street: Streets::PreFlop,
-        pot: 30,
+        pot: 0,
         players: mut_player_list,
         deck,
         board_cards: Vec::new(),

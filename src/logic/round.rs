@@ -7,6 +7,9 @@ use crate::logic::player;
 use crate::logic::game::Game;
 use crate::logic::game::Streets;
 
+use super::constants::BIG_BLIND;
+use super::constants::SMALL_BLIND;
+
 
 pub fn begin_round(game: &mut Game) {
     // razdeli karte igralcem
@@ -23,10 +26,10 @@ pub fn begin_round(game: &mut Game) {
             Some(card) => card,
         };
         if player.position == player::PlayerPosition::SmallBlind {
-            player.money -= 10;
+            player.chips -= 10;
             player.current_bet += 10;
         } else if player.position == player::PlayerPosition::BigBlind {
-            player.money -= 20;
+            player.chips -= 20;
             player.current_bet += 20;
         }
         player.hand_cards = (card1, card2)
@@ -36,7 +39,7 @@ pub fn begin_round(game: &mut Game) {
     game.board_cards = Vec::new();
     game.position_on_turn = player::PlayerPosition::UnderTheGun;
     game.round_number += 1;
-    game.pot = 30;
+    game.pot = SMALL_BLIND + BIG_BLIND;
 }
 
 pub fn next_turn(game: &mut Game) {

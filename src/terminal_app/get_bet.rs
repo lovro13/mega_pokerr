@@ -8,7 +8,7 @@ pub fn get_bet(player: &player::Player, req_bet: u32) -> Option<u32> {
     // TODO treba še preveriti kakšno stavo mora staviti da ne stavi premalo
  
     assert!(player.playing); // nedolžno preverjenje ki rešuje use
-    println!("please enter your bet (0 to check, empty input to skip): ");
+    println!("Hey {:?}, please enter your bet (empty input to fold and {} to call/check or more to raise): ", player.position, req_bet);
     loop {
         let mut buffer = String::new();
         println!(
@@ -26,7 +26,7 @@ pub fn get_bet(player: &player::Player, req_bet: u32) -> Option<u32> {
                 // Poskusi pretvoriti vnos v število
                 match input.parse::<u32>() {
                     Ok(bet) => {
-                        if bet <= player.money {
+                        if bet <= player.chips {
                             if req_bet > bet {
                                 println!("Bet too small, if u dont want to fold u need to bet {req_bet}!")
                             } else {
@@ -36,7 +36,7 @@ pub fn get_bet(player: &player::Player, req_bet: u32) -> Option<u32> {
                         } else {
                             println!(
                                 "Invalid bet! You only have {} money. Try again.",
-                                player.money
+                                player.chips
                             );
                         }
                     }
