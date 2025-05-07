@@ -9,8 +9,6 @@ use crate::sdl2_app::constants::{CARD_HEIGHT, CARD_WIDTH};
 use crate::sdl2_app::render_cards;
 use crate::sdl2_app::render_text::draw_text;
 
-use super::render_button::Button;
-
 
 pub fn render_player_info(
     canvas: &mut WindowCanvas,

@@ -30,7 +30,7 @@ impl Button {
         &self,
         canvas: &mut sdl2::render::WindowCanvas,
         font: &sdl2::ttf::Font,
-    ) {
+    ) -> Result<(), String> {
         let color = if self.is_clicked {
             Color::RGB(100, 100, 100)
         } else {
@@ -40,8 +40,9 @@ impl Button {
         let text_color = Color::RGB(0, 0, 0);
 
         canvas.set_draw_color(color);
-        canvas.fill_rect(self.rect);
-        draw_text(canvas, &self.text, &self.rect, font, text_color);
+        canvas.fill_rect(self.rect)?;
+        draw_text(canvas, &self.text, &self.rect, font, text_color)?;
+        Ok(())
     }
 
     pub fn handle_button_events(event: &Event, button: &mut Button) {

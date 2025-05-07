@@ -1,11 +1,8 @@
-use itertools::fold;
 use mega_pokerr::logic::betting_system::make_bets;
-use mega_pokerr::logic::constants::BIG_BLIND;
 use mega_pokerr::sdl2_app::make_bet;
 use sdl2::event::Event;
 use sdl2::image::{self, InitFlag};
 use sdl2::keyboard::Keycode;
-use sdl2::libc::sleep;
 use sdl2::pixels::Color;
 use std::time::Duration;
 
@@ -56,7 +53,7 @@ fn main() -> Result<(), String> {
     // zazna inpute
 
     // GLAVNA ZANKA
-    'running: loop {
+    'running: loop { // ta main loop mi ni ušeč, bolje da imamo več funkicji v kateri je vsaki tak isti loop
         for event in event_pump.poll_iter() {
             // se sprehodi cez use evente
             Button::handle_button_events(&event, &mut fold_button);
@@ -101,7 +98,7 @@ fn main() -> Result<(), String> {
                 &mut raise_button,
                 &mut canvas,
                 &font
-            )
+            ).unwrap()
         };
         make_bets(&mut game, get_bet);
         canvas.present();

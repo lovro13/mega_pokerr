@@ -10,6 +10,9 @@ use crate::logic::game::Streets;
 use super::constants::BIG_BLIND;
 use super::constants::SMALL_BLIND;
 
+pub struct Round {
+    
+}
 
 pub fn begin_round(game: &mut Game) {
     // razdeli karte igralcem
