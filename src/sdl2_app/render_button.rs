@@ -8,9 +8,9 @@ use sdl2::render::WindowCanvas;
 use crate::sdl2_app::render_text::draw_text;
 
 pub struct Button {
-    rect: Rect,
-    text: String,
-    is_clicked: bool,
+    pub rect: Rect,
+    pub text: String,
+    pub is_clicked: bool,
 }
 
 impl Button {
@@ -84,5 +84,39 @@ impl Button {
             text: String::from("FOLD"),
             is_clicked: false,
         }
+    }
+    pub fn init_call_button(canvas: &mut WindowCanvas) -> Self {
+        let (width, heigth) = canvas.output_size().unwrap();
+        let screen_center = Point::new((width as i32) / 2, (heigth as i32) / 2 + 100);
+        let button_position = screen_center
+            + Point::new(
+                player::Player::PLAYER1_CARDS.0,
+                -player::Player::PLAYER1_CARDS.1,
+            )
+            + Point::new(110, 0);
+        let button_target = Rect::from_center(button_position, 100, 50);
+        Button {
+            rect: button_target,
+            text: String::from("CALL"),
+            is_clicked: false,
+        }
+        
+    }
+    pub fn init_raise_button(canvas: &mut WindowCanvas) -> Self {
+        let (width, heigth) = canvas.output_size().unwrap();
+        let screen_center = Point::new((width as i32) / 2, (heigth as i32) / 2 + 100);
+        let button_position = screen_center
+            + Point::new(
+                player::Player::PLAYER1_CARDS.0,
+                -player::Player::PLAYER1_CARDS.1,
+            )
+            + Point::new(220, 0);
+        let button_target = Rect::from_center(button_position, 100, 50);
+        Button {
+            rect: button_target,
+            text: String::from("RAISE"),
+            is_clicked: false,
+        }
+        
     }
 }

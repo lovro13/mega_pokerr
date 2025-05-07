@@ -10,3 +10,15 @@ vzame &player in u32 -> Option<u32>
 // player ki ga vzame mora igrati!!!! , torej player.playing = true!!!!
 
 - določiti moram kako bo izgledal glavni game loop, da bosta skupaj delovala logika in prikaz
+
+SDL2 app:
+do nadaljnega lahko samo raisa usak za BIGBLIND
+
+LOGIC:
+TODO-treba narediti struct round in ga ločiti od game, ali pa v game še nekaj implementirati s čimer
+bom lahko nadziral kateri del igre je kot npr make_bets, ali pa kaj drugega, saj je itak večina igre 
+make_bets
+
+-- preden nadalajujem z SDL2 bi bilo fino, implementirati logiko naprej, v bistvu lahko cel loop, ki pa lahko 
+sprejme nek closure ki bo povedal ali naj se igra nadaljuje, ki lahko kasneje tudi naredi da bo malo počakalo preden gre naprej, 
+saj ni človeško če se stvari odvijajo konstantno

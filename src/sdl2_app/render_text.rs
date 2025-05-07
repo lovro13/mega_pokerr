@@ -18,7 +18,6 @@ pub fn draw_text(
     let text_texture = texture_creator
         .create_texture_from_surface(&name_surface)
         .map_err(|e| e.to_string())?;
-
     canvas.copy(&text_texture, None, Some(*position))?;
     Ok(())
 }

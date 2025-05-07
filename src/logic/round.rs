@@ -10,11 +10,15 @@ use crate::logic::game::Streets;
 use super::constants::BIG_BLIND;
 use super::constants::SMALL_BLIND;
 
+pub struct Round {
+    
+}
 
 pub fn begin_round(game: &mut Game) {
     // razdeli karte igralcem
     let deck = card::Card::make_ordered_deck();
     let mut deck = card::Card::scramble_deck(deck);
+    game.pot = 0;
     for player in game.players.iter_mut() {
         player.position = player::PlayerPosition::next_player_position(&player.position);
         let card1 = match deck.pop() {
@@ -26,11 +30,25 @@ pub fn begin_round(game: &mut Game) {
             Some(card) => card,
         };
         if player.position == player::PlayerPosition::SmallBlind {
-            player.chips -= 10;
-            player.current_bet += 10;
+            if player.chips < SMALL_BLIND {
+                player.playing = false;
+                game.pot += player.chips;
+                player.chips = 0;
+            } else {
+                player.chips -= SMALL_BLIND;
+                player.current_bet += SMALL_BLIND;
+                game.pot += SMALL_BLIND;
+            }
         } else if player.position == player::PlayerPosition::BigBlind {
-            player.chips -= 20;
-            player.current_bet += 20;
+            if player.chips < BIG_BLIND {
+                player.playing = false;
+                game.pot += player.chips;
+                player.chips = 0;
+            } else {
+                player.chips -= BIG_BLIND;
+                player.current_bet += BIG_BLIND;
+                game.pot += BIG_BLIND;
+            }
         }
         player.hand_cards = (card1, card2)
     }
@@ -39,7 +57,6 @@ pub fn begin_round(game: &mut Game) {
     game.board_cards = Vec::new();
     game.position_on_turn = player::PlayerPosition::UnderTheGun;
     game.round_number += 1;
-    game.pot = SMALL_BLIND + BIG_BLIND;
 }
 
 pub fn next_turn(game: &mut Game) {

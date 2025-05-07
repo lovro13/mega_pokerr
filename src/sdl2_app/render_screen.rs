@@ -9,11 +9,13 @@ use crate::sdl2_app::constants::{CARD_HEIGHT, CARD_WIDTH};
 use crate::sdl2_app::render_cards;
 use crate::sdl2_app::render_text::draw_text;
 
+
 pub fn render_player_info(
     canvas: &mut WindowCanvas,
     player: &player::Player,
     font: &sdl2::ttf::Font,
 ) -> Result<(), String> {
+    // nariše karte, ime, balance, dealer žeton, če je treba
     let (width, height) = canvas.output_size()?;
     let screen_center = Point::new(width as i32 / 2, (height as i32) / 2 - 100);
     // torej screen_center na nekak obrnjen kartezicni sistem, torej x normalen, y pa je obrnjen
@@ -62,9 +64,6 @@ pub fn render_player_info(
         canvas.copy(&texture, None, screen_rect_dealer)?;
     }
 
-    // let test_button = Button::new(0, 0, 50, 50, String::from("test"));
-    // Button::draw_button(&test_button, canvas, font)?;
-
     Ok(())
 }
 
@@ -72,7 +71,7 @@ pub fn render_screen(
     canvas: &mut WindowCanvas,
     background_color: Color,
     game: &Game, // tega tudi mogoče dobi iz player lista
-    font: &sdl2::ttf::Font,
+    font: &sdl2::ttf::Font
 ) -> Result<(), String> {
     canvas.set_draw_color(background_color);
     canvas.clear();
@@ -85,5 +84,6 @@ pub fn render_screen(
         // nariše karte, imena, balance
     }
     canvas.present();
+
     Ok(())
 }
