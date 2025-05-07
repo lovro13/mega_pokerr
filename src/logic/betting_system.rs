@@ -4,7 +4,7 @@ use crate::logic::game::Streets;
 use crate::logic::player;
 
 
-pub fn make_bets(game: &mut Game, get_bet: impl Fn(&player::Player, u32) -> Option<u32>) {
+pub fn make_bets(game: &mut Game, mut get_bet: impl FnMut(&player::Player, u32) -> Option<u32>) {
     // pomoje bo to treba še enkrat napisati skor complete
 
     // ta funkcija naj bi v grobem na pravilen način zmanjšala player.money v game.players in povečala game.pot

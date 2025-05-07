@@ -10,3 +10,6 @@ vzame &player in u32 -> Option<u32>
 // player ki ga vzame mora igrati!!!! , torej player.playing = true!!!!
 
 - določiti moram kako bo izgledal glavni game loop, da bosta skupaj delovala logika in prikaz
+
+SDL2 app:
+do nadaljnega lahko samo raisa usak za BIGBLIND
