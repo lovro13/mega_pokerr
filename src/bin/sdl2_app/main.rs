@@ -5,6 +5,7 @@ use mega_pokerr::sdl2_app::make_bet;
 use sdl2::event::Event;
 use sdl2::image::{self, InitFlag};
 use sdl2::keyboard::Keycode;
+use sdl2::libc::sleep;
 use sdl2::pixels::Color;
 use std::time::Duration;
 
@@ -75,37 +76,34 @@ fn main() -> Result<(), String> {
                     ..
                 } => {
                     round::begin_round(&mut game);
-                    // let get_bet = |player: &Player, req_bet: u32| -> Option<u32> {
-                    //     make_bet::make_bet(
-                    //         player,
-                    //         req_bet,
-                    //         &mut event_pump,
-                    //         &mut fold_button,
-                    //         &mut call_button,
-                    //         &mut raise_button,
-                    //         &mut canvas,
-                    //         &game,
-                    //         &font,
-                    //     )
-                    // };
-                    // make_bets(&mut game, get_bet);
-                    // skupi z for po eventih, ki bojo pač vrnil Option<Int>
-                    // in tudi z render screen, zato more biti zaprtje, mogoče še tukaj definirano, da lahko dela z canvas in font
-                    // torej lahko tudi button narišemo v get_bets
                 }
                 _ => {}
             }
         }
+        // skupi z for po eventih, ki bojo pač vrnil Option<Int>
+        // in tudi z render screen, zato more biti zaprtje, mogoče še tukaj definirano, da lahko dela z canvas in font
+        // torej lahko tudi button narišemo v get_bets
         render_screen(
             &mut canvas,
             Color::RGB(200, 200, 255),
             &game,
-            &font,
-            &fold_button,
-            &call_button,
-            &raise_button,
+            &font
         )?; // nariše use kar vidiš
-
+        
+        
+        let get_bet = |player: &Player, req_bet: u32| -> Option<u32> {
+            make_bet::make_bet(
+                player,
+                req_bet,
+                &mut event_pump,
+                &mut fold_button,
+                &mut call_button,
+                &mut raise_button,
+                &mut canvas,
+                &font
+            )
+        };
+        make_bets(&mut game, get_bet);
         canvas.present();
         ::std::thread::sleep(Duration::new(0, 1_000_000_000u32 / 30))
         // nastavi na cca 30 FPS

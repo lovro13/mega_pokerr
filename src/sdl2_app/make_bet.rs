@@ -21,10 +21,12 @@ pub fn make_bet(
     call_button: &mut Button,
     raise_button: &mut Button,
     canvas: &mut Canvas<Window>,
-    game: &Game,
-    font: &Font,
+    font: &Font
 ) -> Option<u32> {
     loop {
+        Button::draw_button(&fold_button, canvas, &font);
+        Button::draw_button(&call_button, canvas, &font);
+        Button::draw_button(&raise_button, canvas, &font);
         for event in event_pump.poll_iter() {
             // se sprehodi cez use evente
             Button::handle_button_events(&event, fold_button);
@@ -57,20 +59,6 @@ pub fn make_bet(
                 continue;
             }
         }
-        if let Err(e) = render_screen(
-            canvas,
-            Color::RGB(200, 200, 255),
-            game,
-            &font,
-            &fold_button,
-            &call_button,
-            &raise_button,
-        ) {
-            eprintln!("Error rendering screen: {}", e);
-            return None;
-        } // na tak način baje razrešiš result v closure
-          // nariše use kar vidiš
-
         canvas.present();
         ::std::thread::sleep(Duration::new(0, 1_000_000_000u32 / 30))
     }

@@ -73,10 +73,7 @@ pub fn render_screen(
     canvas: &mut WindowCanvas,
     background_color: Color,
     game: &Game, // tega tudi mogoče dobi iz player lista
-    font: &sdl2::ttf::Font,
-    fold_button: &Button,
-    call_button: &Button,
-    raise_button: &Button
+    font: &sdl2::ttf::Font
 ) -> Result<(), String> {
     canvas.set_draw_color(background_color);
     canvas.clear();
@@ -89,8 +86,6 @@ pub fn render_screen(
         // nariše karte, imena, balance
     }
     canvas.present();
-    Button::draw_button(&fold_button, canvas, &font)?;
-    Button::draw_button(&call_button, canvas, &font)?;
-    Button::draw_button(&raise_button, canvas, &font)?;
+
     Ok(())
 }
