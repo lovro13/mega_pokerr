@@ -1,5 +1,6 @@
+pub mod betting_state;
 pub mod constants;
-pub mod make_bet;
+pub mod send_bet;
 pub mod render_button;
 pub mod render_cards;
 pub mod render_screen;

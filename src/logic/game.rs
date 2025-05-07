@@ -25,6 +25,7 @@ impl Streets {
     }
 }
 
+#[derive(Clone, Debug)] // CLONE SAMO ZA RISANJE PO ZASLONU PAZIIII!!!!
 pub struct Game {
     pub street: Streets,              // v bistvu pove koliko kart je na mizi
     pub pot: u32,                     // koliko je stav na mizi
@@ -44,7 +45,7 @@ impl Game {
         // uporablja se v make_bets v while true loopu namesto for zanka
         // ker je vsakič drugi začetni igralec
     
-        let next_player = self.position_on_turn.next_player_position();
+        let next_player = self.position_on_turn.next_player_on_turn();
         self.position_on_turn = next_player;
     }
 

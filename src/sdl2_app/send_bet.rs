@@ -12,6 +12,8 @@ use crate::logic::constants::BIG_BLIND;
 use crate::logic::player::Player;
 use crate::sdl2_app::render_button::Button;
 
+use super::render_screen::render_turn_indicator;
+
 pub fn make_bet(
     player: &Player,
     req_bet: u32,
@@ -20,8 +22,9 @@ pub fn make_bet(
     call_button: &mut Button,
     raise_button: &mut Button,
     canvas: &mut Canvas<Window>,
-    font: &Font
+    font: &Font,
 ) -> Result<Option<u32>, String> {
+    // naj rendera buttone in playerja malo pokaže da je na vrsti, in naj seveda naredi to kateri gumb je bil kliknjen
     loop {
         Button::draw_button(&fold_button, canvas, &font)?;
         Button::draw_button(&call_button, canvas, &font)?;
@@ -31,24 +34,21 @@ pub fn make_bet(
             Button::handle_button_events(&event, fold_button);
             Button::handle_button_events(&event, call_button);
             Button::handle_button_events(&event, raise_button);
-            let turn_indicator_color = Color::RGB(255, 0, 0);
-            let turn_indicator_position = Point::new(player.card_position.0, -player.card_position.1) 
-                + Point::new(50, -50); // Adjust position relative to card_position
-            let turn_indicator_rect = Rect::from_center(turn_indicator_position, 20, 20);
-            canvas.set_draw_color(turn_indicator_color);
-            canvas.fill_rect(turn_indicator_rect)?;
+            render_turn_indicator(player, canvas)?;
+            canvas.present();
             match event {
                 Event::Quit { .. }
                 | Event::KeyDown {
                     keycode: Some(Keycode::Escape),
                     ..
                 } => {
-                    return Ok(None);
+                    panic!("ustavljam igro z panic, ker drugače ne gre :) <3");
                 }
                 _ => {}
             }
         }
         if fold_button.is_clicked {
+            println!("folding in sld2app");
             return Ok(None);
         } else if call_button.is_clicked {
             if req_bet <= player.chips {
@@ -63,7 +63,8 @@ pub fn make_bet(
                 continue;
             }
         }
-        canvas.present();
+
         ::std::thread::sleep(Duration::new(0, 1_000_000_000u32 / 30))
     }
+    return Ok(None);
 }

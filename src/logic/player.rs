@@ -25,16 +25,23 @@ pub enum PlayerPosition {
     Cutoff,
     NotPlaying,
 }
-impl Iterator for PlayerPosition {
-    type Item = PlayerPosition;
 
-    fn next(&mut self) -> Option<Self::Item> {
-        let next_pos = self.next_player_position();
-        Some(std::mem::replace(self, next_pos))
-    }
-}
 impl PlayerPosition {
     pub fn next_player_position(&self) -> PlayerPosition {
+        match self {
+            PlayerPosition::Dealer => PlayerPosition::Cutoff,
+            PlayerPosition::Cutoff => PlayerPosition::Hijack,
+            PlayerPosition::Hijack => PlayerPosition::MiddlePosition,
+            PlayerPosition::MiddlePosition => PlayerPosition::UnderTheGun1,
+            PlayerPosition::UnderTheGun1 => PlayerPosition::UnderTheGun,
+            PlayerPosition::UnderTheGun => PlayerPosition::BigBlind,
+            PlayerPosition::BigBlind => PlayerPosition::SmallBlind,
+            PlayerPosition::SmallBlind => PlayerPosition::Dealer,
+            PlayerPosition::NotPlaying => panic!("NotPlaying position should not be evaluated (next_player_position)"),
+        }
+    }
+
+    pub fn next_player_on_turn(&self) -> PlayerPosition {
         match self {
             PlayerPosition::Dealer => PlayerPosition::SmallBlind,
             PlayerPosition::SmallBlind => PlayerPosition::BigBlind,
@@ -44,7 +51,7 @@ impl PlayerPosition {
             PlayerPosition::MiddlePosition => PlayerPosition::Hijack,
             PlayerPosition::Hijack => PlayerPosition::Cutoff,
             PlayerPosition::Cutoff => PlayerPosition::Dealer,
-            PlayerPosition::NotPlaying => panic!("NotPlaying position should not be evaluated (next_player_position)"),
+            PlayerPosition::NotPlaying => panic!("NotPlaying position should not be evaluated (next_player_on_turn)"),
         }
     }
 
@@ -77,7 +84,7 @@ impl PlayerPosition {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)] // PAZIII CLONE SAMO RISANJE PLAYERJEV
 pub struct Player {
     pub name: Names,
     pub hand_cards: (card::Card, card::Card),
@@ -116,10 +123,10 @@ impl Player {
     pub fn init_players() -> Vec<Player> {
         let mut list_of_players = Vec::new();
         let mut last_position = PlayerPosition::Dealer;
-        let mut names = Names::all_names();
-        names.reverse(); // reverse da igra poteka v smeri urinega kazalca
+        let names = Names::all_names(); // 1, 2, ... , 8
+
         for name in names {
-            let curr_position = PlayerPosition::next_player_position(&last_position);
+            let curr_position = PlayerPosition::next_player_on_turn(&last_position);
             last_position = curr_position.clone();
             let curr_player = Player {
                 card_position: Self::get_card_position(&name),

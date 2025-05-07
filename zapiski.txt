@@ -22,3 +22,5 @@ make_bets
 -- preden nadalajujem z SDL2 bi bilo fino, implementirati logiko naprej, v bistvu lahko cel loop, ki pa lahko 
 sprejme nek closure ki bo povedal ali naj se igra nadaljuje, ki lahko kasneje tudi naredi da bo malo počakalo preden gre naprej, 
 saj ni človeško če se stvari odvijajo konstantno
+
+--Game je treba implementirati z RC, torej reference counter, drugače verjetno en bo šlo

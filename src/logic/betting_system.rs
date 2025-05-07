@@ -40,10 +40,6 @@ pub fn make_bets(game: &mut Game, mut get_bet: impl FnMut(&player::Player, u32) 
         game.go_to_next_player();
     }
 
-    println!(
-        "\nDEBUG betting_system betting_players_pos: {:?}\n",
-        betting_players_pos
-    );
     assert!(game.player_on_turn().position == start_position);
 
     let mut not_playing_players = vec![];
@@ -60,12 +56,6 @@ pub fn make_bets(game: &mut Game, mut get_bet: impl FnMut(&player::Player, u32) 
             if not_playing_players.len() >= 7 {
                 return;
             }
-            println!("\n=====DEBUG=======================");
-            println!(
-                "curr player : {:?}  \nstart pos : {:?}",
-                game.player_on_turn().position,
-                start_position
-            );
             let player_pos = game.position_on_turn.clone();
             let curr_player = game.get_player_from_pos(&player_pos);
             if !curr_player.playing {
@@ -80,12 +70,14 @@ pub fn make_bets(game: &mut Game, mut get_bet: impl FnMut(&player::Player, u32) 
             match bet {
                 None => {
                     // player folded
+                    println!("{:?} folded", curr_player.name);
                     curr_player.current_bet = 0;
                     curr_player.playing = false;
                     not_playing_players.push(player_pos.clone());
                 }
                 Some(amount) if amount + curr_player.current_bet > curr_highest_bet => {
                     // player raised
+                    println!("{:?} raised", curr_player.name);
                     curr_highest_bet = amount + curr_player.current_bet;
                     curr_player.current_bet += amount;
                     game.pot += amount;
@@ -96,6 +88,7 @@ pub fn make_bets(game: &mut Game, mut get_bet: impl FnMut(&player::Player, u32) 
                 }
                 Some(amount) => {
                     // player called
+                    println!("{:?} called", curr_player.name);
                     curr_player.chips -= amount;
                     curr_player.current_bet += amount;
                     game.pot += amount;
@@ -105,6 +98,16 @@ pub fn make_bets(game: &mut Game, mut get_bet: impl FnMut(&player::Player, u32) 
             if game.player_on_turn().position == start_position {
                 break;
             }
+            let mut playing_players = 0;
+            for player in game.players.iter() {
+                if player.playing {
+                    playing_players += 1;
+                }
+            }
+            if playing_players <= 1 {
+                println!("finished make_bets");
+                return;
+            }
         }
 
         if !need_another_round {
@@ -112,5 +115,6 @@ pub fn make_bets(game: &mut Game, mut get_bet: impl FnMut(&player::Player, u32) 
         }
         need_another_round = false;
     }
+    println!("finished make_bets");
     // zdaj imam seznam igralcev ki igrajo
 }

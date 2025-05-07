@@ -1,5 +1,5 @@
-use crate::logic::player;
 use crate::logic::game::Game;
+use crate::logic::player::{self, Player};
 use sdl2::image::LoadTexture;
 use sdl2::pixels::Color;
 use sdl2::rect::{Point, Rect};
@@ -9,6 +9,17 @@ use crate::sdl2_app::constants::{CARD_HEIGHT, CARD_WIDTH};
 use crate::sdl2_app::render_cards;
 use crate::sdl2_app::render_text::draw_text;
 
+impl Player {
+    pub fn get_player_screen_center(&self, canvas: &WindowCanvas) -> Point {
+        // is on the middle of the first card
+        let (width, height) = canvas.output_size().unwrap();
+        let screen_center = Point::new(width as i32 / 2, (height as i32) / 2 - 100);
+        let card_position = self.card_position;
+        let player_center = // is on the middle of the first card
+        Point::new(card_position.0, -card_position.1) + screen_center;
+        return player_center;
+    }
+}
 
 pub fn render_player_info(
     canvas: &mut WindowCanvas,
@@ -16,12 +27,7 @@ pub fn render_player_info(
     font: &sdl2::ttf::Font,
 ) -> Result<(), String> {
     // nariše karte, ime, balance, dealer žeton, če je treba
-    let (width, height) = canvas.output_size()?;
-    let screen_center = Point::new(width as i32 / 2, (height as i32) / 2 - 100);
-    // torej screen_center na nekak obrnjen kartezicni sistem, torej x normalen, y pa je obrnjen
-    let card_position = player.card_position;
-    let player_center = // is on the middle of the first card
-        Point::new(card_position.0, -card_position.1) + screen_center;
+    let player_center = player.get_player_screen_center(canvas);
     // tukaj je center v player_position z normalnim kartezičnim
     let card_target1 = Rect::from_center(player_center, CARD_WIDTH, CARD_HEIGHT);
     let screen_position2 = player_center + Point::new(30, 0);
@@ -67,11 +73,20 @@ pub fn render_player_info(
     Ok(())
 }
 
+pub fn render_turn_indicator(player: &Player, canvas: &mut WindowCanvas) -> Result<(), String> {
+    let player_center = player.get_player_screen_center(canvas);
+    let indincator_target = player_center + Point::new(-20, 50);
+    let target = Rect::from_center(indincator_target, 50, 50);
+    canvas.set_draw_color(Color::RGB(200, 0, 0));
+    canvas.fill_rect(target)?;
+    Ok(())
+}
+
 pub fn render_screen(
     canvas: &mut WindowCanvas,
     background_color: Color,
     game: &Game, // tega tudi mogoče dobi iz player lista
-    font: &sdl2::ttf::Font
+    font: &sdl2::ttf::Font,
 ) -> Result<(), String> {
     canvas.set_draw_color(background_color);
     canvas.clear();
