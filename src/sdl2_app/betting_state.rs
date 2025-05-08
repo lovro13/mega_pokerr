@@ -22,8 +22,7 @@ pub fn run_betting_state(
     font: &Font,
 ) -> Result<(), String> {
     // let mut mut_game = game.borrow_mut();
-    let unmut_game = game.borrow();
-    render_screen(canvas, Color::RGB(200, 200, 255), &unmut_game.clone(), &font)?; // nariše use kar vidiš
+        render_screen(canvas, Color::RGB(200, 200, 255), &Rc::clone(&game), &font)?; // nariše use kar vidiš
 
     let get_bet = {
         // Prenesi potrebne komponente v zaprtje
@@ -43,7 +42,7 @@ pub fn run_betting_state(
             render_screen(
                 canvas,
                 Color::RGB(BACKGROUND_COLOR.0, BACKGROUND_COLOR.1, BACKGROUND_COLOR.2),
-                &unmut_game, // Uporabi klonirano stanje
+                &Rc::clone(&game), // Uporabi klonirano stanje
                 &font,
             ).unwrap();
     

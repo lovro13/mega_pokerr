@@ -4,6 +4,8 @@ use sdl2::image::LoadTexture;
 use sdl2::pixels::Color;
 use sdl2::rect::{Point, Rect};
 use sdl2::render::WindowCanvas;
+use std::rc::Rc;
+use std::cell::RefCell;
 
 use crate::sdl2_app::constants::{CARD_HEIGHT, CARD_WIDTH};
 use crate::sdl2_app::render_cards;
@@ -85,12 +87,12 @@ pub fn render_turn_indicator(player: &Player, canvas: &mut WindowCanvas) -> Resu
 pub fn render_screen(
     canvas: &mut WindowCanvas,
     background_color: Color,
-    game: &Game, // tega tudi mogoče dobi iz player lista
+    game: &Rc<RefCell<Game>>, // tega tudi mogoče dobi iz player lista
     font: &sdl2::ttf::Font,
 ) -> Result<(), String> {
     canvas.set_draw_color(background_color);
     canvas.clear();
-
+    let game = game.borrow();
     let players_list = &game.players;
     for player in players_list {
         //naprinta ime in karte igralca
