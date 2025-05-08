@@ -1,6 +1,5 @@
 use mega_pokerr::sdl2_app::betting_state::run_betting_state;
 use sdl2::image::{self, InitFlag};
-use std::rc::Rc;
 
 use mega_pokerr::logic::game;
 use mega_pokerr::logic::player;
@@ -34,8 +33,6 @@ fn main() -> Result<(), String> {
     // canvas.copy(...), texture -> riše slike, ali tekst
     // canvas.present() ... predstavi spremembe, ki so jih nardil .copy(), .clear()
 
-    canvas.clear();
-    canvas.present();
     let player_list = player::Player::init_players();
     let game = game::init_game(player_list);
 

@@ -1,12 +1,12 @@
-use crate::logic::player;
+use crate::logic::game::Game;
 use std::io;
 
-pub fn get_bet(player: &player::Player, req_bet: u32) -> Option<u32> {
+pub fn get_bet(game: &Game, req_bet: u32) -> Option<u32> {
     // vrne u32, če je pravilno vnešeno in če je prazno vrne None ko hoče foldat
     // ne dovoli staviti več denarja kot ga ima player
     // če je vnešeno karkoli razen u32 ali prazno je treba vnesti ponovno
     // TODO treba še preveriti kakšno stavo mora staviti da ne stavi premalo
- 
+    let player = game.player_on_turn_immutable();
     assert!(player.playing); // nedolžno preverjenje ki rešuje use
     println!("Hey {:?}, please enter your bet (empty input to fold and {} to call/check or more to raise): ", player.position, req_bet);
     loop {

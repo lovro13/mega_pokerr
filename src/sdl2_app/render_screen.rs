@@ -97,7 +97,5 @@ pub fn render_screen(
         let _ = render_player_info(canvas, player, font);
         // nariše karte, imena, balance
     }
-    canvas.present();
-
     Ok(())
 }

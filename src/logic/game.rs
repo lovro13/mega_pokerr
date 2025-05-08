@@ -1,10 +1,10 @@
 use core::panic;
-use std::rc::Rc;
-use std::cell::RefCell;
 
 use crate::logic::card;
 use crate::logic::player;
 use crate::logic::player::Player;
+use std::rc::Rc;
+use std::cell::RefCell;
 
 #[derive(Debug, PartialEq, Clone)]
 pub enum Streets {
@@ -61,6 +61,16 @@ impl Game {
         panic!("Player not found (go_to_next_street)");
     }
 
+    pub fn player_on_turn_immutable(&self) -> &Player {
+        // isto se uporablja samo v make_bets
+        for player in self.players.iter() {
+            if player.position == self.position_on_turn {
+                return player;
+            }
+        }
+        panic!("Player not found (go_to_next_street)");
+    }
+
     pub fn get_player_from_pos(&mut self, pos: &player::PlayerPosition) -> &mut Player {
         // isto se uporablja samo v make_bets
         for player in self.players.iter_mut() {
@@ -87,6 +97,6 @@ pub fn init_game(player_list: Vec<player::Player>) -> Rc<RefCell<Game>> {
         deck,
         board_cards: Vec::new(),
         position_on_turn: player::PlayerPosition::UnderTheGun,
-        round_number: 0
+        round_number: 0,
     }))
 }

@@ -1,16 +1,17 @@
-use sdl2::event::Event;
 use sdl2::keyboard::Keycode;
 use sdl2::render::Canvas;
 use sdl2::ttf::Font;
 use sdl2::video::Window;
 use sdl2::EventPump;
+use sdl2::{event::Event, pixels::Color};
 use std::time::Duration;
 
 use crate::logic::constants::BIG_BLIND;
+use crate::logic::game::Game;
 use crate::logic::player::Player;
 use crate::sdl2_app::render_button::Button;
 
-use super::render_screen::render_turn_indicator;
+use super::render_screen::{render_screen, render_turn_indicator};
 
 pub fn make_bet(
     player: &Player,
@@ -21,18 +22,15 @@ pub fn make_bet(
     raise_button: &mut Button,
     canvas: &mut Canvas<Window>,
     font: &Font,
+    game: &Game,
 ) -> Result<Option<u32>, String> {
-    // naj rendera buttone in playerja malo pokaže da je na vrsti, in naj seveda naredi to kateri gumb je bil kliknjen
+    let _: Vec<_> = event_pump.poll_iter().collect();
     loop {
-        Button::draw_button(&fold_button, canvas, &font)?;
-        Button::draw_button(&call_button, canvas, &font)?;
-        Button::draw_button(&raise_button, canvas, &font)?;
         for event in event_pump.poll_iter() {
             // se sprehodi cez use evente
             Button::handle_button_events(&event, fold_button);
             Button::handle_button_events(&event, call_button);
             Button::handle_button_events(&event, raise_button);
-            render_turn_indicator(player, canvas)?;
             canvas.present();
             match event {
                 Event::Quit { .. }
@@ -61,7 +59,16 @@ pub fn make_bet(
                 continue;
             }
         }
-
-        ::std::thread::sleep(Duration::new(0, 1_000_000_000u32 / 30))
+        let (r, g, b) = (173, 216, 230); // Light blue color
+        render_screen(canvas, Color::RGB(r, g, b), game, font)?;
+        Button::draw_button(&fold_button, canvas, &font)?;
+        Button::draw_button(&call_button, canvas, &font)?;
+        Button::draw_button(&raise_button, canvas, &font)?;
+        render_turn_indicator(player, canvas)?;
+        canvas.present();
+        if fold_button.is_clicked || call_button.is_clicked || raise_button.is_clicked {
+            ::std::thread::sleep(Duration::from_millis(200));
+        }
+        ::std::thread::sleep(Duration::from_millis(33));
     }
 }

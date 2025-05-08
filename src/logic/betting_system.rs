@@ -3,8 +3,10 @@ use crate::logic::game::Game;
 use crate::logic::game::Streets;
 use crate::logic::player;
 
-
-pub fn make_bets(game: &mut Game, mut get_bet: impl FnMut(&player::Player, u32) -> Option<u32>) {
+pub fn make_bets(
+    game: &mut Game,
+    mut get_bet: impl FnMut(&Game, u32) -> Option<u32>
+) {
     // pomoje bo to treba še enkrat napisati skor complete
 
     // ta funkcija naj bi v grobem na pravilen način zmanjšala player.money v game.players in povečala game.pot
@@ -21,6 +23,7 @@ pub fn make_bets(game: &mut Game, mut get_bet: impl FnMut(&player::Player, u32) 
     // - če je kdo stavil več kot ostali, je treba vse ostale igralce prisiliti, da stavijo še enkrat
     // - torej moramo vedeti koliko je največji bet
 
+    // še eno zaprtje print info ki poskrbi kaj se izpiše na zaslonu
     if game.street == Streets::PreFlop {
         game.position_on_turn = player::PlayerPosition::UnderTheGun;
     } else {
@@ -65,7 +68,12 @@ pub fn make_bets(game: &mut Game, mut get_bet: impl FnMut(&player::Player, u32) 
                 continue;
             }
             let needed_bet = curr_highest_bet - curr_player.current_bet;
-            let bet = get_bet(curr_player, needed_bet);
+            
+            let bet = {
+                let game_ref = &*game; // Ne-mutabilna izposoja
+                get_bet(game_ref, needed_bet) // Ne-mutabilen klic
+            };
+            let curr_player = game.get_player_from_pos(&player_pos);
             match bet {
                 None => {
                     // player folded
@@ -78,6 +86,7 @@ pub fn make_bets(game: &mut Game, mut get_bet: impl FnMut(&player::Player, u32) 
                     // player raised
                     println!("{:?} raised", curr_player.name);
                     curr_highest_bet = amount + curr_player.current_bet;
+                    curr_player.chips -= amount;
                     curr_player.current_bet += amount;
                     game.pot += amount;
                     need_another_round = true;
