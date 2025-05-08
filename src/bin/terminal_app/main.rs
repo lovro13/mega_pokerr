@@ -15,7 +15,7 @@ fn main() {
     let mut mut_game = game.borrow_mut();
     begin_round(&mut mut_game);
     print_game_info(&mut_game);
-    make_bets(&mut Rc::clone(&game), get_bet); // PREFLOP
+    make_bets(&mut mut_game, get_bet); // PREFLOP
     print_game_info(&mut_game);
     next_turn(&mut mut_game);
 }

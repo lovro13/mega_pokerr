@@ -57,7 +57,6 @@ pub fn begin_round(game: &mut Game) {
     game.board_cards = Vec::new();
     game.position_on_turn = player::PlayerPosition::UnderTheGun;
     game.round_number += 1;
-    println!("{:?}", game);
 }
 
 pub fn next_turn(game: &mut Game) {

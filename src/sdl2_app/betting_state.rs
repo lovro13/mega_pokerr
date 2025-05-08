@@ -2,66 +2,73 @@ use sdl2::pixels::Color;
 use sdl2::ttf::Font;
 use sdl2::{render::Canvas, video::Window, EventPump};
 
-use std::time::Duration;
-use std::rc::Rc;
 use std::cell::RefCell;
+use std::rc::Rc;
+use std::time::Duration;
 
 use crate::logic::betting_system::make_bets;
 use crate::logic::game::Game;
 use crate::logic::player::Player;
-use crate::sdl2_app::send_bet;
 use crate::sdl2_app::render_button::Button;
 use crate::sdl2_app::render_screen::render_screen;
+use crate::sdl2_app::send_bet;
 
 use super::constants::BACKGROUND_COLOR;
 
 pub fn run_betting_state(
     canvas: &mut Canvas<Window>,
     event_pump: &mut EventPump,
-    game: &mut Rc<RefCell<Game>>,
+    game: &Rc<RefCell<Game>>,
     font: &Font,
 ) -> Result<(), String> {
-    // let mut mut_game = game.borrow_mut();
-        render_screen(canvas, Color::RGB(200, 200, 255), &Rc::clone(&game), &font)?; // nariše use kar vidiš
-
-    let get_bet = {
-        // Prenesi potrebne komponente v zaprtje
-        let event_pump = event_pump; // Predpostavka: event_pump je `&mut EventPump`
-         // Če `Game` implementira `Clone`
+    // Kloniraj Rc<RefCell<Game>> za uporabo v zaprtju
+    let game_clone = Rc::clone(game);
     
+    // Definiraj get_bet
+    let get_bet = {
+        // Prenesi reference na canvas in font
+        let event_pump = event_pump; // &mut EventPump
+
         move |player: &Player, req_bet: u32| -> Option<u32> {
-            // 1. Ustvari NOVE gumbe za vsakega igralca
+            // Ustvari gumbe
             let mut fold_button = Button::init_fold_button(canvas);
             let mut call_button = Button::init_call_button(canvas);
             let mut raise_button = Button::init_raise_button(canvas);
-    
-            // 2. Počisti event_pump pred novo iteracijo
+
+            // Počisti event_pump
             let _: Vec<_> = event_pump.poll_iter().collect();
-    
-            // 3. Render s kloniranim stanjem (če je potrebno)
-            render_screen(
-                canvas,
-                Color::RGB(BACKGROUND_COLOR.0, BACKGROUND_COLOR.1, BACKGROUND_COLOR.2),
-                &Rc::clone(&game), // Uporabi klonirano stanje
-                &font,
-            ).unwrap();
-    
-            // 4. Pokliči make_bet s svežimi gumbi in očiščenim event_pump
+
+            // Render s ne-mutabilnim dostopom
+            {
+                let game_ref = game_clone.borrow();  // Dobimo &RefCell<Game>
+                render_screen(
+                    canvas,
+                    Color::RGB(BACKGROUND_COLOR.0, BACKGROUND_COLOR.1, BACKGROUND_COLOR.2),
+                    &*game_ref,  // Dereferenciramo v &Game
+                    font,
+                )
+                .unwrap();
+            } // game_ref se sprosti tukaj
+
             send_bet::make_bet(
                 player,
                 req_bet,
-                event_pump, // Preveri, ali je event_pump pravilno uporabljen
+                event_pump,
                 &mut fold_button,
                 &mut call_button,
                 &mut raise_button,
                 canvas,
-                &font,
+                font,
             )
             .unwrap()
         }
     };
-    
-    make_bets(&mut Rc::clone(game), get_bet);
-    ::std::thread::sleep(Duration::new(0, 1_000_000_000u32 / 30));
+
+    // Ločen scope za mutabilen dostop v make_bets
+    {
+        let mut game_mut = game.borrow_mut();
+        make_bets(&mut game_mut, get_bet);
+    }
+
     Ok(())
 }
