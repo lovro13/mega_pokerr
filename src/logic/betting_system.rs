@@ -1,10 +1,13 @@
+use std::rc::Rc;
+use std::cell::RefCell;
+
 use crate::logic::constants::BIG_BLIND;
 use crate::logic::game::Game;
 use crate::logic::game::Streets;
 use crate::logic::player;
 
 
-pub fn make_bets(game: &mut Game, mut get_bet: impl FnMut(&player::Player, u32) -> Option<u32>) {
+pub fn make_bets(game: &mut Rc<RefCell<Game>>, mut get_bet: impl FnMut(&player::Player, u32) -> Option<u32>) {
     // pomoje bo to treba še enkrat napisati skor complete
 
     // ta funkcija naj bi v grobem na pravilen način zmanjšala player.money v game.players in povečala game.pot
@@ -20,32 +23,32 @@ pub fn make_bets(game: &mut Game, mut get_bet: impl FnMut(&player::Player, u32) 
     // - vsak igralec stavi enkrat, oziroma lahko folda, kar pomeni da ga izloči iz seznama igralcev, ki igrajo
     // - če je kdo stavil več kot ostali, je treba vse ostale igralce prisiliti, da stavijo še enkrat
     // - torej moramo vedeti koliko je največji bet
+    let mut game_mut = game.borrow_mut(); 
 
-
-    if game.street == Streets::PreFlop {
-        game.position_on_turn = player::PlayerPosition::UnderTheGun;
+    if game_mut.street == Streets::PreFlop {
+        game_mut.position_on_turn = player::PlayerPosition::UnderTheGun;
     } else {
-        game.position_on_turn = player::PlayerPosition::SmallBlind;
+        game_mut.position_on_turn = player::PlayerPosition::SmallBlind;
     }
 
-    let mut start_position = game.player_on_turn().position.clone();
+    let mut start_position = game_mut.player_on_turn().position.clone();
 
     let mut betting_players_pos = vec![start_position.clone()];
-    game.go_to_next_player();
+    game_mut.go_to_next_player();
 
-    while game.player_on_turn().position != start_position {
-        if game.player_on_turn().playing {
-            betting_players_pos.push(game.player_on_turn().position.clone())
+    while game_mut.player_on_turn().position != start_position {
+        if game_mut.player_on_turn().playing {
+            betting_players_pos.push(game_mut.player_on_turn().position.clone())
         }
-        game.go_to_next_player();
+        game_mut.go_to_next_player();
     }
 
-    assert!(game.player_on_turn().position == start_position);
+    assert!(game_mut.player_on_turn().position == start_position);
 
     let mut not_playing_players = vec![];
 
     let mut curr_highest_bet = 0;
-    if game.street == Streets::PreFlop {
+    if game_mut.street == Streets::PreFlop {
         curr_highest_bet = BIG_BLIND;
     }
     let mut need_another_round = false;
@@ -56,11 +59,11 @@ pub fn make_bets(game: &mut Game, mut get_bet: impl FnMut(&player::Player, u32) 
             if not_playing_players.len() >= 7 {
                 return;
             }
-            let player_pos = game.position_on_turn.clone();
-            let curr_player = game.get_player_from_pos(&player_pos);
+            let player_pos = game_mut.position_on_turn.clone();
+            let curr_player = game_mut.get_player_from_pos(&player_pos);
             if !curr_player.playing {
-                game.go_to_next_player();
-                if game.player_on_turn().position == start_position {
+                game_mut.go_to_next_player();
+                if game_mut.player_on_turn().position == start_position {
                     break;
                 }
                 continue;
@@ -80,10 +83,10 @@ pub fn make_bets(game: &mut Game, mut get_bet: impl FnMut(&player::Player, u32) 
                     println!("{:?} raised", curr_player.name);
                     curr_highest_bet = amount + curr_player.current_bet;
                     curr_player.current_bet += amount;
-                    game.pot += amount;
+                    game_mut.pot += amount;
                     need_another_round = true;
                     start_position = player_pos.clone();
-                    game.go_to_next_player();
+                    game_mut.go_to_next_player();
                     break;
                 }
                 Some(amount) => {
@@ -91,15 +94,15 @@ pub fn make_bets(game: &mut Game, mut get_bet: impl FnMut(&player::Player, u32) 
                     println!("{:?} called", curr_player.name);
                     curr_player.chips -= amount;
                     curr_player.current_bet += amount;
-                    game.pot += amount;
+                    game_mut.pot += amount;
                 }
             }
-            game.go_to_next_player();
-            if game.player_on_turn().position == start_position {
+            game_mut.go_to_next_player();
+            if game_mut.player_on_turn().position == start_position {
                 break;
             }
             let mut playing_players = 0;
-            for player in game.players.iter() {
+            for player in game_mut.players.iter() {
                 if player.playing {
                     playing_players += 1;
                 }

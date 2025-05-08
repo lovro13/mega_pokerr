@@ -3,6 +3,8 @@ use sdl2::ttf::Font;
 use sdl2::{render::Canvas, video::Window, EventPump};
 
 use std::time::Duration;
+use std::rc::Rc;
+use std::cell::RefCell;
 
 use crate::logic::betting_system::make_bets;
 use crate::logic::game::Game;
@@ -16,15 +18,17 @@ use super::constants::BACKGROUND_COLOR;
 pub fn run_betting_state(
     canvas: &mut Canvas<Window>,
     event_pump: &mut EventPump,
-    game: &mut Game,
+    game: &mut Rc<RefCell<Game>>,
     font: &Font,
 ) -> Result<(), String> {
-    render_screen(canvas, Color::RGB(200, 200, 255), &game.clone(), &font)?; // nariše use kar vidiš
+    // let mut mut_game = game.borrow_mut();
+    let unmut_game = game.borrow();
+    render_screen(canvas, Color::RGB(200, 200, 255), &unmut_game.clone(), &font)?; // nariše use kar vidiš
 
     let get_bet = {
         // Prenesi potrebne komponente v zaprtje
         let event_pump = event_pump; // Predpostavka: event_pump je `&mut EventPump`
-        let game_for_rendering = game.clone(); // Če `Game` implementira `Clone`
+         // Če `Game` implementira `Clone`
     
         move |player: &Player, req_bet: u32| -> Option<u32> {
             // 1. Ustvari NOVE gumbe za vsakega igralca
@@ -39,7 +43,7 @@ pub fn run_betting_state(
             render_screen(
                 canvas,
                 Color::RGB(BACKGROUND_COLOR.0, BACKGROUND_COLOR.1, BACKGROUND_COLOR.2),
-                &game_for_rendering, // Uporabi klonirano stanje
+                &unmut_game, // Uporabi klonirano stanje
                 &font,
             ).unwrap();
     
@@ -58,7 +62,7 @@ pub fn run_betting_state(
         }
     };
     
-    make_bets(game, get_bet);
+    make_bets(&mut Rc::clone(game), get_bet);
     ::std::thread::sleep(Duration::new(0, 1_000_000_000u32 / 30));
     Ok(())
 }

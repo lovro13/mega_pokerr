@@ -1,4 +1,6 @@
 use core::panic;
+use std::rc::Rc;
+use std::cell::RefCell;
 
 use crate::logic::card;
 use crate::logic::player;
@@ -70,7 +72,7 @@ impl Game {
     }
 }
 
-pub fn init_game(player_list: Vec<player::Player>) -> Game {
+pub fn init_game(player_list: Vec<player::Player>) -> Rc<RefCell<Game>> {
     let deck = card::Card::make_ordered_deck();
     let deck = card::Card::scramble_deck(deck);
     let mut players_in_game = vec![];
@@ -78,7 +80,7 @@ pub fn init_game(player_list: Vec<player::Player>) -> Game {
         players_in_game.push(player.name.clone());
     }
     let mut_player_list = player_list;
-    Game {
+    Rc::new(RefCell::new(Game {
         street: Streets::PreFlop,
         pot: 0,
         players: mut_player_list,
@@ -86,5 +88,5 @@ pub fn init_game(player_list: Vec<player::Player>) -> Game {
         board_cards: Vec::new(),
         position_on_turn: player::PlayerPosition::UnderTheGun,
         round_number: 0
-    }
+    }))
 }

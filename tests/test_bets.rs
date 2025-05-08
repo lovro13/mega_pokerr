@@ -5,12 +5,13 @@ mod tests {
     use mega_pokerr::logic::betting_system::make_bets;
     use mega_pokerr::logic::player::Player;
     use mega_pokerr::logic::game::init_game;
-use rand::Rng;
+    use rand::Rng;
+    use std::rc::Rc;
 
     #[test]
     fn test_of_betting_function_runs() {
         let player_list = Player::init_players();
-        let mut game = init_game(player_list);
+        let game = init_game(player_list);
         let get_bet = |player: &Player, bet: u32| {
             if player.playing {
                 Some(bet)
@@ -18,12 +19,13 @@ use rand::Rng;
                 None
             }
         };
-        make_bets(&mut game, get_bet);
+        make_bets(&mut Rc::clone(&game), get_bet);
     }
     #[test]
     fn test_betting_all_in() {
         let player_list = Player::init_players();
-        let mut game = init_game(player_list);
+        let game = init_game(player_list);
+        let unmut_game = game.borrow();
         let get_bet = |player: &Player, _bet: u32| {
             println!("Player {:?}, betting all in {}", player.position, player.chips);
             if player.playing {
@@ -32,15 +34,16 @@ use rand::Rng;
                 None
             }
         };
-        println!("Game pot before: {}", game.pot);
-        make_bets(&mut game, get_bet);
-        println!("Game pot after: {}", game.pot);
+        println!("Game pot before: {}", unmut_game.pot);
+        make_bets(&mut Rc::clone(&game), get_bet);
+        println!("Game pot after: {}", unmut_game.pot);
     }
 
     #[test]
     fn test_betting_half_chips() {
         let player_list = Player::init_players();
-        let mut game = init_game(player_list);
+        let game = init_game(player_list);
+        let unmut_game  = game.borrow();
         let get_bet = |player: &Player, _bet: u32| {
             if player.playing {
                 println!("Player {:?}, betting {}", player.position, player.chips / 2);
@@ -49,9 +52,9 @@ use rand::Rng;
                 None
             }
         };
-        println!("Game pot before: {}", game.pot);
-        make_bets(&mut game, get_bet);
-        println!("Game pot after: {}", game.pot);
+        println!("Game pot before: {}", unmut_game.pot);
+        make_bets(&mut Rc::clone(&game), get_bet);
+        println!("Game pot after: {}", unmut_game.pot);
     }
 
     #[test]
