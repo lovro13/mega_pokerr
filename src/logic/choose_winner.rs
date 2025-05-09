@@ -14,8 +14,8 @@ pub fn choose_winner(game: &mut Game) -> Vec<&mut Player> {
     }
 
     list.sort_by(|a, b| b.1.cmp(&a.1));
-    list.reverse();
     let winning_hand_ranking = list[0].1.clone();
+    println!("winning hand ranking {:#?}", winning_hand_ranking);
     let mut winners = vec![list.remove(0).0];
     for (player, hand_ranking) in list {
         if hand_ranking == winning_hand_ranking {
@@ -39,5 +39,6 @@ pub fn players_hand_ranking(player: &Player, board_cards: &Vec<Card>) -> HandRan
         .collect::<Vec<_>>();
     hand_rankings.sort();
     hand_rankings.reverse();
+    println!("players {:#?} hand ranking {:?}", player.name, hand_rankings[0].clone());
     return hand_rankings[0].clone();
 }

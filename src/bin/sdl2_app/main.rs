@@ -43,6 +43,9 @@ fn main() -> Result<(), String> {
 
     // GLAVNA ZANKA
     loop {
+        if game.borrow().round_number > 2 {
+            break;
+        }
         {
             let mut mut_game = game.borrow_mut();
             begin_round(&mut mut_game);

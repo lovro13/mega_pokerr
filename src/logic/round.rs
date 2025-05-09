@@ -2,7 +2,6 @@ use core::panic;
 
 // treba bolj organizirati med round in game
 use crate::logic::card;
-use crate::logic::choose_winner::choose_winner;
 use crate::logic::player;
 use crate::logic::game::Game;
 use crate::logic::game::Streets;
