@@ -20,6 +20,7 @@ pub fn begin_round(game: &mut Game) {
     game.pot = 0;
     for player in game.players.iter_mut() {
         player.position = player::PlayerPosition::next_player_position(&player.position);
+        player.playing = true;
         let card1 = match deck.pop() {
             None => panic!("Deck is empty (begin_round)"),
             Some(card) => card,
@@ -85,7 +86,6 @@ pub fn next_turn(game: &mut Game) {
     };
 
     for player in game.players.iter_mut() {
-        player.playing = true;
         player.current_bet = 0;
     }
 }

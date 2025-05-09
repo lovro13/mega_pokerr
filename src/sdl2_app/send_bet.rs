@@ -10,6 +10,7 @@ use crate::logic::constants::BIG_BLIND;
 use crate::logic::game::Game;
 use crate::logic::player::Player;
 use crate::sdl2_app::render_button::Button;
+use crate::sdl2_app::render_text::write_info;
 
 use super::render_screen::{render_screen, render_turn_indicator};
 
@@ -43,18 +44,32 @@ pub fn make_bet(
             }
         }
         if fold_button.is_clicked {
-            println!("folding in sld2app");
+            write_info(canvas, format!("{:?} folded", player.name), font)?;
+            canvas.present();
+            ::std::thread::sleep(Duration::from_millis(800));
             return Ok(None);
         } else if call_button.is_clicked {
             if req_bet <= player.chips {
+                write_info(canvas, format!("{:?} called", player.name), font)?;
+                canvas.present();
+                ::std::thread::sleep(Duration::from_millis(800));
                 return Ok(Some(req_bet));
             } else {
+                write_info(canvas, format!("{:?} you dont have enough chips", player.name), font)?;
+                canvas.present();
+                ::std::thread::sleep(Duration::from_millis(800));
                 continue;
             }
         } else if raise_button.is_clicked {
             if player.chips >= req_bet + BIG_BLIND {
+                write_info(canvas, format!("{:?} raised", player.name), font)?;
+                canvas.present();
+                ::std::thread::sleep(Duration::from_millis(800));
                 return Ok(Some(req_bet + BIG_BLIND));
             } else {
+                write_info(canvas, format!("{:?} you dont have enough chips", player.name), font)?;
+                canvas.present();
+                ::std::thread::sleep(Duration::from_millis(800));
                 continue;
             }
         }

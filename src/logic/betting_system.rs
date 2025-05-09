@@ -34,18 +34,20 @@ pub fn make_bets(
 
     let mut betting_players_pos = vec![start_position.clone()];
     game.go_to_next_player();
-
+    
     while game.player_on_turn().position != start_position {
         if game.player_on_turn().playing {
             betting_players_pos.push(game.player_on_turn().position.clone())
         }
         game.go_to_next_player();
     }
-
+    if betting_players_pos.len() <= 1 {
+        return;
+    }
     assert!(game.player_on_turn().position == start_position);
-
+    
     let mut not_playing_players = vec![];
-
+    
     let mut curr_highest_bet = 0;
     if game.street == Streets::PreFlop {
         curr_highest_bet = BIG_BLIND;
@@ -54,7 +56,9 @@ pub fn make_bets(
     loop {
         // loop če je treba narediti več krogov stav - torej ko nekdo raisa
         loop {
+
             // en krog stav, če nekdo raisa se krog konča in je on nov začetni player
+            println!("not playing player: {}", not_playing_players.len());
             if not_playing_players.len() >= 7 {
                 return;
             }

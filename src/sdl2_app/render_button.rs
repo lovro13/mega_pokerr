@@ -41,7 +41,7 @@ impl Button {
 
         canvas.set_draw_color(color);
         canvas.fill_rect(self.rect)?;
-        draw_text(canvas, &self.text, &self.rect, font, text_color)?;
+        draw_text(canvas, &self.text, self.rect, font, text_color)?;
         Ok(())
     }
 

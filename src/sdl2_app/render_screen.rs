@@ -5,12 +5,13 @@ use sdl2::pixels::Color;
 use sdl2::rect::{Point, Rect};
 use sdl2::render::WindowCanvas;
 
-use crate::sdl2_app::constants::{CARD_HEIGHT, CARD_WIDTH};
+use crate::sdl2_app::constants::CARD_WIDTH;
 use crate::sdl2_app::render_text::draw_text;
+
 
 pub fn get_screen_center(canvas: &WindowCanvas) -> Point {
     let (width, height) = canvas.output_size().unwrap();
-    let screen_center = Point::new(width as i32 / 2, (height as i32) / 2 - 100);
+    let screen_center = Point::new(width as i32 / 2, (height as i32) / 2 - 40);
     return screen_center;
 }
 
@@ -35,16 +36,11 @@ pub fn render_player_info(
     // nariše karte, ime, balance, dealer žeton, če je treba
     let player_center = player.get_player_screen_center(canvas);
     // tukaj je center v player_position z normalnim kartezičnim
-    let card_target1 = Rect::from_center(player_center, CARD_WIDTH, CARD_HEIGHT);
-    let screen_position2 = player_center + Point::new(30, 0);
-    let card_target2 = Rect::from_center(screen_position2, CARD_WIDTH, CARD_HEIGHT);
-    let texture_creator = canvas.texture_creator();
-    let filename1 = player.hand_cards.0.card_to_file();
-    let filename2 = player.hand_cards.1.card_to_file();
-    let texture1 = texture_creator.load_texture(filename1)?;
-    let texture2 = texture_creator.load_texture(filename2)?;
-    canvas.copy(&texture1, None, card_target1)?;
-    canvas.copy(&texture2, None, card_target2)?;
+    let card2_pos = player_center + Point::new(30, 0);
+    if player.playing {
+        player.hand_cards.0.draw_card(canvas, player_center)?;
+        player.hand_cards.1.draw_card(canvas, card2_pos)?;
+    }
 
     // write player name near the player cards
     let text_color = Color::RGB(0, 0, 0);
@@ -53,7 +49,7 @@ pub fn render_player_info(
     let player_name_position = player_center + Point::new(25, 85);
     let text_target = Rect::from_center(player_name_position, 150 as u32, 75 as u32);
 
-    let _ = draw_text(canvas, &name_text, &text_target, font, text_color);
+    let _ = draw_text(canvas, &name_text, text_target, font, text_color);
 
     let balance_color = Color::RGB(0, 0, 10);
     let balance_text = format!("Balance: {}", player.chips);
@@ -63,7 +59,7 @@ pub fn render_player_info(
     let _ = draw_text(
         canvas,
         &balance_text,
-        &balance_text_target,
+        balance_text_target,
         font,
         balance_color,
     );
