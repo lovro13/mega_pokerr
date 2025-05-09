@@ -61,10 +61,11 @@ pub fn begin_round(game: &mut Game) {
 
 pub fn next_turn(game: &mut Game) {
     // gre na naslednji street in "položi karte na mizo kolikor je treba"
+    game.go_to_next_street();
     let _ = match game.street.clone() {
         Streets::PreFlop => {}
         Streets::Flop => {
-            for _ in 0..2 {
+            for _ in 0..3 {
                 let card = match game.deck.pop() {
                     None => panic!("Deck is empty"),
                     Some(card) => card,
@@ -80,8 +81,12 @@ pub fn next_turn(game: &mut Game) {
             game.board_cards.push(card);
         }
         Streets::Showdown => {
-            choose_winner(game);
+            
         }
     };
-    game.go_to_next_street();
+
+    for player in game.players.iter_mut() {
+        player.playing = true;
+        player.current_bet = 0;
+    }
 }

@@ -6,8 +6,13 @@ use sdl2::rect::{Point, Rect};
 use sdl2::render::WindowCanvas;
 
 use crate::sdl2_app::constants::{CARD_HEIGHT, CARD_WIDTH};
-use crate::sdl2_app::render_cards;
 use crate::sdl2_app::render_text::draw_text;
+
+pub fn get_screen_center(canvas: &WindowCanvas) -> Point {
+    let (width, height) = canvas.output_size().unwrap();
+    let screen_center = Point::new(width as i32 / 2, (height as i32) / 2 - 100);
+    return screen_center;
+}
 
 impl Player {
     pub fn get_player_screen_center(&self, canvas: &WindowCanvas) -> Point {
@@ -21,6 +26,7 @@ impl Player {
     }
 }
 
+
 pub fn render_player_info(
     canvas: &mut WindowCanvas,
     player: &player::Player,
@@ -33,8 +39,8 @@ pub fn render_player_info(
     let screen_position2 = player_center + Point::new(30, 0);
     let card_target2 = Rect::from_center(screen_position2, CARD_WIDTH, CARD_HEIGHT);
     let texture_creator = canvas.texture_creator();
-    let filename1 = render_cards::card_to_file(&player.hand_cards.0);
-    let filename2 = render_cards::card_to_file(&player.hand_cards.1);
+    let filename1 = player.hand_cards.0.card_to_file();
+    let filename2 = player.hand_cards.1.card_to_file();
     let texture1 = texture_creator.load_texture(filename1)?;
     let texture2 = texture_creator.load_texture(filename2)?;
     canvas.copy(&texture1, None, card_target1)?;
@@ -96,6 +102,13 @@ pub fn render_screen(
         // let _ = player::Player::render_player_info(canvas, player, font);
         let _ = render_player_info(canvas, player, font);
         // nariše karte, imena, balance
+    }
+
+    let screen_center = get_screen_center(canvas);
+    let mut card_position = screen_center - Point::new((2.5 * CARD_WIDTH as f32) as i32, 0);
+    for card in game.board_cards.iter() {
+        card.draw_card(canvas, card_position)?;
+        card_position.x += (CARD_WIDTH + 10) as i32;        
     }
     Ok(())
 }

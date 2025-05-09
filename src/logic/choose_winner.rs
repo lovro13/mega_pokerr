@@ -6,9 +6,9 @@ use super::player::Player;
 use super::game::Game;
 use itertools::Itertools;
 
-pub fn choose_winner(game: &mut Game) -> Vec<&Player> {
+pub fn choose_winner(game: &mut Game) -> Vec<&mut Player> {
     let mut list = Vec::new();
-    for player in game.players.iter() {
+    for player in game.players.iter_mut() {
         let hand_ranking = players_hand_ranking(player, &game.board_cards);
         list.push((player, hand_ranking));
     }
@@ -17,9 +17,9 @@ pub fn choose_winner(game: &mut Game) -> Vec<&Player> {
     list.reverse();
     let winning_hand_ranking = list[0].1.clone();
     let mut winners = vec![list.remove(0).0];
-    for (player, hand_ranking) in list.iter() {
-        if hand_ranking == &winning_hand_ranking {
-            winners.push(*player);
+    for (player, hand_ranking) in list {
+        if hand_ranking == winning_hand_ranking {
+            winners.push(player);
         } else {
             break;
         }
