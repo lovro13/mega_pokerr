@@ -31,7 +31,6 @@ pub fn make_bet(
             Button::handle_button_events(&event, fold_button);
             Button::handle_button_events(&event, call_button);
             Button::handle_button_events(&event, raise_button);
-            canvas.present();
             match event {
                 Event::Quit { .. }
                 | Event::KeyDown {
