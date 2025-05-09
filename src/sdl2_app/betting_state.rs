@@ -33,7 +33,6 @@ pub fn run_betting_state(
             let mut call_button = Button::init_call_button(&mut *canvas_borrow);
             let mut raise_button = Button::init_raise_button(&mut *canvas_borrow);
 
-
             send_bet::make_bet(
                 player,
                 req_bet,
