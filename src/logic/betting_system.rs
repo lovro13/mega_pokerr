@@ -58,7 +58,6 @@ pub fn make_bets(
         loop {
 
             // en krog stav, če nekdo raisa se krog konča in je on nov začetni player
-            println!("not playing player: {}", not_playing_players.len());
             if not_playing_players.len() >= 7 {
                 return;
             }

@@ -7,6 +7,8 @@ use sdl2::render::WindowCanvas;
 
 use crate::sdl2_app::render_text::draw_text;
 
+use super::render_screen::get_screen_center;
+
 pub struct Button {
     pub rect: Rect,
     pub text: String,
@@ -115,6 +117,21 @@ impl Button {
         Button {
             rect: button_target,
             text: String::from("RAISE"),
+            is_clicked: false,
+        }
+        
+    }
+
+    pub fn init_end_of_round_button(canvas: &mut WindowCanvas) -> Self {
+        let screen_center = get_screen_center(canvas);
+        let button_position = screen_center
+            + Point::new(
+                0, 125
+            );
+        let button_target = Rect::from_center(button_position, 200, 50);
+        Button {
+            rect: button_target,
+            text: String::from("START NEW ROUND"),
             is_clicked: false,
         }
         

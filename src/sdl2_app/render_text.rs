@@ -9,7 +9,7 @@ pub fn draw_text(
     string: &String,
     position: Rect,
     font: &sdl2::ttf::Font,
-    text_color: Color,
+    text_color: Color
 ) -> Result<(), String> {
     let texture_creator = canvas.texture_creator();
     let name_surface = font
@@ -24,10 +24,10 @@ pub fn draw_text(
     Ok(())
 }
 
-pub fn write_info(canvas: &mut WindowCanvas, string: String, font: &sdl2::ttf::Font) -> Result<(), String> {
+pub fn write_info(canvas: &mut WindowCanvas, string: String, font: &sdl2::ttf::Font, size: u32) -> Result<(), String> {
     let center = get_screen_center(&canvas);
     let pos = Point::new(center.x, center.y - 100);
-    let rect = Rect::from_center(pos, 250, 60);
+    let rect = Rect::from_center(pos, size, 60);
     println!("Rišem write_info");
     canvas.set_draw_color(Color::RGB(255, 102, 102));
     canvas.fill_rect(rect)?;

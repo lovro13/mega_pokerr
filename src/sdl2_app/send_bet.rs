@@ -44,30 +44,30 @@ pub fn make_bet(
             }
         }
         if fold_button.is_clicked {
-            write_info(canvas, format!("{:?} folded", player.name), font)?;
+            write_info(canvas, format!("{:?} folded", player.name), font, 250)?;
             canvas.present();
             ::std::thread::sleep(Duration::from_millis(800));
             return Ok(None);
         } else if call_button.is_clicked {
             if req_bet <= player.chips {
-                write_info(canvas, format!("{:?} called", player.name), font)?;
+                write_info(canvas, format!("{:?} called", player.name), font, 250)?;
                 canvas.present();
                 ::std::thread::sleep(Duration::from_millis(800));
                 return Ok(Some(req_bet));
             } else {
-                write_info(canvas, format!("{:?} you dont have enough chips", player.name), font)?;
+                write_info(canvas, format!("{:?} you dont have enough chips", player.name), font, 250)?;
                 canvas.present();
                 ::std::thread::sleep(Duration::from_millis(800));
                 continue;
             }
         } else if raise_button.is_clicked {
             if player.chips >= req_bet + BIG_BLIND {
-                write_info(canvas, format!("{:?} raised", player.name), font)?;
+                write_info(canvas, format!("{:?} raised", player.name), font, 250)?;
                 canvas.present();
                 ::std::thread::sleep(Duration::from_millis(800));
                 return Ok(Some(req_bet + BIG_BLIND));
             } else {
-                write_info(canvas, format!("{:?} you dont have enough chips", player.name), font)?;
+                write_info(canvas, format!("{:?} you dont have enough chips", player.name), font, 250)?;
                 canvas.present();
                 ::std::thread::sleep(Duration::from_millis(800));
                 continue;
