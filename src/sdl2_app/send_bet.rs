@@ -12,7 +12,7 @@ use crate::logic::player::Player;
 use crate::sdl2_app::render_button::Button;
 use crate::sdl2_app::render_text::write_info;
 
-use super::render_screen::{render_screen, render_turn_indicator};
+use super::render_screen::render_screen;
 
 pub fn make_bet(
     player: &Player,
@@ -78,7 +78,7 @@ pub fn make_bet(
         Button::draw_button(&fold_button, canvas, &font)?;
         Button::draw_button(&call_button, canvas, &font)?;
         Button::draw_button(&raise_button, canvas, &font)?;
-        render_turn_indicator(player, canvas)?;
+        // render_turn_indicator(player, canvas)?;
         canvas.present();
         if fold_button.is_clicked || call_button.is_clicked || raise_button.is_clicked {
             ::std::thread::sleep(Duration::from_millis(200));

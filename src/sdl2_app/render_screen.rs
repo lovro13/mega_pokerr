@@ -32,6 +32,7 @@ pub fn render_player_info(
     canvas: &mut WindowCanvas,
     player: &player::Player,
     font: &sdl2::ttf::Font,
+    color: Color
 ) -> Result<(), String> {
     // nariše karte, ime, balance, dealer žeton, če je treba
     let player_center = player.get_player_screen_center(canvas);
@@ -43,13 +44,12 @@ pub fn render_player_info(
     }
 
     // write player name near the player cards
-    let text_color = Color::RGB(0, 0, 0);
     let name_text = player::Player::get_player_name(player);
 
     let player_name_position = player_center + Point::new(25, 85);
     let text_target = Rect::from_center(player_name_position, 150 as u32, 75 as u32);
 
-    let _ = draw_text(canvas, &name_text, text_target, font, text_color);
+    draw_text(canvas, &name_text, text_target, font, color)?;
 
     let balance_color = Color::RGB(0, 0, 10);
     let balance_text = format!("Balance: {}", player.chips);
@@ -77,8 +77,9 @@ pub fn render_player_info(
 
 pub fn render_turn_indicator(player: &Player, canvas: &mut WindowCanvas) -> Result<(), String> {
     let player_center = player.get_player_screen_center(canvas);
-    let indincator_target = player_center + Point::new(-20, 50);
-    let target = Rect::from_center(indincator_target, 50, 50);
+    let player_name_position = player_center + Point::new(25, 85);
+    let indincator_target = player_name_position + Point::new(0, 80);
+    let target = Rect::from_center(indincator_target, 150, 10);
     canvas.set_draw_color(Color::RGB(200, 0, 0));
     canvas.fill_rect(target)?;
     Ok(())
@@ -96,7 +97,15 @@ pub fn render_screen(
     for player in players_list {
         //naprinta ime in karte igralca
         // let _ = player::Player::render_player_info(canvas, player, font);
-        let _ = render_player_info(canvas, player, font);
+        let color = Color::RGB(0, 0, 0);
+        if player.position == game.position_on_turn {
+            let background = Color::RGB(255, 105, 105);
+            let player_name_position = player.get_player_screen_center(canvas) + Point::new(25, 85);
+            let text_target = Rect::from_center(player_name_position, 150 as u32, 50 as u32);
+            canvas.set_draw_color(background);
+            canvas.fill_rect(text_target)?;
+        }
+        let _ = render_player_info(canvas, player, font, color);
         // nariše karte, imena, balance
     }
 

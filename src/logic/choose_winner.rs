@@ -9,8 +9,10 @@ use itertools::Itertools;
 pub fn choose_winner(game: &mut Game) -> Vec<&mut Player> {
     let mut list = Vec::new();
     for player in game.players.iter_mut() {
-        let hand_ranking = players_hand_ranking(player, &game.board_cards);
-        list.push((player, hand_ranking));
+        if player.playing {
+            let hand_ranking = players_hand_ranking(player, &game.board_cards);
+            list.push((player, hand_ranking));
+        }
     }
 
     list.sort_by(|a, b| b.1.cmp(&a.1));

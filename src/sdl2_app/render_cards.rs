@@ -31,7 +31,7 @@ impl Card {
             CardNumber::NA => String::from("ace"),
             CardNumber::Empty => String::from("red_joker.png"),
         };
-        String::from("assets/") + &string1 + &string2
+        String::from("assets/cards/") + &string1 + &string2
     }
 
     pub fn draw_card(&self, canvas: &mut WindowCanvas, position: Point) -> Result<(), String> {

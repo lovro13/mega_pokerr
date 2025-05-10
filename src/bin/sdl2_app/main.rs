@@ -25,7 +25,7 @@ fn main() -> Result<(), String> {
     let mut canvas = app_context.canvas;
     let font = app_context
         .ttf_context
-        .load_font("font/Poppins-Black.ttf", 120)
+        .load_font("assets/font/Poppins-Black.ttf", 120)
         .map_err(|e| e.to_string())?;
 
     // GLAVNA ZANKA
