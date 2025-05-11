@@ -1,3 +1,4 @@
+use crate::logic::constants::{BIG_BLIND, SMALL_BLIND};
 use crate::logic::game::Game;
 use crate::logic::player::{self, Player};
 use sdl2::image::LoadTexture;
@@ -7,6 +8,8 @@ use sdl2::render::WindowCanvas;
 
 use crate::sdl2_app::constants::CARD_WIDTH;
 use crate::sdl2_app::render_text::draw_text;
+
+use super::constants::CARD_HEIGHT;
 
 
 pub fn get_screen_center(canvas: &WindowCanvas) -> Point {
@@ -62,7 +65,63 @@ pub fn render_player_info(
         balance_text_target,
         font,
         balance_color,
-    );
+    );  
+
+    let texture_creator = canvas.texture_creator();
+    let texture_red = texture_creator.load_texture("assets/pokerchip_red.png")?;
+    let texture_yellow = texture_creator.load_texture("assets/pokerchip_yellow.png")?;
+    let texture_green = texture_creator.load_texture("assets/pokerchip_green.png")?;
+    let texture_blue = texture_creator.load_texture("assets/pokerchip_blue.png")?;
+    let mut balance_with_chips_pos =  player_name_position + Point::new(-(CARD_WIDTH as i32), 50);
+    let mut copy_balance = player.chips.clone() as i32;
+    println!("tukaj sem 2.0 with {:?}", player.name);    
+    while copy_balance > 0 {
+        println!("tukaj sem 2.01");
+        let target = Rect::from_center(balance_with_chips_pos, 30, 30);
+        if copy_balance >= 1000 {
+            canvas.copy(&texture_green, None, target)?;
+            copy_balance -= 1000;
+        } else if copy_balance >= 100 {
+            canvas.copy(&texture_yellow, None, target)?;
+            copy_balance -= 100;
+        } else if copy_balance >= BIG_BLIND as i32 {
+            canvas.copy(&texture_red, None, target)?;
+            copy_balance -= BIG_BLIND as i32;
+        } else if copy_balance >= SMALL_BLIND as i32 {
+            canvas.copy(&texture_blue, None, target)?;
+            copy_balance -= SMALL_BLIND as i32;
+        } else {
+            break;
+        }
+        balance_with_chips_pos += Point::new(0, -10);
+
+    }
+    if !player.playing {
+        let folded_color = Color::RGB(128, 128, 128);
+        let folded_text = String::from("Folded");
+        let folded_text_position = player_name_position + Point::new(0, -100);
+        let folded_text_target = Rect::from_center(folded_text_position, 150 as u32, 50 as u32);
+        draw_text(canvas, &folded_text, folded_text_target, font, folded_color)?;
+    }
+    let mut copy_curr_bet: i32 = player.current_bet.clone() as i32;
+    let mut x_pos = -30;
+    while copy_curr_bet > 0 {
+        let curr_bet_pos = player_center + Point::new(x_pos, -(CARD_HEIGHT as i32) / 2 - 15);
+        let curr_bet_target = Rect::from_center(curr_bet_pos, 30, 30);
+        if copy_curr_bet as u32 >= 100 {
+            canvas.copy(&texture_yellow, None, curr_bet_target)?;
+            copy_curr_bet -= 100 as i32;
+        } else if copy_curr_bet as u32 >= BIG_BLIND {
+            canvas.copy(&texture_red, None, curr_bet_target)?;
+            copy_curr_bet -= BIG_BLIND as i32;
+        } else if copy_curr_bet as u32 >= SMALL_BLIND {
+            canvas.copy(&texture_blue, None, curr_bet_target)?;
+            copy_curr_bet -= SMALL_BLIND as i32;
+        } else {
+            break;
+        }
+        x_pos += 10;
+    }
 
     if player.position == player::PlayerPosition::Dealer {
         let texture_creator = canvas.texture_creator();
@@ -71,7 +130,6 @@ pub fn render_player_info(
         let screen_rect_dealer = Rect::from_center(screen_position4, 70, 70);
         canvas.copy(&texture, None, screen_rect_dealer)?;
     }
-
     Ok(())
 }
 

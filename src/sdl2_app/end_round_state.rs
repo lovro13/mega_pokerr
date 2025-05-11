@@ -18,6 +18,7 @@ pub fn end_round(
     canvas: &mut WindowCanvas,
     font: &Font,
 ) -> Result<(), String> {
+    println!("do tukaj pridm");
     let curr_pot = game.pot;
     let mut winners = choose_winner(game);
     let winnings = curr_pot - winners.len() as u32;
@@ -44,13 +45,16 @@ pub fn end_round(
             }
         }
         let (r, g, b) = (173, 216, 230); // Light blue color
+        println!("tukaj sem1");
         render_screen(canvas, Color::RGB(r, g, b), game, font)?;
+        println!("tukaj sem2");
         write_info(
             canvas,
             format!("{:?} won the round and {} chips", print_winners, winnings),
             font,
             500
         )?;
+        println!("tukaj sem3");
         continue_button.draw_button(canvas, font)?;
         canvas.present();
         if continue_button.is_clicked {
