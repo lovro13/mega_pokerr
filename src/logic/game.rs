@@ -35,7 +35,8 @@ pub struct Game {
     pub deck: Vec<card::Card>,        // seznam kart
     pub board_cards: Vec<card::Card>, // katere karte so na mizi
     pub position_on_turn: player::PlayerPosition, // kateri igralec je na vrsti, imamo poziicijo, torej kje sedi
-    pub round_number: u32                        // okrasek, koliko rund smo že odigral
+    pub round_number: u32,
+    pub quit: bool                        // okrasek, koliko rund smo že odigral
 }
 
 impl Game {
@@ -98,5 +99,6 @@ pub fn init_game(player_list: Vec<player::Player>) -> Rc<RefCell<Game>> {
         board_cards: Vec::new(),
         position_on_turn: player::PlayerPosition::UnderTheGun,
         round_number: 0,
+        quit: false
     }))
 }

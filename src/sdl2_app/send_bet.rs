@@ -4,6 +4,7 @@ use sdl2::ttf::Font;
 use sdl2::video::Window;
 use sdl2::EventPump;
 use sdl2::{event::Event, pixels::Color};
+use std::sync::atomic::Ordering;
 use std::time::Duration;
 
 use crate::logic::constants::BIG_BLIND;
@@ -11,6 +12,7 @@ use crate::logic::game::Game;
 use crate::logic::player::Player;
 use crate::sdl2_app::render_button::Button;
 use crate::sdl2_app::render_text::write_info;
+use crate::logic::constants::SHOULD_QUIT;
 
 use super::render_screen::render_screen;
 
@@ -23,7 +25,7 @@ pub fn make_bet(
     raise_button: &mut Button,
     canvas: &mut Canvas<Window>,
     font: &Font,
-    game: &Game,
+    game: &Game
 ) -> Result<Option<u32>, String> {
     let _: Vec<_> = event_pump.poll_iter().collect();
     loop {
@@ -38,7 +40,8 @@ pub fn make_bet(
                     keycode: Some(Keycode::Escape),
                     ..
                 } => {
-                    panic!("ustavljam igro z panic, ker drugače ne gre :) <3");
+                    SHOULD_QUIT.store(true, Ordering::Relaxed);
+                    return Ok(None); // Signal za izhod
                 }
                 _ => {}
             }

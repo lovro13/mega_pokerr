@@ -74,9 +74,7 @@ pub fn render_player_info(
     let texture_blue = texture_creator.load_texture("assets/pokerchip_blue.png")?;
     let mut balance_with_chips_pos =  player_name_position + Point::new(-(CARD_WIDTH as i32), 50);
     let mut copy_balance = player.chips.clone() as i32;
-    println!("tukaj sem 2.0 with {:?}", player.name);    
     while copy_balance > 0 {
-        println!("tukaj sem 2.01");
         let target = Rect::from_center(balance_with_chips_pos, 30, 30);
         if copy_balance >= 1000 {
             canvas.copy(&texture_green, None, target)?;

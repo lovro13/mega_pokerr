@@ -1,3 +1,5 @@
+use std::sync::atomic::Ordering;
+
 use mega_pokerr::logic::round::next_turn;
 use mega_pokerr::sdl2_app::betting_state::run_betting_state;
 use mega_pokerr::sdl2_app::end_round_state::end_round;
@@ -6,7 +8,7 @@ use mega_pokerr::sdl2_app::resources::init_app_context;
 use mega_pokerr::logic::game;
 use mega_pokerr::logic::player;
 use mega_pokerr::logic::round::begin_round;
-
+use mega_pokerr::logic::constants::SHOULD_QUIT;
 pub enum GameState {
     Paused,
     Played(player::Player),
@@ -39,6 +41,10 @@ fn main() -> Result<(), String> {
             println!("Current street {:?}", mut_game.street);
         }
         for _ in 0..4 {
+            if SHOULD_QUIT.load(Ordering::Relaxed) {
+                println!("Exiting gracefully...");
+                break;
+            }
             {
                 run_betting_state(&mut canvas, &mut event_pump, &game, &font)?;
                 let mut mut_game = game.borrow_mut();
@@ -46,6 +52,10 @@ fn main() -> Result<(), String> {
                 println!("Current street {:?}", mut_game.street);
                 println!("board_cards : {:?}", mut_game.board_cards);
             }
+        }
+        if SHOULD_QUIT.load(Ordering::Relaxed) {
+            println!("Exiting gracefully...");
+            break;
         }
         end_round(&mut game.borrow_mut(), &mut event_pump, &mut canvas, &font)?;
     }

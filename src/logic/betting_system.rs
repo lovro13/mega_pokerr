@@ -1,7 +1,10 @@
+use std::sync::atomic::Ordering;
+
 use crate::logic::constants::BIG_BLIND;
 use crate::logic::game::Game;
 use crate::logic::game::Streets;
 use crate::logic::player;
+use crate::logic::constants::SHOULD_QUIT;
 
 pub fn make_bets(
     game: &mut Game,
@@ -73,9 +76,16 @@ pub fn make_bets(
             let needed_bet = curr_highest_bet - curr_player.current_bet;
             
             let bet = {
-                let game_ref = &*game; // Ne-mutabilna izposoja
-                get_bet(game_ref, needed_bet) // Ne-mutabilen klic
+                let game_ref = &mut *game;
+                get_bet(game_ref, needed_bet)
             };
+            if SHOULD_QUIT.load(Ordering::Relaxed) {
+                println!("Exiting gracefully...");
+                return;
+            }
+            if game.quit {
+                return;
+            }
             let curr_player = game.get_player_from_pos(&player_pos);
             match bet {
                 None => {
