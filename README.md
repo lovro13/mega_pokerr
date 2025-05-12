@@ -32,4 +32,6 @@ cargo run --bin sdl2_app --features run_with_sdl2
 ```
 
 Sauron app:
+```bash
 TODO
+```
