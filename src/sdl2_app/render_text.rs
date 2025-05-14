@@ -28,7 +28,6 @@ pub fn write_info(canvas: &mut WindowCanvas, string: String, font: &sdl2::ttf::F
     let center = get_screen_center(&canvas);
     let pos = Point::new(center.x, center.y - 100);
     let rect = Rect::from_center(pos, size, 60);
-    println!("Rišem write_info");
     canvas.set_draw_color(Color::RGB(255, 102, 102));
     canvas.fill_rect(rect)?;
     draw_text(canvas, &string, rect, font, Color::RGB(0, 0, 0))?;

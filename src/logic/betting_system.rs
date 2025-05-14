@@ -1,15 +1,12 @@
 use std::sync::atomic::Ordering;
 
 use crate::logic::constants::BIG_BLIND;
+use crate::logic::constants::SHOULD_QUIT;
 use crate::logic::game::Game;
 use crate::logic::game::Streets;
 use crate::logic::player;
-use crate::logic::constants::SHOULD_QUIT;
 
-pub fn make_bets(
-    game: &mut Game,
-    mut get_bet: impl FnMut(&Game, u32) -> Option<u32>
-) {
+pub fn make_bets(game: &mut Game, mut get_bet: impl FnMut(&Game, u32) -> Option<u32>) {
     // pomoje bo to treba še enkrat napisati skor complete
 
     // ta funkcija naj bi v grobem na pravilen način zmanjšala player.money v game.players in povečala game.pot
@@ -27,6 +24,7 @@ pub fn make_bets(
     // - torej moramo vedeti koliko je največji bet
 
     // še eno zaprtje print info ki poskrbi kaj se izpiše na zaslonu
+    println!("starting make_bets");
     if game.street == Streets::PreFlop {
         game.position_on_turn = player::PlayerPosition::UnderTheGun;
     } else {
@@ -37,7 +35,7 @@ pub fn make_bets(
 
     let mut betting_players_pos = vec![start_position.clone()];
     game.go_to_next_player();
-    
+
     while game.player_on_turn().position != start_position {
         if game.player_on_turn().playing {
             betting_players_pos.push(game.player_on_turn().position.clone())
@@ -48,9 +46,9 @@ pub fn make_bets(
         return;
     }
     assert!(game.player_on_turn().position == start_position);
-    
+
     let mut not_playing_players = vec![];
-    
+
     let mut curr_highest_bet = 0;
     if game.street == Streets::PreFlop {
         curr_highest_bet = BIG_BLIND;
@@ -59,11 +57,7 @@ pub fn make_bets(
     loop {
         // loop če je treba narediti več krogov stav - torej ko nekdo raisa
         loop {
-
             // en krog stav, če nekdo raisa se krog konča in je on nov začetni player
-            if not_playing_players.len() >= 7 {
-                return;
-            }
             let player_pos = game.position_on_turn.clone();
             let curr_player = game.get_player_from_pos(&player_pos);
             if !curr_player.playing {
@@ -74,13 +68,12 @@ pub fn make_bets(
                 continue;
             }
             let needed_bet = curr_highest_bet - curr_player.current_bet;
-            
+
             let bet = {
                 let game_ref = &mut *game;
                 get_bet(game_ref, needed_bet)
             };
             if SHOULD_QUIT.load(Ordering::Relaxed) {
-                println!("Exiting gracefully...");
                 return;
             }
             if game.quit {
@@ -90,14 +83,14 @@ pub fn make_bets(
             match bet {
                 None => {
                     // player folded
-                    println!("{:?} folded", curr_player.name);
+                    // println!("{:?} folded", curr_player.name);
                     curr_player.current_bet = 0;
                     curr_player.playing = false;
                     not_playing_players.push(player_pos.clone());
                 }
                 Some(amount) if amount + curr_player.current_bet > curr_highest_bet => {
                     // player raised
-                    println!("{:?} raised", curr_player.name);
+                    // println!("{:?} raised", curr_player.name);
                     curr_highest_bet = amount + curr_player.current_bet;
                     curr_player.chips -= amount;
                     curr_player.current_bet += amount;
@@ -109,7 +102,7 @@ pub fn make_bets(
                 }
                 Some(amount) => {
                     // player called
-                    println!("{:?} called", curr_player.name);
+                    // println!("{:?} called", curr_player.name);
                     curr_player.chips -= amount;
                     curr_player.current_bet += amount;
                     game.pot += amount;
@@ -125,8 +118,10 @@ pub fn make_bets(
                     playing_players += 1;
                 }
             }
+            println!("playing players {}", playing_players);
             if playing_players <= 1 {
-                println!("finished make_bets");
+                // println!("finished make_bets");
+                println!("finished make_bets beacuse everyone folded but 1 player");
                 return;
             }
         }

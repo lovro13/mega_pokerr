@@ -42,19 +42,25 @@ fn main() -> Result<(), String> {
         }
         for _ in 0..4 {
             if SHOULD_QUIT.load(Ordering::Relaxed) {
-                println!("Exiting gracefully...");
                 break;
             }
             {
                 run_betting_state(&mut canvas, &mut event_pump, &game, &font)?;
                 let mut mut_game = game.borrow_mut();
                 next_turn(&mut mut_game);
-                println!("Current street {:?}", mut_game.street);
-                println!("board_cards : {:?}", mut_game.board_cards);
+            }
+            let mut count_playing_players = 0;
+            for player in game.borrow().players.iter() {
+                if player.playing {
+                    count_playing_players += 1;
+                }
+            }
+
+            if count_playing_players <= 1 {
+                break;
             }
         }
         if SHOULD_QUIT.load(Ordering::Relaxed) {
-            println!("Exiting gracefully...");
             break;
         }
         end_round(&mut game.borrow_mut(), &mut event_pump, &mut canvas, &font)?;

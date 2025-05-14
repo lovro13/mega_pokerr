@@ -57,7 +57,6 @@ impl Button {
             } => {
                 if button.is_hovered(*x, *y) {
                     button.is_clicked = true;
-                    println!("Gumb je bil kliknjen!");
                 }
             }
             Event::MouseButtonUp {
@@ -102,7 +101,6 @@ impl Button {
             text: String::from("CALL"),
             is_clicked: false,
         }
-        
     }
     pub fn init_raise_button(canvas: &mut WindowCanvas) -> Self {
         let (width, heigth) = canvas.output_size().unwrap();
@@ -119,21 +117,16 @@ impl Button {
             text: String::from("RAISE"),
             is_clicked: false,
         }
-        
     }
 
     pub fn init_end_of_round_button(canvas: &mut WindowCanvas) -> Self {
         let screen_center = get_screen_center(canvas);
-        let button_position = screen_center
-            + Point::new(
-                0, 125
-            );
+        let button_position = screen_center + Point::new(0, 125);
         let button_target = Rect::from_center(button_position, 200, 50);
         Button {
             rect: button_target,
             text: String::from("START NEW ROUND"),
             is_clicked: false,
         }
-        
     }
 }

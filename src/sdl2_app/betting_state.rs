@@ -8,6 +8,7 @@ use std::sync::atomic::Ordering;
 use crate::logic::betting_system::make_bets;
 use crate::logic::constants::SHOULD_QUIT;
 use crate::logic::game::Game;
+use crate::logic::player::Names;
 use crate::sdl2_app::render_button::Button;
 use crate::sdl2_app::send_bet;
 
@@ -30,23 +31,27 @@ pub fn run_betting_state(
             let player = game.player_on_turn_immutable();
             let canvas = Rc::clone(&canvas_rc);
             let mut canvas_borrow = canvas.borrow_mut();
-            // Ustvari gumbe
-            let mut fold_button = Button::init_fold_button(&mut *canvas_borrow);
-            let mut call_button = Button::init_call_button(&mut *canvas_borrow);
-            let mut raise_button = Button::init_raise_button(&mut *canvas_borrow);
-
-            send_bet::make_bet(
-                player,
-                req_bet,
-                event_pump,
-                &mut fold_button,
-                &mut call_button,
-                &mut raise_button,
-                &mut *canvas_borrow,
-                font,
-                game
-            )
-            .unwrap()
+            if player.name == Names::Player1 {
+                // Ustvari gumbe
+                let mut fold_button = Button::init_fold_button(&mut *canvas_borrow);
+                let mut call_button = Button::init_call_button(&mut *canvas_borrow);
+                let mut raise_button = Button::init_raise_button(&mut *canvas_borrow);
+                
+                send_bet::make_bet_player1(
+                    player,
+                    req_bet,
+                    event_pump,
+                    &mut fold_button,
+                    &mut call_button,
+                    &mut raise_button,
+                    &mut *canvas_borrow,
+                    font,
+                    game
+                )
+                .unwrap()
+            } else {
+                send_bet::make_bet_bot(player, req_bet, event_pump, &mut *canvas_borrow, font, game).unwrap()
+            }
         }
     };
 
@@ -55,7 +60,6 @@ pub fn run_betting_state(
         let mut game_mut  = game.borrow_mut();
         make_bets(&mut *game_mut, get_bet);
         if SHOULD_QUIT.load(Ordering::Relaxed) {
-            println!("Exiting gracefully...");
             return Ok(());
         }
     }

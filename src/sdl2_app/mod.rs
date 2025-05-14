@@ -7,3 +7,4 @@ pub mod render_screen;
 pub mod render_text;
 pub mod resources;
 pub mod send_bet;
+pub mod tactic1;

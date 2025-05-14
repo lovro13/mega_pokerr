@@ -1,8 +1,7 @@
 PRAVILA, ki jih pozabljam:
 - kdor je že foldal se preverja samo v betting_system
 
-PRAVILA za funkcijo get_bet, ki je pri vsakem prikazu seveda različna:
-vzame &player in u32 -> Option<u32>
+PRAVILA za funkcijo get_bet
 // vrne Some(u32), če je pravilno vnešeno in če je prazno vrne None ko hoče foldat
 // ne dovoli staviti več denarja kot ga ima player
 // če je vnešeno karkoli razen u32 ali prazno je treba vnesti ponovno
@@ -13,14 +12,10 @@ vzame &player in u32 -> Option<u32>
 
 SDL2 app:
 do nadaljnega lahko samo raisa usak za BIGBLIND
+-- treba narest slider
 
 LOGIC:
-TODO-treba narediti struct round in ga ločiti od game, ali pa v game še nekaj implementirati s čimer
-bom lahko nadziral kateri del igre je kot npr make_bets, ali pa kaj drugega, saj je itak večina igre 
-make_bets
+-- porihtati če gre nekdo all in ker crasha
 
--- preden nadalajujem z SDL2 bi bilo fino, implementirati logiko naprej, v bistvu lahko cel loop, ki pa lahko 
-sprejme nek closure ki bo povedal ali naj se igra nadaljuje, ki lahko kasneje tudi naredi da bo malo počakalo preden gre naprej, 
-saj ni človeško če se stvari odvijajo konstantno
-
---Game je treba implementirati z RC, torej reference counter, drugače verjetno en bo šlo
+BOT:
+-- osnovna logika dela, za predstavitev bo več pa ne bom rihtov

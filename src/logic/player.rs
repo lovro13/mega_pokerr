@@ -1,7 +1,7 @@
 use crate::logic::card;
 use crate::logic::constants::BUY_IN;
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub enum Names {
     Player1,
     Player2,

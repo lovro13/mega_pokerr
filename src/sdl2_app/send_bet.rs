@@ -7,16 +7,18 @@ use sdl2::{event::Event, pixels::Color};
 use std::sync::atomic::Ordering;
 use std::time::Duration;
 
+use crate::logic::card::Card;
 use crate::logic::constants::BIG_BLIND;
+use crate::logic::constants::SHOULD_QUIT;
 use crate::logic::game::Game;
 use crate::logic::player::Player;
 use crate::sdl2_app::render_button::Button;
 use crate::sdl2_app::render_text::write_info;
-use crate::logic::constants::SHOULD_QUIT;
 
 use super::render_screen::render_screen;
+use super::tactic1::rank_cards_preflop;
 
-pub fn make_bet(
+pub fn make_bet_player1(
     player: &Player,
     req_bet: u32,
     event_pump: &mut EventPump,
@@ -25,7 +27,7 @@ pub fn make_bet(
     raise_button: &mut Button,
     canvas: &mut Canvas<Window>,
     font: &Font,
-    game: &Game
+    game: &Game,
 ) -> Result<Option<u32>, String> {
     let _: Vec<_> = event_pump.poll_iter().collect();
     loop {
@@ -58,7 +60,12 @@ pub fn make_bet(
                 ::std::thread::sleep(Duration::from_millis(800));
                 return Ok(Some(req_bet));
             } else {
-                write_info(canvas, format!("{:?} you dont have enough chips", player.name), font, 250)?;
+                write_info(
+                    canvas,
+                    format!("{:?} you dont have enough chips", player.name),
+                    font,
+                    250,
+                )?;
                 canvas.present();
                 ::std::thread::sleep(Duration::from_millis(800));
                 continue;
@@ -70,7 +77,12 @@ pub fn make_bet(
                 ::std::thread::sleep(Duration::from_millis(800));
                 return Ok(Some(req_bet + BIG_BLIND));
             } else {
-                write_info(canvas, format!("{:?} you dont have enough chips", player.name), font, 250)?;
+                write_info(
+                    canvas,
+                    format!("{:?} you dont have enough chips", player.name),
+                    font,
+                    250,
+                )?;
                 canvas.present();
                 ::std::thread::sleep(Duration::from_millis(800));
                 continue;
@@ -87,5 +99,57 @@ pub fn make_bet(
             ::std::thread::sleep(Duration::from_millis(200));
         }
         ::std::thread::sleep(Duration::from_millis(33));
+    }
+}
+
+pub fn make_bet_bot(
+    player: &Player,
+    req_bet: u32,
+    event_pump: &mut EventPump,
+    canvas: &mut Canvas<Window>,
+    font: &Font,
+    game: &Game,
+) -> Result<Option<u32>, String> {
+    let _: Vec<_> = event_pump.poll_iter().collect();
+    let decision = make_decision(&player.hand_cards, req_bet, player.current_bet);
+    let (r, g, b) = (173, 216, 230);
+    if let Some(bet) = decision {
+        render_screen(canvas, Color::RGB(r, g, b), game, font)?;
+        if bet == req_bet {
+            println!("pišem write_info v send_bet ko bot dela odloćiitve");
+            write_info(canvas, format!("{:?} called", player.name), font, 250)?;
+        } else {
+            println!("pišem write_info v send_bet ko bot dela odloćiitve");
+            write_info(canvas, format!("{:?} raised", player.name), font, 250)?;
+        }
+        canvas.present();
+        ::std::thread::sleep(Duration::from_millis(800));
+        return Ok(Some(bet));
+    } else {
+        println!("pišem write_info v send_bet ko bot dela odloćiitve");
+        render_screen(canvas, Color::RGB(r, g, b), game, font)?;
+        write_info(canvas, format!("{:?} folded", player.name), font, 250)?;
+        canvas.present();
+        ::std::thread::sleep(Duration::from_millis(800));
+        return Ok(None);
+    }
+}
+
+pub fn make_decision(player_cards: &(Card, Card), req_bet: u32, curr_bet: u32) -> Option<u32> {
+    let hand_cards_vec: Vec<_> = vec![player_cards.0.clone(), player_cards.1.clone()];
+    let rank_points = rank_cards_preflop(hand_cards_vec);
+    println!("hand ranking of cards {} {} is {}", player_cards.0, player_cards.1, rank_points);
+    if (rank_points < 10) || (rank_points < 25 && curr_bet == 0) {
+        if curr_bet <= 5 * BIG_BLIND {
+            Some(req_bet + BIG_BLIND)
+        } else {
+            Some(0)
+        }
+    } else if rank_points < 35 {
+        Some(req_bet)
+    } else if req_bet == curr_bet {
+        return Some(0);
+    } else {
+        None
     }
 }
