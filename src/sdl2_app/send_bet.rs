@@ -16,6 +16,7 @@ use crate::sdl2_app::render_button::Button;
 use crate::sdl2_app::render_text::write_info;
 
 use super::render_screen::render_screen;
+use super::slider::Slider;
 use super::tactic1::rank_cards_preflop;
 
 pub fn make_bet_player1(
@@ -30,12 +31,14 @@ pub fn make_bet_player1(
     game: &Game,
 ) -> Result<Option<u32>, String> {
     let _: Vec<_> = event_pump.poll_iter().collect();
+    let mut slider = Slider::new(1150, 840, 600, 20, 10, 1000);
     loop {
         for event in event_pump.poll_iter() {
             // se sprehodi cez use evente
             Button::handle_button_events(&event, fold_button);
             Button::handle_button_events(&event, call_button);
             Button::handle_button_events(&event, raise_button);
+            slider.handle_event(&event);
             match event {
                 Event::Quit { .. }
                 | Event::KeyDown {
@@ -90,6 +93,7 @@ pub fn make_bet_player1(
         }
         let (r, g, b) = (173, 216, 230); // Light blue color
         render_screen(canvas, Color::RGB(r, g, b), game, font)?;
+        slider.draw(canvas, font)?;
         Button::draw_button(&fold_button, canvas, &font)?;
         Button::draw_button(&call_button, canvas, &font)?;
         Button::draw_button(&raise_button, canvas, &font)?;

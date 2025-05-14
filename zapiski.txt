@@ -18,4 +18,8 @@ LOGIC:
 -- porihtati če gre nekdo all in ker crasha
 
 BOT:
--- osnovna logika dela, za predstavitev bo več pa ne bom rihtov
+-- osnovna logika dela, za predstavitev bo več pa ne bom rihtov za zdj
+
+ČE BO PREMALO DELA:
+-- bote narediti zeloo dobre
+-- server narediti
