@@ -16,6 +16,7 @@ do nadaljnega lahko samo raisa usak za BIGBLIND
 
 LOGIC:
 -- porihtati če gre nekdo all in ker crasha ===== POMEMBNO
+-- treba zrihtat bote, preveriti robne primere da ne crasha
 
 BOT:
 -- osnovna logika dela, za predstavitev bo več pa ne bom rihtov za zdj
