@@ -92,6 +92,7 @@ pub fn make_bets(game: &mut Game, mut get_bet: impl FnMut(&Game, u32) -> Option<
                     // player raised
                     // println!("{:?} raised", curr_player.name);
                     curr_highest_bet = amount + curr_player.current_bet;
+                    println!("amount betet {}, player.chips {}", amount, curr_player.chips);
                     curr_player.chips -= amount;
                     curr_player.current_bet += amount;
                     game.pot += amount;

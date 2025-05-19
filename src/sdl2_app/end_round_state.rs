@@ -49,7 +49,7 @@ pub fn end_round(
         render_screen(canvas, Color::RGB(r, g, b), game, font)?;
         write_info(
             canvas,
-            format!("{:?} won the round and {} chips", print_winners, winnings),
+            &format!("{:?} won the round and {} chips", print_winners, winnings),
             font,
             500
         )?;

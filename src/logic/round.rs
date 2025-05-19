@@ -19,6 +19,10 @@ pub fn begin_round(game: &mut Game) {
     let mut deck = card::Card::scramble_deck(deck);
     game.pot = 0;
     for player in game.players.iter_mut() {
+        if player.chips == 0 {
+            player.chips = 1000;
+            player.debt += 1;
+        }
         player.position = player::PlayerPosition::next_player_position(&player.position);
         player.playing = true;
         let card1 = match deck.pop() {

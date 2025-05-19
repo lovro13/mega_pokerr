@@ -24,7 +24,7 @@ pub fn draw_text(
     Ok(())
 }
 
-pub fn write_info(canvas: &mut WindowCanvas, string: String, font: &sdl2::ttf::Font, size: u32) -> Result<(), String> {
+pub fn write_info(canvas: &mut WindowCanvas, string: &String, font: &sdl2::ttf::Font, size: u32) -> Result<(), String> {
     let center = get_screen_center(&canvas);
     let pos = Point::new(center.x, center.y - 100);
     let rect = Rect::from_center(pos, size, 60);

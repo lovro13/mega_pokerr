@@ -53,39 +53,45 @@ pub fn make_bet_player1(
         }
         let raise_value = slider.get_value();
         if fold_button.is_clicked {
-            write_info(canvas, format!("{:?} folded", player.name), font, 250)?;
+            write_info(canvas, &format!("{:?} folded", player.name), font, 250)?;
             canvas.present();
             ::std::thread::sleep(Duration::from_millis(800));
             return Ok(None);
         } else if call_button.is_clicked {
             if req_bet <= player.chips {
-                write_info(canvas, format!("{:?} called", player.name), font, 250)?;
+                write_info(canvas, &format!("{:?} called", player.name), font, 250)?;
                 canvas.present();
                 ::std::thread::sleep(Duration::from_millis(800));
                 return Ok(Some(req_bet));
             } else {
                 write_info(
                     canvas,
-                    format!("{:?} you dont have enough chips", player.name),
+                    &format!(
+                        "{:?} you dont have enough chips to call full bet, you went all in",
+                        player.name
+                    ),
                     font,
-                    250,
+                    800,
                 )?;
                 canvas.present();
                 ::std::thread::sleep(Duration::from_millis(800));
-                continue;
+                return Ok(Some(player.chips));
             }
         } else if raise_button.is_clicked {
-            if player.chips >= raise_value + BIG_BLIND {
-                write_info(canvas, format!("{:?} raised", player.name), font, 250)?;
+            if player.chips >= raise_value {
+                write_info(canvas, &format!("{:?} raised", player.name), font, 250)?;
                 canvas.present();
                 ::std::thread::sleep(Duration::from_millis(800));
                 return Ok(Some(raise_value));
             } else {
                 write_info(
                     canvas,
-                    format!("{:?} you dont have enough chips", player.name),
+                    &format!(
+                        "{:?} you dont have enough chips, if u want to all in call",
+                        player.name
+                    ),
                     font,
-                    250,
+                    400,
                 )?;
                 canvas.present();
                 ::std::thread::sleep(Duration::from_millis(800));
@@ -116,41 +122,88 @@ pub fn make_bet_bot(
     game: &Game,
 ) -> Result<Option<u32>, String> {
     let _: Vec<_> = event_pump.poll_iter().collect();
-    let decision = make_decision(&player.hand_cards, req_bet, player.current_bet);
+    let decision = make_decision(
+        &player.hand_cards,
+        req_bet,
+        player.current_bet,
+        player.chips,
+    );
     let (r, g, b) = (173, 216, 230);
     if let Some(bet) = decision {
         render_screen(canvas, Color::RGB(r, g, b), game, font)?;
+        let string = 
         if bet == req_bet {
-            println!("pišem write_info v send_bet ko bot dela odloćiitve");
-            write_info(canvas, format!("{:?} called", player.name), font, 250)?;
+            // println!("pišem write_info v send_bet ko bot dela odloćiitve");
+            format!("{:?} called", player.name)
         } else {
-            println!("pišem write_info v send_bet ko bot dela odloćiitve");
-            write_info(canvas, format!("{:?} raised", player.name), font, 250)?;
+            // println!("pišem write_info v send_bet ko bot dela odloćiitve");
+            format!("{:?} raised", player.name)
+        };
+        let start_time = std::time::Instant::now();
+        while start_time.elapsed() < Duration::from_millis(800) {
+            for event in event_pump.poll_iter() {
+                match event {
+                    Event::Quit { .. }
+                    | Event::KeyDown {
+                        keycode: Some(Keycode::Escape),
+                        ..
+                    } => {
+                        SHOULD_QUIT.store(true, Ordering::Relaxed);
+                        return Ok(None); // Signal za izhod
+                    }
+                    _ => {}
+                }
+            }
+            render_screen(canvas, Color::RGB(r, g, b), game, font)?;
+            write_info(canvas, &string, font, 250)?;
+            canvas.present();
+            ::std::thread::sleep(Duration::from_millis(30));
         }
-        canvas.present();
-        ::std::thread::sleep(Duration::from_millis(800));
         return Ok(Some(bet));
     } else {
-        println!("pišem write_info v send_bet ko bot dela odloćiitve");
-        render_screen(canvas, Color::RGB(r, g, b), game, font)?;
-        write_info(canvas, format!("{:?} folded", player.name), font, 250)?;
-        canvas.present();
-        ::std::thread::sleep(Duration::from_millis(800));
+        let start_time = std::time::Instant::now();
+        while start_time.elapsed() < Duration::from_millis(800) {
+            for event in event_pump.poll_iter() {
+                match event {
+                    Event::Quit { .. }
+                    | Event::KeyDown {
+                        keycode: Some(Keycode::Escape),
+                        ..
+                    } => {
+                        SHOULD_QUIT.store(true, Ordering::Relaxed);
+                        return Ok(None); // Signal za izhod
+                    }
+                    _ => {}
+                }
+            }
+            render_screen(canvas, Color::RGB(r, g, b), game, font)?;
+            write_info(canvas, &format!("{:?} folded", player.name), font, 250)?;
+            canvas.present();
+            ::std::thread::sleep(Duration::from_millis(30));
+        }
         return Ok(None);
     }
 }
 
-pub fn make_decision(player_cards: &(Card, Card), req_bet: u32, curr_bet: u32) -> Option<u32> {
+pub fn make_decision(
+    player_cards: &(Card, Card),
+    req_bet: u32,
+    curr_bet: u32,
+    player_chips: u32,
+) -> Option<u32> {
     let hand_cards_vec: Vec<_> = vec![player_cards.0.clone(), player_cards.1.clone()];
     let rank_points = rank_cards_preflop(hand_cards_vec);
-    println!("hand ranking of cards {} {} is {}", player_cards.0, player_cards.1, rank_points);
+    // println!("hand ranking of cards {} {} is {}", player_cards.0, player_cards.1, rank_points);
     if (rank_points < 10) || (rank_points < 25 && curr_bet == 0) {
+        if req_bet > player_chips {
+            return Some(player_chips);
+        }
         if curr_bet <= 5 * BIG_BLIND {
-            Some(req_bet + BIG_BLIND)
+            Some(5 * BIG_BLIND - curr_bet)
         } else {
             Some(0)
         }
-    } else if rank_points < 35 {
+    } else if rank_points < 35 && player_chips <= req_bet {
         Some(req_bet)
     } else if req_bet == curr_bet {
         return Some(0);
