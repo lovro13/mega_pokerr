@@ -31,7 +31,7 @@ pub fn make_bet_player1(
     game: &Game,
 ) -> Result<Option<u32>, String> {
     let _: Vec<_> = event_pump.poll_iter().collect();
-    let mut slider = Slider::new(1150, 840, 600, 20, 10, 1000);
+    let mut slider = Slider::new(1150, 840, 600, 20, req_bet, player.chips);
     loop {
         for event in event_pump.poll_iter() {
             // se sprehodi cez use evente
@@ -51,6 +51,7 @@ pub fn make_bet_player1(
                 _ => {}
             }
         }
+        let raise_value = slider.get_value();
         if fold_button.is_clicked {
             write_info(canvas, format!("{:?} folded", player.name), font, 250)?;
             canvas.present();
@@ -74,11 +75,11 @@ pub fn make_bet_player1(
                 continue;
             }
         } else if raise_button.is_clicked {
-            if player.chips >= req_bet + BIG_BLIND {
+            if player.chips >= raise_value + BIG_BLIND {
                 write_info(canvas, format!("{:?} raised", player.name), font, 250)?;
                 canvas.present();
                 ::std::thread::sleep(Duration::from_millis(800));
-                return Ok(Some(req_bet + BIG_BLIND));
+                return Ok(Some(raise_value));
             } else {
                 write_info(
                     canvas,

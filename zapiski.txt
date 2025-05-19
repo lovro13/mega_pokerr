@@ -15,10 +15,11 @@ do nadaljnega lahko samo raisa usak za BIGBLIND
 -- treba narest slider
 
 LOGIC:
--- porihtati če gre nekdo all in ker crasha
+-- porihtati če gre nekdo all in ker crasha ===== POMEMBNO
 
 BOT:
 -- osnovna logika dela, za predstavitev bo več pa ne bom rihtov za zdj
+-- zdaj dela če lahko stavi samo fiksno BIG BLIND, ampka zdaj lahko player stavi kokr hoče
 
 ČE BO PREMALO DELA:
 -- bote narediti zeloo dobre
