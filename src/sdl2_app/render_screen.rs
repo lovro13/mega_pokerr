@@ -50,10 +50,10 @@ pub fn render_player_info(
     let player_name_position = player_center + Point::new(25, 85);
     let text_target = Rect::from_center(player_name_position, 150 as u32, 75 as u32);
 
-    draw_text(canvas, &name_text, text_target, font, color)?;
+    draw_text(canvas, &name_text, text_target, font, color, None)?;
 
     let balance_color = Color::RGB(0, 0, 10);
-    let balance_text = format!("Balance: {}", player.chips);
+    let balance_text = format!("Chips: {}", player.chips);
 
     let balance_screen_position = player_name_position + Point::new(0, 50);
     let balance_text_target = Rect::from_center(balance_screen_position, 150 as u32, 75 as u32);
@@ -63,6 +63,7 @@ pub fn render_player_info(
         balance_text_target,
         font,
         balance_color,
+        None
     );
 
     let texture_creator = canvas.texture_creator();
@@ -96,7 +97,7 @@ pub fn render_player_info(
         let folded_text = String::from("Folded");
         let folded_text_position = player_name_position + Point::new(0, -100);
         let folded_text_target = Rect::from_center(folded_text_position, 150 as u32, 50 as u32);
-        draw_text(canvas, &folded_text, folded_text_target, font, folded_color)?;
+        draw_text(canvas, &folded_text, folded_text_target, font, folded_color, None)?;
     }
     let mut copy_curr_bet: i32 = player.current_bet.clone() as i32;
     let mut x_pos = -30;
