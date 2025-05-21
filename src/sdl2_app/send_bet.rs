@@ -148,7 +148,7 @@ pub fn make_bet_bot(
         player.chips,
     );
     let (r, g, b) = (173, 216, 230);
-    if let Some(bet) = decision {
+    if let Some(bet) = decision { // to bi se tut dal lepš!!
         render_screen(canvas, Color::RGB(r, g, b), game, font)?;
         let string = if bet == req_bet {
             // println!("pišem write_info v send_bet ko bot dela odloćiitve");

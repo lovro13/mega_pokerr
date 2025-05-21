@@ -1,6 +1,3 @@
-PRAVILA, ki jih pozabljam:
-- kdor je že foldal se preverja samo v betting_system
-
 PRAVILA za funkcijo get_bet
 // vrne Some(u32), če je pravilno vnešeno in če je prazno vrne None ko hoče foldat
 // ne dovoli staviti več denarja kot ga ima player
@@ -9,12 +6,13 @@ PRAVILA za funkcijo get_bet
 
 
 SDL2 app:
--- start screen
+-- start screen mal lepši
 -- option screen
 -- pri gumbih se še vedno lah najdemo izboljšave sploh pr sliderju
 -- mogoče treba req_bet in player.chips mal bl obravnavat, da nau problemov k ma player edino možnost it all in
 v make_bet_player1 to zgoraj
--- urediti positione na screenu da ne bo tko po kavbojsk
+-- urediti positione na screenu da ne bo tko po kavbojsk == HIGH PRIRORITY
+-- pokaži pot size
 
 LOGIC:
 -- treba bl zrihtat bote, ampak kr uredu delajo
@@ -28,6 +26,7 @@ BOT:
 SERVER:
 -- cel za narest, pomoje se splaca da se mal backend naucim
 -- treba se naucit sploh kaj kj dela, mogoče clo prasat ksnga
+-- maybe clo s forkom, da nam use unicu kle
 
 ČE BO PREMALO DELA:
 -- bote narediti zeloo dobre

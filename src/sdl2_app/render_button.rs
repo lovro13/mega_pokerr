@@ -7,6 +7,7 @@ use sdl2::render::WindowCanvas;
 
 use crate::sdl2_app::render_text::draw_text;
 
+use super::constants::{BUTTON_COLOR, BUTTON_COLOR_PRESSED};
 use super::render_screen::get_screen_center;
 
 pub struct Button {
@@ -34,16 +35,14 @@ impl Button {
         font: &sdl2::ttf::Font,
     ) -> Result<(), String> {
         let color = if self.is_clicked {
-            Color::RGB(100, 100, 100)
+            Color::RGB(BUTTON_COLOR_PRESSED.0, BUTTON_COLOR_PRESSED.1, BUTTON_COLOR_PRESSED.2)
         } else {
-            Color::RGB(200, 200, 200)
+            Color::RGB(BUTTON_COLOR.0, BUTTON_COLOR.1, BUTTON_COLOR.2)
         };
 
         let text_color = Color::RGB(0, 0, 0);
 
-        canvas.set_draw_color(color);
-        canvas.fill_rect(self.rect)?;
-        draw_text(canvas, &self.text, self.rect, font, text_color)?;
+        draw_text(canvas, &self.text, self.rect, font, text_color, Some(color))?;
         Ok(())
     }
 

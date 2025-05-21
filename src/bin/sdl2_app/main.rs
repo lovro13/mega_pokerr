@@ -11,6 +11,7 @@ use mega_pokerr::logic::constants::SHOULD_QUIT;
 use mega_pokerr::logic::game;
 use mega_pokerr::logic::player;
 use mega_pokerr::logic::round::begin_round;
+use mega_pokerr::sdl2_app::start_screen::start_screen_state;
 pub enum GameState {
     Paused,
     Played(player::Player),
@@ -29,10 +30,21 @@ fn main() -> Result<(), String> {
     let mut canvas = app_context.canvas;
     let font = app_context
         .ttf_context
-        .load_font("assets/font/Poppins-Black.ttf", 120)
+        .load_font("assets/font/Poppins-Black.ttf", 90)
         .map_err(|e| e.to_string())?;
 
+    let normal_font = app_context
+        .ttf_context
+        .load_font("assets/font/Poppins-Black.ttf", 40)
+        .map_err(|e| e.to_string())?;
+
+
     // GLAVNA ZANKA
+    let start = start_screen_state(&mut canvas, &mut event_pump, &font);
+
+    if !start {
+        return Ok(());
+    }
     loop {
         {
             let mut mut_game = game.borrow_mut();
@@ -55,7 +67,7 @@ fn main() -> Result<(), String> {
                 break;
             }
             {
-                run_betting_state(&mut canvas, &mut event_pump, &game, &font)?;
+                run_betting_state(&mut canvas, &mut event_pump, &game, &normal_font)?;
                 let mut mut_game = game.borrow_mut();
                 next_turn(&mut mut_game);
             }
@@ -79,7 +91,7 @@ fn main() -> Result<(), String> {
                 player.opened_cards = true;
             }
         }
-        end_round(&mut game.borrow_mut(), &mut event_pump, &mut canvas, &font)?;
+        end_round(&mut game.borrow_mut(), &mut event_pump, &mut canvas, &normal_font)?;
     }
     println!("Stopped app at the end of main sdl2_app");
     Ok(())
