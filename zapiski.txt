@@ -5,23 +5,29 @@ PRAVILA za funkcijo get_bet
 // vrne Some(u32), če je pravilno vnešeno in če je prazno vrne None ko hoče foldat
 // ne dovoli staviti več denarja kot ga ima player
 // če je vnešeno karkoli razen u32 ali prazno je treba vnesti ponovno
-// treba še preveriti kakšno stavo mora staviti da ne stavi premalo 
-// player ki ga vzame mora igrati!!!! , torej player.playing = true!!!!
+// treba še preveriti kakšno stavo mora staviti da ne stavi premalo
 
-- določiti moram kako bo izgledal glavni game loop, da bosta skupaj delovala logika in prikaz
 
 SDL2 app:
-do nadaljnega lahko samo raisa usak za BIGBLIND
--- treba narest slider
+-- start screen
+-- option screen
+-- pri gumbih se še vedno lah najdemo izboljšave sploh pr sliderju
+-- mogoče treba req_bet in player.chips mal bl obravnavat, da nau problemov k ma player edino možnost it all in
+v make_bet_player1 to zgoraj
+-- urediti positione na screenu da ne bo tko po kavbojsk
 
 LOGIC:
--- porihtati če gre nekdo all in ker crasha ===== POMEMBNO
--- treba zrihtat bote, preveriti robne primere da ne crasha
+-- treba bl zrihtat bote, ampak kr uredu delajo
+-- loh bi več stvari avtomatiziral, npr end_round, pa še mal bl uredi
+-- game pa player mata pomoje mal preveč stvari v enumu zih bi se ksne dal znebit al pa ksn nov enum narest
 
 BOT:
 -- osnovna logika dela, za predstavitev bo več pa ne bom rihtov za zdj
 -- zdaj dela če lahko stavi samo fiksno BIG BLIND, ampka zdaj lahko player stavi kokr hoče
 
+SERVER:
+-- cel za narest, pomoje se splaca da se mal backend naucim
+-- treba se naucit sploh kaj kj dela, mogoče clo prasat ksnga
+
 ČE BO PREMALO DELA:
 -- bote narediti zeloo dobre
--- server narediti

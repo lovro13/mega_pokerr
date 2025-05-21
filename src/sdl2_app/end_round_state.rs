@@ -21,7 +21,7 @@ pub fn end_round(
 ) -> Result<(), String> {
     let curr_pot = game.pot;
     let mut winners = choose_winner(game);
-    let winnings = curr_pot - winners.len() as u32;
+    let winnings = curr_pot / winners.len() as u32;
     let mut print_winners = vec![];
     for winner in winners.iter_mut() {
         winner.chips += winnings;

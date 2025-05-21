@@ -6,6 +6,8 @@ use crate::logic::player::Player;
 use std::rc::Rc;
 use std::cell::RefCell;
 
+use super::player::Names;
+
 #[derive(Debug, PartialEq, Clone)]
 pub enum Streets {
     PreFlop,
@@ -33,7 +35,7 @@ pub struct Game {
     pub pot: u32,                     // koliko je stav na mizi
     pub players: Vec<Player>,         // seznam igralcev
     pub deck: Vec<card::Card>,        // seznam kart
-    pub board_cards: Vec<card::Card>, // katere karte so na mizi
+    pub table_cards: Vec<card::Card>, // katere karte so na mizi
     pub position_on_turn: player::PlayerPosition, // kateri igralec je na vrsti, imamo poziicijo, torej kje sedi
     pub round_number: u32,
     pub quit: bool                        // okrasek, koliko rund smo že odigral
@@ -81,6 +83,14 @@ impl Game {
         }
         panic!("Pozicija manjka (get_player_from_pos)")
     }
+    pub fn get_player_from_name(&mut self, name: Names) -> &mut Player {
+        for player in self.players.iter_mut() {
+            if player.name == name {
+                return player;
+            }
+        }
+        panic!("Player with name '{:?}' not found (get_player_from_name)", name);
+    }
 }
 
 pub fn init_game(player_list: Vec<player::Player>) -> Rc<RefCell<Game>> {
@@ -96,7 +106,7 @@ pub fn init_game(player_list: Vec<player::Player>) -> Rc<RefCell<Game>> {
         pot: 0,
         players: mut_player_list,
         deck,
-        board_cards: Vec::new(),
+        table_cards: Vec::new(),
         position_on_turn: player::PlayerPosition::UnderTheGun,
         round_number: 0,
         quit: false

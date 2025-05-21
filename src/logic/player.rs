@@ -94,6 +94,7 @@ pub struct Player {
     pub playing: bool,
     pub current_bet: u32,
     pub debt: u32,
+    pub opened_cards: bool
 }
 
 impl Names {
@@ -146,7 +147,8 @@ impl Player {
                 chips: BUY_IN,
                 playing: true,
                 current_bet: 0,
-                debt: 0
+                debt: 0,
+                opened_cards: false
             };
             list_of_players.push(curr_player);
         }

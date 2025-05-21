@@ -1,4 +1,8 @@
-use sdl2::{image::LoadTexture, rect::{Point, Rect}, render::WindowCanvas};
+use sdl2::{
+    image::LoadTexture,
+    rect::{Point, Rect},
+    render::WindowCanvas,
+};
 
 use crate::logic::card::{Card, CardColor, CardNumber};
 
@@ -34,13 +38,21 @@ impl Card {
         String::from("assets/cards/") + &string1 + &string2
     }
 
-    pub fn draw_card(&self, canvas: &mut WindowCanvas, position: Point) -> Result<(), String> {
+    pub fn draw_card(
+        &self,
+        canvas: &mut WindowCanvas,
+        position: Point,
+        opened: bool,
+    ) -> Result<(), String> {
         let card_target = Rect::from_center(position, CARD_WIDTH, CARD_HEIGHT);
-        let filename = self.card_to_file();
+        let filename = if opened {
+            self.card_to_file()
+        } else {
+            String::from("assets/cards/card_back.png")
+        };
         let texture_creator = canvas.texture_creator();
         let texture = texture_creator.load_texture(filename)?;
         canvas.copy(&texture, None, card_target)?;
         Ok(())
     }
-
 }

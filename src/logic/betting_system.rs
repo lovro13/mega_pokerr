@@ -76,9 +76,6 @@ pub fn make_bets(game: &mut Game, mut get_bet: impl FnMut(&Game, u32) -> Option<
             if SHOULD_QUIT.load(Ordering::Relaxed) {
                 return;
             }
-            if game.quit {
-                return;
-            }
             let curr_player = game.get_player_from_pos(&player_pos);
             match bet {
                 None => {
@@ -92,6 +89,7 @@ pub fn make_bets(game: &mut Game, mut get_bet: impl FnMut(&Game, u32) -> Option<
                     // player raised
                     // println!("{:?} raised", curr_player.name);
                     curr_highest_bet = amount + curr_player.current_bet;
+                    println!("new highest bet {}", curr_highest_bet);
                     println!("amount betet {}, player.chips {}", amount, curr_player.chips);
                     curr_player.chips -= amount;
                     curr_player.current_bet += amount;
@@ -119,7 +117,7 @@ pub fn make_bets(game: &mut Game, mut get_bet: impl FnMut(&Game, u32) -> Option<
                     playing_players += 1;
                 }
             }
-            println!("playing players {}", playing_players);
+            // println!("playing players {}", playing_players);
             if playing_players <= 1 {
                 // println!("finished make_bets");
                 println!("finished make_bets beacuse everyone folded but 1 player");

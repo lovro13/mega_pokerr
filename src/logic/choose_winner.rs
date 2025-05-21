@@ -10,7 +10,7 @@ pub fn choose_winner(game: &mut Game) -> Vec<&mut Player> {
     let mut list = Vec::new();
     for player in game.players.iter_mut() {
         if player.playing {
-            let hand_ranking = players_hand_ranking(player, &game.board_cards);
+            let hand_ranking = players_hand_ranking(player, &game.table_cards);
             list.push((player, hand_ranking));
         }
     }

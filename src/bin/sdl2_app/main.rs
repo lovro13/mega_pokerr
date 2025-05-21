@@ -2,13 +2,15 @@ use std::sync::atomic::Ordering;
 
 use mega_pokerr::logic::round::next_turn;
 use mega_pokerr::sdl2_app::betting_state::run_betting_state;
+use mega_pokerr::sdl2_app::constants::DEBUG;
+use mega_pokerr::sdl2_app::constants::MAIN_PLAYER;
 use mega_pokerr::sdl2_app::end_round_state::end_round;
 use mega_pokerr::sdl2_app::resources::init_app_context;
 
+use mega_pokerr::logic::constants::SHOULD_QUIT;
 use mega_pokerr::logic::game;
 use mega_pokerr::logic::player;
 use mega_pokerr::logic::round::begin_round;
-use mega_pokerr::logic::constants::SHOULD_QUIT;
 pub enum GameState {
     Paused,
     Played(player::Player),
@@ -32,13 +34,21 @@ fn main() -> Result<(), String> {
 
     // GLAVNA ZANKA
     loop {
-        if game.borrow().round_number > 2 {
-            break;
-        }
         {
             let mut mut_game = game.borrow_mut();
             begin_round(&mut mut_game);
             println!("Current street {:?}", mut_game.street);
+        }
+        let debug = DEBUG.load(Ordering::Relaxed);
+        {
+            let mut mut_game = game.borrow_mut();
+            if debug {
+                for player in mut_game.players.iter_mut() {
+                    player.opened_cards = true;
+                }
+            } else {
+                mut_game.get_player_from_name(MAIN_PLAYER).opened_cards = true
+            }
         }
         for _ in 0..4 {
             if SHOULD_QUIT.load(Ordering::Relaxed) {
@@ -62,6 +72,12 @@ fn main() -> Result<(), String> {
         }
         if SHOULD_QUIT.load(Ordering::Relaxed) {
             break;
+        }
+        {
+            let mut mut_game = game.borrow_mut();
+            for player in mut_game.players.iter_mut() {
+                player.opened_cards = true;
+            }
         }
         end_round(&mut game.borrow_mut(), &mut event_pump, &mut canvas, &font)?;
     }

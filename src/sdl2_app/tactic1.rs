@@ -1,4 +1,4 @@
-use crate::logic::card::Card;
+use crate::logic::{card::Card, constants::BIG_BLIND};
 
 pub fn rank_cards_preflop(pair_of_cards: Vec<Card>) -> u32 {
     assert!(pair_of_cards.len() == 2);
@@ -11,7 +11,6 @@ pub fn rank_cards_preflop(pair_of_cards: Vec<Card>) -> u32 {
     } else {
         (card2, card1)
     };
-
 
     let high_index = (14 - high.number.evaluate_to_int()) as usize;
     let low_index = (14 - low.number.evaluate_to_int()) as usize;
@@ -53,4 +52,34 @@ pub fn rank_cards_preflop(pair_of_cards: Vec<Card>) -> u32 {
     ];
 
     TABLE[i][j]
+}
+
+pub fn make_decision(
+    player_cards: &(Card, Card),
+    _table_cards: &Vec<Card>, // v planu še uporabit
+    req_bet: u32,
+    players_curr_bet: u32, // samo za to da nau preveč stavu in da enkrat neha
+    player_chips: u32,
+) -> Option<u32> {
+    if player_chips == 0 {
+        return Some(0);
+    }
+    let hand_cards_vec: Vec<_> = vec![player_cards.0.clone(), player_cards.1.clone()];
+    let rank_points = rank_cards_preflop(hand_cards_vec);
+    if (rank_points < 10) || (rank_points < 25 && req_bet <= 2 * BIG_BLIND) {
+        if req_bet > player_chips {
+            return Some(player_chips);
+        }
+        if players_curr_bet <= 5 * BIG_BLIND && 5 * BIG_BLIND + req_bet <= player_chips {
+            Some(5 * BIG_BLIND + req_bet)
+        } else {
+            Some(req_bet)
+        }
+    } else if rank_points < 35 && player_chips <= req_bet && players_curr_bet <= 2 * BIG_BLIND {
+        Some(req_bet)
+    } else if req_bet == 0 {
+        return Some(0);
+    } else {
+        None
+    }
 }

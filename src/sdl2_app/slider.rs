@@ -8,14 +8,14 @@ use super::render_text::draw_text;
 pub struct Slider {
     pub track_rect: Rect,      // Območje celotnega traku
     pub thumb_rect: Rect,      // Območje drsaka
-    pub min: u32,             // Minimalna vrednost
-    pub max: u32,             // Maksimalna vrednost
-    pub value: u32,           // Trenutna vrednost
+    pub min: i32,             // Minimalna vrednost
+    pub max: i32,             // Maksimalna vrednost
+    pub value: i32,           // Trenutna vrednost
     pub is_dragging: bool,    // Ali se drsak premika
 }
 
 impl Slider {
-    pub fn new(x: i32, y: i32, width: i32, height: i32, min: u32, max: u32) -> Self {
+    pub fn new(x: i32, y: i32, width: i32, height: i32, min: i32, max: i32) -> Self {
         let track_rect = Rect::new(x, y, width as u32, height as u32);
         let thumb_width = 20;
 
@@ -73,7 +73,7 @@ impl Slider {
         let total_range_pixels = self.track_rect.width() as i32 - self.thumb_rect.width() as i32;
         let value_range = self.max - self.min;
         
-        self.value = self.min + ((relative_pos as f32 / total_range_pixels as f32) * value_range as f32) as u32;
+        self.value = self.min + ((relative_pos as f32 / total_range_pixels as f32) * value_range as f32) as i32;
     }
     // Risanje sliderja
     pub fn draw(&self, canvas: &mut sdl2::render::Canvas<sdl2::video::Window>, font: &Font) -> Result<(), String> {
@@ -94,7 +94,7 @@ impl Slider {
         Ok(())
     }
 
-    pub fn get_value(&self) -> u32 {
+    pub fn get_value(&self) -> i32 {
         self.value
     }
 }

@@ -7,8 +7,6 @@ use sdl2::{event::Event, pixels::Color};
 use std::sync::atomic::Ordering;
 use std::time::Duration;
 
-use crate::logic::card::Card;
-use crate::logic::constants::BIG_BLIND;
 use crate::logic::constants::SHOULD_QUIT;
 use crate::logic::game::Game;
 use crate::logic::player::Player;
@@ -17,27 +15,39 @@ use crate::sdl2_app::render_text::write_info;
 
 use super::render_screen::render_screen;
 use super::slider::Slider;
-use super::tactic1::rank_cards_preflop;
+use super::tactic1::make_decision;
 
 pub fn make_bet_player1(
     player: &Player,
     req_bet: u32,
     event_pump: &mut EventPump,
-    fold_button: &mut Button,
-    call_button: &mut Button,
-    raise_button: &mut Button,
     canvas: &mut Canvas<Window>,
     font: &Font,
     game: &Game,
 ) -> Result<Option<u32>, String> {
+    if player.chips == 0 {
+        return Ok(Some(0));
+    }
+    let req_bet = if player.chips <= req_bet {
+        player.chips
+    } else {
+        req_bet
+    };
+    let mut slider = Slider::new(1150, 840, 600, 20, req_bet as i32, player.chips as i32);
+    // mogoče treba req_bet in player.chips mal bol obravnavat, da nau problemov k ma player edino možnost it all in
+    let check_button = Button::init_check_button(canvas);
+    let allin_button = Button::init_allin_button(canvas);
+    let mut call_button = Button::init_call_button(canvas);
+    let mut raise_button = Button::init_raise_button(canvas);
+    let mut fold_button = Button::init_fold_button(canvas);
+
     let _: Vec<_> = event_pump.poll_iter().collect();
-    let mut slider = Slider::new(1150, 840, 600, 20, req_bet, player.chips);
     loop {
         for event in event_pump.poll_iter() {
             // se sprehodi cez use evente
-            Button::handle_button_events(&event, fold_button);
-            Button::handle_button_events(&event, call_button);
-            Button::handle_button_events(&event, raise_button);
+            Button::handle_button_events(&event, &mut fold_button);
+            Button::handle_button_events(&event, &mut call_button);
+            Button::handle_button_events(&event, &mut raise_button);
             slider.handle_event(&event);
             match event {
                 Event::Quit { .. }
@@ -51,7 +61,7 @@ pub fn make_bet_player1(
                 _ => {}
             }
         }
-        let raise_value = slider.get_value();
+        let raise_value = slider.get_value() as u32;
         if fold_button.is_clicked {
             write_info(canvas, &format!("{:?} folded", player.name), font, 250)?;
             canvas.present();
@@ -100,10 +110,18 @@ pub fn make_bet_player1(
         }
         let (r, g, b) = (173, 216, 230); // Light blue color
         render_screen(canvas, Color::RGB(r, g, b), game, font)?;
-        slider.draw(canvas, font)?;
         Button::draw_button(&fold_button, canvas, &font)?;
-        Button::draw_button(&call_button, canvas, &font)?;
-        Button::draw_button(&raise_button, canvas, &font)?;
+        if req_bet > 0 {
+            Button::draw_button(&call_button, canvas, &font)?;
+        } else {
+            Button::draw_button(&check_button, canvas, &font)?;
+        }
+        if player.chips >= req_bet {
+            Button::draw_button(&raise_button, canvas, &font)?;
+            slider.draw(canvas, font)?;
+        } else {
+            Button::draw_button(&allin_button, canvas, &font)?;
+        }
         // render_turn_indicator(player, canvas)?;
         canvas.present();
         if fold_button.is_clicked || call_button.is_clicked || raise_button.is_clicked {
@@ -124,6 +142,7 @@ pub fn make_bet_bot(
     let _: Vec<_> = event_pump.poll_iter().collect();
     let decision = make_decision(
         &player.hand_cards,
+        &game.table_cards,
         req_bet,
         player.current_bet,
         player.chips,
@@ -131,8 +150,7 @@ pub fn make_bet_bot(
     let (r, g, b) = (173, 216, 230);
     if let Some(bet) = decision {
         render_screen(canvas, Color::RGB(r, g, b), game, font)?;
-        let string = 
-        if bet == req_bet {
+        let string = if bet == req_bet {
             // println!("pišem write_info v send_bet ko bot dela odloćiitve");
             format!("{:?} called", player.name)
         } else {
@@ -182,32 +200,5 @@ pub fn make_bet_bot(
             ::std::thread::sleep(Duration::from_millis(30));
         }
         return Ok(None);
-    }
-}
-
-pub fn make_decision(
-    player_cards: &(Card, Card),
-    req_bet: u32,
-    curr_bet: u32,
-    player_chips: u32,
-) -> Option<u32> {
-    let hand_cards_vec: Vec<_> = vec![player_cards.0.clone(), player_cards.1.clone()];
-    let rank_points = rank_cards_preflop(hand_cards_vec);
-    // println!("hand ranking of cards {} {} is {}", player_cards.0, player_cards.1, rank_points);
-    if (rank_points < 10) || (rank_points < 25 && curr_bet == 0) {
-        if req_bet > player_chips {
-            return Some(player_chips);
-        }
-        if curr_bet <= 5 * BIG_BLIND {
-            Some(5 * BIG_BLIND - curr_bet)
-        } else {
-            Some(0)
-        }
-    } else if rank_points < 35 && player_chips <= req_bet {
-        Some(req_bet)
-    } else if req_bet == curr_bet {
-        return Some(0);
-    } else {
-        None
     }
 }

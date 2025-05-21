@@ -54,11 +54,12 @@ pub fn begin_round(game: &mut Game) {
                 game.pot += BIG_BLIND;
             }
         }
-        player.hand_cards = (card1, card2)
+        player.opened_cards = false;
+        player.hand_cards = (card1, card2);
     }
     game.street = Streets::PreFlop;
     game.deck = deck;
-    game.board_cards = Vec::new();
+    game.table_cards = Vec::new();
     game.position_on_turn = player::PlayerPosition::UnderTheGun;
     game.round_number += 1;
 }
@@ -74,7 +75,7 @@ pub fn next_turn(game: &mut Game) {
                     None => panic!("Deck is empty"),
                     Some(card) => card,
                 };
-                game.board_cards.push(card);
+                game.table_cards.push(card);
             }
         }
         Streets::River | Streets::Turn => {
@@ -82,7 +83,7 @@ pub fn next_turn(game: &mut Game) {
                 None => panic!("Deck is empty"),
                 Some(card) => card,
             };
-            game.board_cards.push(card);
+            game.table_cards.push(card);
         }
         Streets::Showdown => {
             

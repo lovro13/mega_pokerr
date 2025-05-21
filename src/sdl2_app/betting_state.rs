@@ -9,7 +9,6 @@ use crate::logic::betting_system::make_bets;
 use crate::logic::constants::SHOULD_QUIT;
 use crate::logic::game::Game;
 use crate::logic::player::Names;
-use crate::sdl2_app::render_button::Button;
 use crate::sdl2_app::send_bet;
 
 pub fn run_betting_state(
@@ -32,18 +31,10 @@ pub fn run_betting_state(
             let canvas = Rc::clone(&canvas_rc);
             let mut canvas_borrow = canvas.borrow_mut();
             if player.name == Names::Player1 {
-                // Ustvari gumbe
-                let mut fold_button = Button::init_fold_button(&mut *canvas_borrow);
-                let mut call_button = Button::init_call_button(&mut *canvas_borrow);
-                let mut raise_button = Button::init_raise_button(&mut *canvas_borrow);
-                
                 send_bet::make_bet_player1(
                     player,
                     req_bet,
                     event_pump,
-                    &mut fold_button,
-                    &mut call_button,
-                    &mut raise_button,
                     &mut *canvas_borrow,
                     font,
                     game
