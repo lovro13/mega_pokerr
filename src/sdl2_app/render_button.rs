@@ -7,7 +7,7 @@ use sdl2::render::WindowCanvas;
 use crate::sdl2_app::render_text::draw_text;
 use crate::sdl2_app::render_screen::get_screen_center;
 use super::constants::{BUTTON_COLOR, BUTTON_COLOR_PRESSED};
-use super::positions::ControlPosition;
+use super::positions::{ControlPosition, BUTTON_END_OF_ROUND, BUTTON_END_OF_ROUND_HEIGHT, BUTTON_END_OF_ROUND_WIDTH};
 
 pub struct Button {
     pub rect: Rect,
@@ -116,8 +116,8 @@ impl Button {
 
     pub fn init_end_of_round_button(canvas: &mut WindowCanvas) -> Self {
         let screen_center = get_screen_center(canvas);
-        let button_position = screen_center + Point::new(0, 125);
-        let button_target = Rect::from_center(button_position, 200, 50);
+        let button_position = screen_center + Point::from(BUTTON_END_OF_ROUND);
+        let button_target = Rect::from_center(button_position, BUTTON_END_OF_ROUND_WIDTH, BUTTON_END_OF_ROUND_HEIGHT);
         Button {
             rect: button_target,
             text: String::from("START NEW ROUND"),

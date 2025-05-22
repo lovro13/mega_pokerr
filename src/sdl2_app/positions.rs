@@ -28,6 +28,11 @@ pub const BUTTON_WIDTH: u32 = 120;
 pub const BUTTON_HEIGHT: u32 = 50;
 pub const BUTTON_SPACE: u32 = 10;
 
+
+pub const BUTTON_END_OF_ROUND: (i32, i32) = (0, 125);
+pub const BUTTON_END_OF_ROUND_WIDTH: u32 = 200;
+pub const BUTTON_END_OF_ROUND_HEIGHT: u32 = 50;
+
 pub struct PlayerScreenPosition {
     // to se da še zelo nadgraditi, npr z velikostmi, ...
     pub cards: Point,
@@ -72,6 +77,7 @@ impl PlayerScreenPosition {
 
 pub struct ControlPosition {
     // mogoče fino dat še velikosti
+    // ali pa itak velikosti določim globalno
     pub fold_button: Point,
     pub call_button: Point,
     pub raise_button: Point,

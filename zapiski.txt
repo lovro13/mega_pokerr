@@ -18,6 +18,7 @@ LOGIC:
 -- treba bl zrihtat bote, ampak kr uredu delajo
 -- loh bi več stvari avtomatiziral, npr end_round, pa še mal bl uredi
 -- game pa player mata pomoje mal preveč stvari v enumu zih bi se ksne dal znebit al pa ksn nov enum narest
+-- narest eno funkcijo validate_bet, ki bo olajašala življenje, maybe vrne tipa Option, Option hehe
 
 BOT:
 -- osnovna logika dela, za predstavitev bo več pa ne bom rihtov za zdj

@@ -6,12 +6,12 @@ use sdl2::ttf::Font;
 use super::render_text::draw_text;
 
 pub struct Slider {
-    pub track_rect: Rect,      // Območje celotnega traku
-    pub thumb_rect: Rect,      // Območje drsaka
-    pub min: i32,             // Minimalna vrednost
-    pub max: i32,             // Maksimalna vrednost
-    pub value: i32,           // Trenutna vrednost
-    pub is_dragging: bool,    // Ali se drsak premika
+    pub track_rect: Rect,      // celotnega traku
+    pub thumb_rect: Rect,      // pravoktnik k se premika
+    pub min: i32,             // minimalna vrednost
+    pub max: i32,             // maksimalna vrednost
+    pub value: i32,           // trenutna vrednost
+    pub is_dragging: bool,    // ali se premika
 }
 
 impl Slider {
