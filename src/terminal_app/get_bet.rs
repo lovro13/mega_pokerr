@@ -13,14 +13,14 @@ pub fn get_bet(game: &Game, req_bet: u32) -> Option<u32> {
         let mut buffer = String::new();
         println!(
             "Player {:?} {:?}, current bet: {}, ",
-            player.name, player.position, player.current_bet
+            player.id, player.position, player.current_bet
         );
 
         match io::stdin().read_line(&mut buffer) {
             Ok(_) => {
                 let input = buffer.trim();
                 if input.is_empty() {
-                    println!("Player {:?} {:?} folded", player.name, player.position);
+                    println!("Player {:?} {:?} folded", player.id, player.position);
                     return None;
                 }
                 // Poskusi pretvoriti vnos v število

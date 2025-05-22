@@ -41,6 +41,6 @@ pub fn players_hand_ranking(player: &Player, board_cards: &Vec<Card>) -> HandRan
         .collect::<Vec<_>>();
     hand_rankings.sort();
     hand_rankings.reverse();
-    println!("players {:#?} hand ranking {:?}", player.name, hand_rankings[0].clone());
+    println!("players {:#?} hand ranking {:?}", player.id, hand_rankings[0].clone());
     return hand_rankings[0].clone();
 }

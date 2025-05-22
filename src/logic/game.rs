@@ -6,7 +6,7 @@ use crate::logic::player::Player;
 use std::rc::Rc;
 use std::cell::RefCell;
 
-use super::player::Names;
+use super::player::Id;
 
 #[derive(Debug, PartialEq, Clone)]
 pub enum Streets {
@@ -83,9 +83,9 @@ impl Game {
         }
         panic!("Pozicija manjka (get_player_from_pos)")
     }
-    pub fn get_player_from_name(&mut self, name: Names) -> &mut Player {
+    pub fn get_player_from_name(&mut self, name: Id) -> &mut Player {
         for player in self.players.iter_mut() {
-            if player.name == name {
+            if player.id == name {
                 return player;
             }
         }
@@ -98,7 +98,7 @@ pub fn init_game(player_list: Vec<player::Player>) -> Rc<RefCell<Game>> {
     let deck = card::Card::scramble_deck(deck);
     let mut players_in_game = vec![];
     for player in player_list.iter() {
-        players_in_game.push(player.name.clone());
+        players_in_game.push(player.id.clone());
     }
     let mut_player_list = player_list;
     Rc::new(RefCell::new(Game {

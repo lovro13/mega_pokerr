@@ -1,32 +1,18 @@
 use crate::logic::constants::{BIG_BLIND, SMALL_BLIND};
 use crate::logic::game::Game;
-use crate::logic::player::{self, Names, Player};
+use crate::logic::player::{self, Id, Player};
 use sdl2::image::LoadTexture;
 use sdl2::pixels::Color;
 use sdl2::rect::{Point, Rect};
 use sdl2::render::WindowCanvas;
 
-use crate::sdl2_app::constants::CARD_WIDTH;
+use crate::sdl2_app::positions::{CARD_WIDTH, CARD_HEIGHT};
 use crate::sdl2_app::render_text::draw_text;
-
-use super::constants::CARD_HEIGHT;
 
 pub fn get_screen_center(canvas: &WindowCanvas) -> Point {
     let (width, height) = canvas.output_size().unwrap();
     let screen_center = Point::new(width as i32 / 2, (height as i32) / 2 - 40);
     return screen_center;
-}
-
-impl Player {
-    pub fn get_player_screen_center(&self, canvas: &WindowCanvas) -> Point {
-        // is on the middle of the first card
-        let (width, height) = canvas.output_size().unwrap();
-        let screen_center = Point::new(width as i32 / 2, (height as i32) / 2 - 100);
-        let card_position = self.card_position;
-        let player_center = // is on the middle of the first card
-        Point::new(card_position.0, -card_position.1) + screen_center;
-        return player_center;
-    }
 }
 
 pub fn render_player_info(
@@ -36,7 +22,7 @@ pub fn render_player_info(
     color: Color,
 ) -> Result<(), String> {
     // nariše karte, ime, balance, dealer žeton, če je treba
-    let player_center = player.get_player_screen_center(canvas);
+    let player_center = player.id.get_player_screen_center(canvas);
     // tukaj je center v player_position z normalnim kartezičnim
     let card2_pos = player_center + Point::new(30, 0);
     if player.playing {
@@ -45,7 +31,7 @@ pub fn render_player_info(
     }
 
     // write player name near the player cards
-    let name_text = player::Player::get_player_name(player);
+    let name_text = player::Player::player_id_to_str(player);
 
     let player_name_position = player_center + Point::new(25, 85);
     let text_target = Rect::from_center(player_name_position, 150 as u32, 75 as u32);
@@ -103,11 +89,11 @@ pub fn render_player_info(
     let mut x_pos = -30;
     while copy_curr_bet > 0 {
         let curr_bet_pos =
-            if vec![Names::Player1, Names::Player2, Names::Player8].contains(&player.name) {
+            if vec![Id::Player1, Id::Player2, Id::Player8].contains(&player.id) {
                 player_center + Point::new(x_pos, -(CARD_HEIGHT as i32) / 2 - 30)
-            } else if vec![Names::Player4, Names::Player5, Names::Player6].contains(&player.name) {
+            } else if vec![Id::Player4, Id::Player5, Id::Player6].contains(&player.id) {
                 player_center - Point::new(x_pos, -(CARD_HEIGHT as i32) - 60)
-            } else if player.name == Names::Player7 {
+            } else if player.id == Id::Player7 {
                 player_center + Point::new(x_pos - 75,70)
             } else {
                 player_center + Point::new(x_pos + 160,70)
@@ -139,7 +125,7 @@ pub fn render_player_info(
 }
 
 pub fn render_turn_indicator(player: &Player, canvas: &mut WindowCanvas) -> Result<(), String> {
-    let player_center = player.get_player_screen_center(canvas);
+    let player_center = player.id.get_player_screen_center(canvas);
     let player_name_position = player_center + Point::new(25, 85);
     let indincator_target = player_name_position + Point::new(0, 80);
     let target = Rect::from_center(indincator_target, 150, 10);
@@ -163,7 +149,7 @@ pub fn render_screen(
         let color = Color::RGB(0, 0, 0);
         if player.position == game.position_on_turn {
             let background = Color::RGB(255, 105, 105);
-            let player_name_position = player.get_player_screen_center(canvas) + Point::new(25, 85);
+            let player_name_position = player.id.get_player_screen_center(canvas) + Point::new(25, 85);
             let text_target = Rect::from_center(player_name_position, 150 as u32, 50 as u32);
             canvas.set_draw_color(background);
             canvas.fill_rect(text_target)?;

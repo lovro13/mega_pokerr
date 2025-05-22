@@ -5,8 +5,7 @@ use sdl2::{
 };
 
 use crate::logic::card::{Card, CardColor, CardNumber};
-
-use super::constants::{CARD_HEIGHT, CARD_WIDTH};
+use crate::sdl2_app::positions::{CARD_HEIGHT, CARD_WIDTH};
 
 impl Card {
     pub fn card_to_file(self: &Card) -> String {

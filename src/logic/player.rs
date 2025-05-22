@@ -2,7 +2,7 @@ use crate::logic::card;
 use crate::logic::constants::BUY_IN;
 
 #[derive(Debug, Clone, PartialEq)]
-pub enum Names {
+pub enum Id {
     Player1,
     Player2,
     Player3,
@@ -27,6 +27,7 @@ pub enum PlayerPosition {
 }
 
 impl PlayerPosition {
+    // uu to bo treba še popravt, če nočem da je edina možna stvar 8 playerjov, ampak tud druge številke
     pub fn next_player_position(&self) -> PlayerPosition {
         match self {
             PlayerPosition::Dealer => PlayerPosition::Cutoff,
@@ -37,7 +38,9 @@ impl PlayerPosition {
             PlayerPosition::UnderTheGun => PlayerPosition::BigBlind,
             PlayerPosition::BigBlind => PlayerPosition::SmallBlind,
             PlayerPosition::SmallBlind => PlayerPosition::Dealer,
-            PlayerPosition::NotPlaying => panic!("NotPlaying position should not be evaluated (next_player_position)"),
+            PlayerPosition::NotPlaying => {
+                panic!("NotPlaying position should not be evaluated (next_player_position)")
+            }
         }
     }
 
@@ -51,7 +54,9 @@ impl PlayerPosition {
             PlayerPosition::MiddlePosition => PlayerPosition::Hijack,
             PlayerPosition::Hijack => PlayerPosition::Cutoff,
             PlayerPosition::Cutoff => PlayerPosition::Dealer,
-            PlayerPosition::NotPlaying => panic!("NotPlaying position should not be evaluated (next_player_on_turn)"),
+            PlayerPosition::NotPlaying => {
+                panic!("NotPlaying position should not be evaluated (next_player_on_turn)")
+            }
         }
     }
 
@@ -65,7 +70,9 @@ impl PlayerPosition {
             PlayerPosition::MiddlePosition => 5,
             PlayerPosition::Hijack => 6,
             PlayerPosition::Cutoff => 7,
-            PlayerPosition::NotPlaying => panic!("NotPlaying position should not be evaluated to int"),
+            PlayerPosition::NotPlaying => {
+                panic!("NotPlaying position should not be evaluated to int")
+            }
         }
     }
 
@@ -86,53 +93,42 @@ impl PlayerPosition {
 
 #[derive(Debug, Clone)] // PAZIII CLONE SAMO RISANJE PLAYERJEV
 pub struct Player {
-    pub name: Names,
+    pub id: Id, // from Player1, ...,  Player8
     pub hand_cards: (card::Card, card::Card),
-    pub card_position: (i32, i32),
     pub position: PlayerPosition,
     pub chips: u32,
     pub playing: bool,
     pub current_bet: u32,
     pub debt: u32,
-    pub opened_cards: bool
+    pub opened_cards: bool,
 }
 
-impl Names {
-    pub fn all_names() -> Vec<Names> {
+impl Id {
+    pub fn all_names() -> Vec<Id> {
         vec![
-            Names::Player1,
-            Names::Player2,
-            Names::Player3,
-            Names::Player4,
-            Names::Player5,
-            Names::Player6,
-            Names::Player7,
-            Names::Player8,
+            Id::Player1,
+            Id::Player2,
+            Id::Player3,
+            Id::Player4,
+            Id::Player5,
+            Id::Player6,
+            Id::Player7,
+            Id::Player8,
         ]
     }
 }
 
 impl Player {
-    pub const PLAYER1_CARDS: (i32, i32) = (-50, -300);
-    const PLAYER2_CARDS: (i32, i32) = (-500, -300);
-    const PLAYER3_CARDS: (i32, i32) = (-775, 0);
-    const PLAYER4_CARDS: (i32, i32) = (-500, 275);
-    const PLAYER5_CARDS: (i32, i32) = (-50, 275);
-    const PLAYER6_CARDS: (i32, i32) = (500, 275);
-    const PLAYER7_CARDS: (i32, i32) = (700, 0);
-    const PLAYER8_CARDS: (i32, i32) = (500, -300);
-
     pub fn init_players() -> Vec<Player> {
         let mut list_of_players = Vec::new();
         let mut last_position = PlayerPosition::Dealer;
-        let names = Names::all_names(); // 1, 2, ... , 8
+        let names = Id::all_names(); // 1, 2, ... , 8
 
         for name in names {
             let curr_position = PlayerPosition::next_player_on_turn(&last_position);
             last_position = curr_position.clone();
             let curr_player = Player {
-                card_position: Self::get_card_position(&name),
-                name,
+                id: name,
                 hand_cards: (
                     card::Card {
                         color: card::CardColor::Empty,
@@ -148,36 +144,23 @@ impl Player {
                 playing: true,
                 current_bet: 0,
                 debt: 0,
-                opened_cards: false
+                opened_cards: false,
             };
             list_of_players.push(curr_player);
         }
         list_of_players
     }
 
-    pub fn get_card_position(name: &Names) -> (i32, i32) {
-        match name {
-            Names::Player1 => Self::PLAYER1_CARDS,
-            Names::Player2 => Self::PLAYER2_CARDS,
-            Names::Player3 => Self::PLAYER3_CARDS,
-            Names::Player4 => Self::PLAYER4_CARDS,
-            Names::Player5 => Self::PLAYER5_CARDS,
-            Names::Player6 => Self::PLAYER6_CARDS,
-            Names::Player7 => Self::PLAYER7_CARDS,
-            Names::Player8 => Self::PLAYER8_CARDS,
-        }
-    }
-
-    pub fn get_player_name(player: &Player) -> String {
-        match player.name {
-            Names::Player1 => String::from("Player1"),
-            Names::Player2 => String::from("Player2"),
-            Names::Player3 => String::from("Player3"),
-            Names::Player4 => String::from("Player4"),
-            Names::Player5 => String::from("Player5"),
-            Names::Player6 => String::from("Player6"),
-            Names::Player7 => String::from("Player7"),
-            Names::Player8 => String::from("Player8"),
+    pub fn player_id_to_str(player: &Player) -> String {
+        match player.id {
+            Id::Player1 => String::from("Player1"),
+            Id::Player2 => String::from("Player2"),
+            Id::Player3 => String::from("Player3"),
+            Id::Player4 => String::from("Player4"),
+            Id::Player5 => String::from("Player5"),
+            Id::Player6 => String::from("Player6"),
+            Id::Player7 => String::from("Player7"),
+            Id::Player8 => String::from("Player8"),
         }
     }
 }

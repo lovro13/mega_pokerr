@@ -63,13 +63,13 @@ pub fn make_bet_player1(
         }
         let raise_value = slider.get_value() as u32;
         if fold_button.is_clicked {
-            write_info(canvas, &format!("{:?} folded", player.name), font, 250)?;
+            write_info(canvas, &format!("{:?} folded", player.id), font, 250)?;
             canvas.present();
             ::std::thread::sleep(Duration::from_millis(800));
             return Ok(None);
         } else if call_button.is_clicked {
             if req_bet <= player.chips {
-                write_info(canvas, &format!("{:?} called", player.name), font, 250)?;
+                write_info(canvas, &format!("{:?} called", player.id), font, 250)?;
                 canvas.present();
                 ::std::thread::sleep(Duration::from_millis(800));
                 return Ok(Some(req_bet));
@@ -78,7 +78,7 @@ pub fn make_bet_player1(
                     canvas,
                     &format!(
                         "{:?} you dont have enough chips to call full bet, you went all in",
-                        player.name
+                        player.id
                     ),
                     font,
                     800,
@@ -89,7 +89,7 @@ pub fn make_bet_player1(
             }
         } else if raise_button.is_clicked {
             if player.chips >= raise_value {
-                write_info(canvas, &format!("{:?} raised", player.name), font, 250)?;
+                write_info(canvas, &format!("{:?} raised", player.id), font, 250)?;
                 canvas.present();
                 ::std::thread::sleep(Duration::from_millis(800));
                 return Ok(Some(raise_value));
@@ -98,7 +98,7 @@ pub fn make_bet_player1(
                     canvas,
                     &format!(
                         "{:?} you dont have enough chips, if u want to all in call",
-                        player.name
+                        player.id
                     ),
                     font,
                     400,
@@ -152,10 +152,10 @@ pub fn make_bet_bot(
         render_screen(canvas, Color::RGB(r, g, b), game, font)?;
         let string = if bet == req_bet {
             // println!("pišem write_info v send_bet ko bot dela odloćiitve");
-            format!("{:?} called", player.name)
+            format!("{:?} called", player.id)
         } else {
             // println!("pišem write_info v send_bet ko bot dela odloćiitve");
-            format!("{:?} raised", player.name)
+            format!("{:?} raised", player.id)
         };
         let start_time = std::time::Instant::now();
         while start_time.elapsed() < Duration::from_millis(800) {
@@ -195,7 +195,7 @@ pub fn make_bet_bot(
                 }
             }
             render_screen(canvas, Color::RGB(r, g, b), game, font)?;
-            write_info(canvas, &format!("{:?} folded", player.name), font, 250)?;
+            write_info(canvas, &format!("{:?} folded", player.id), font, 250)?;
             canvas.present();
             ::std::thread::sleep(Duration::from_millis(30));
         }

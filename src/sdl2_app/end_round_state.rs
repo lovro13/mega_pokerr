@@ -25,7 +25,7 @@ pub fn end_round(
     let mut print_winners = vec![];
     for winner in winners.iter_mut() {
         winner.chips += winnings;
-        print_winners.push(winner.name.clone());
+        print_winners.push(winner.id.clone());
     }
 
     let mut continue_button = Button::init_end_of_round_button(canvas);
