@@ -6,8 +6,18 @@ use sdl2::pixels::Color;
 use sdl2::rect::{Point, Rect};
 use sdl2::render::WindowCanvas;
 
-use crate::sdl2_app::positions::{CARD_WIDTH, CARD_HEIGHT};
+use crate::sdl2_app::positions::{CARD_HEIGHT, CARD_WIDTH};
 use crate::sdl2_app::render_text::draw_text;
+
+const CARD2_POS: i32 = 30; // relative to first card, so same height but 30 pixels right, x
+
+const NAME_POS: (i32, i32) = (25, 85);
+const NAME_WIDTH: u32 = 150;
+const NAME_HEIGHT: u32 = 75;
+
+const BALANCE_POS: i32 = 50; // relative to player center, y
+const BALANCE_WIDTH: u32 = 150;
+const BALANCE_HEIGHT: u32 = 75;
 
 pub fn get_screen_center(canvas: &WindowCanvas) -> Point {
     let (width, height) = canvas.output_size().unwrap();
@@ -24,33 +34,40 @@ pub fn render_player_info(
     // nariše karte, ime, balance, dealer žeton, če je treba
     let player_center = player.id.get_player_screen_center(canvas);
     // tukaj je center v player_position z normalnim kartezičnim
-    let card2_pos = player_center + Point::new(30, 0);
+    let card2_pos = player_center + Point::new(CARD2_POS, 0);
     if player.playing {
-        player.hand_cards.0.draw_card(canvas, player_center, player.opened_cards)?;
-        player.hand_cards.1.draw_card(canvas, card2_pos, player.opened_cards)?;
+        player
+            .hand_cards
+            .0
+            .draw_card(canvas, player_center, player.opened_cards)?;
+        player
+            .hand_cards
+            .1
+            .draw_card(canvas, card2_pos, player.opened_cards)?;
     }
 
     // write player name near the player cards
     let name_text = player::Player::player_id_to_str(player);
 
-    let player_name_position = player_center + Point::new(25, 85);
-    let text_target = Rect::from_center(player_name_position, 150 as u32, 75 as u32);
+    let player_name_position = player_center + Point::from(NAME_POS);
+    let text_target = Rect::from_center(player_name_position, NAME_WIDTH, NAME_HEIGHT);
 
     draw_text(canvas, &name_text, text_target, font, color, None)?;
 
     let balance_color = Color::RGB(0, 0, 10);
     let balance_text = format!("Chips: {}", player.chips);
 
-    let balance_screen_position = player_name_position + Point::new(0, 50);
-    let balance_text_target = Rect::from_center(balance_screen_position, 150 as u32, 75 as u32);
-    let _ = draw_text(
+    let balance_screen_position = player_name_position + Point::new(0, BALANCE_POS);
+    let balance_text_target =
+        Rect::from_center(balance_screen_position, BALANCE_WIDTH, BALANCE_HEIGHT);
+    draw_text(
         canvas,
         &balance_text,
         balance_text_target,
         font,
         balance_color,
-        None
-    );
+        None,
+    )?;
 
     let texture_creator = canvas.texture_creator();
     let texture_red = texture_creator.load_texture("assets/pokerchip_red.png")?;
@@ -81,23 +98,28 @@ pub fn render_player_info(
     if !player.playing {
         let folded_color = Color::RGB(128, 128, 128);
         let folded_text = String::from("Folded");
-        let folded_text_position = player_name_position + Point::new(0, -100);
-        let folded_text_target = Rect::from_center(folded_text_position, 150 as u32, 50 as u32);
-        draw_text(canvas, &folded_text, folded_text_target, font, folded_color, None)?;
+        let folded_text_target = Rect::from_center(player_center, 150 as u32, 50 as u32);
+        draw_text(
+            canvas,
+            &folded_text,
+            folded_text_target,
+            font,
+            folded_color,
+            None,
+        )?;
     }
     let mut copy_curr_bet: i32 = player.current_bet.clone() as i32;
     let mut x_pos = -30;
     while copy_curr_bet > 0 {
-        let curr_bet_pos =
-            if vec![Id::Player1, Id::Player2, Id::Player8].contains(&player.id) {
-                player_center + Point::new(x_pos, -(CARD_HEIGHT as i32) / 2 - 30)
-            } else if vec![Id::Player4, Id::Player5, Id::Player6].contains(&player.id) {
-                player_center - Point::new(x_pos, -(CARD_HEIGHT as i32) - 60)
-            } else if player.id == Id::Player7 {
-                player_center + Point::new(x_pos - 75,70)
-            } else {
-                player_center + Point::new(x_pos + 160,70)
-            };
+        let curr_bet_pos = if vec![Id::Player1, Id::Player2, Id::Player8].contains(&player.id) {
+            player_center + Point::new(x_pos, -(CARD_HEIGHT as i32) / 2 - 30)
+        } else if vec![Id::Player4, Id::Player5, Id::Player6].contains(&player.id) {
+            player_center - Point::new(x_pos, -(CARD_HEIGHT as i32) - 60)
+        } else if player.id == Id::Player7 {
+            player_center + Point::new(x_pos - 75, 70)
+        } else {
+            player_center + Point::new(x_pos + 160, 70)
+        };
         let curr_bet_target = Rect::from_center(curr_bet_pos, 30, 30);
         if copy_curr_bet as u32 >= 100 {
             canvas.copy(&texture_yellow, None, curr_bet_target)?;
@@ -149,7 +171,8 @@ pub fn render_screen(
         let color = Color::RGB(0, 0, 0);
         if player.position == game.position_on_turn {
             let background = Color::RGB(255, 105, 105);
-            let player_name_position = player.id.get_player_screen_center(canvas) + Point::new(25, 85);
+            let player_name_position =
+                player.id.get_player_screen_center(canvas) + Point::new(25, 85);
             let text_target = Rect::from_center(player_name_position, 150 as u32, 50 as u32);
             canvas.set_draw_color(background);
             canvas.fill_rect(text_target)?;

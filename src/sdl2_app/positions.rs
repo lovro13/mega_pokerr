@@ -20,7 +20,7 @@ pub const PLAYER6_CARDS: (i32, i32) = (500, 275);
 pub const PLAYER7_CARDS: (i32, i32) = (700, 0);
 pub const PLAYER8_CARDS: (i32, i32) = (500, -300);
 
-pub const CARD_HEIGHT: u32 = 120;
+pub const CARD_HEIGHT: u32 = 130;
 pub const CARD_WIDTH: u32 = 95;
 
 pub const CALL_BUTTON: (i32, i32) = (0, 440);
