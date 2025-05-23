@@ -7,7 +7,7 @@ use sdl2::{event::Event, pixels::Color};
 use std::sync::atomic::Ordering;
 use std::time::Duration;
 
-use crate::logic::constants::SHOULD_QUIT;
+use crate::logic::constants::{BIG_BLIND, SHOULD_QUIT};
 use crate::logic::game::Game;
 use crate::logic::player::Player;
 use crate::sdl2_app::render_button::Button;
@@ -33,7 +33,8 @@ pub fn make_bet_player1(
     } else {
         req_bet
     };
-    let mut slider = Slider::new(1150, 840, 600, 20, req_bet as i32, player.chips as i32);
+    
+    let mut slider = Slider::init_raise_slider(&canvas, (req_bet + BIG_BLIND) as i32, player.chips as i32);
     // mogoče treba req_bet in player.chips mal bol obravnavat, da nau problemov k ma player edino možnost it all in
     let check_button = Button::init_check_button(canvas);
     let allin_button = Button::init_allin_button(canvas);

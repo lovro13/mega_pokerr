@@ -21,21 +21,22 @@ pub fn draw_text(
         .blended(text_color)
         .map_err(|e| e.to_string())?;
 
-    // Dobi dimenzije besedila
     let (text_width, text_height) = (text_surface.width(), text_surface.height());
 
-    // Izračunaj pozicijo za centriranje
+
     let x = position.x() + (position.width() as i32 - text_width as i32) / 2;
     let y = position.y() + (position.height() as i32 - text_height as i32) / 2;
     let dest_rect = Rect::new(x, y, text_width, text_height);
 
-    // Nariši ozadje (če je podano)
     if let Some(bg_color) = background {
         canvas.set_draw_color(bg_color);
         canvas.fill_rect(dest_rect)?; // Celoten podani pravokotnik
     }
 
-    // Ustvari teksturo in nariši centrirano besedilo
+    // if !position.contains_rect(dest_rect) {
+    //     println!("premjahen rect za text narisat (draw_text)");
+    // }
+
     let text_texture = texture_creator
         .create_texture_from_surface(&text_surface)
         .map_err(|e| e.to_string())?;
@@ -54,7 +55,6 @@ pub fn write_info(
     let pos = Point::new(center.x, center.y - 100);
     let rect = Rect::from_center(pos, size, 60);
     canvas.set_draw_color(Color::RGB(255, 102, 102));
-    canvas.fill_rect(rect)?;
     draw_text(
         canvas,
         &string,

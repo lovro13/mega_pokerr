@@ -3,7 +3,11 @@ use sdl2::pixels::Color;
 use sdl2::event::Event;
 use sdl2::ttf::Font;
 
+use super::positions::ControlPosition;
 use super::render_text::draw_text;
+
+const SLIDER_HEIGHT: u32 = 30;
+const SLIDER_WIDTH: u32 = 300;
 
 pub struct Slider {
     pub track_rect: Rect,      // celotnega traku
@@ -15,17 +19,17 @@ pub struct Slider {
 }
 
 impl Slider {
-    pub fn new(x: i32, y: i32, width: i32, height: i32, min: i32, max: i32) -> Self {
-        let track_rect = Rect::new(x, y, width as u32, height as u32);
+    pub fn new(center: Point, width: u32, height: u32, min: i32, max: i32) -> Self {
+        let track_rect = Rect::new(center.x, center.y, width as u32, height as u32);
         let thumb_width = 20;
 
         let value = min;
         let total_range = (max - min) as f32;
-        let thumb_x = x + ((value - min) as f32 / total_range * (width - thumb_width) as f32) as i32;
+        let thumb_x = center.x + ((value - min) as f32 / total_range * (width - thumb_width) as f32) as i32;
         
         let thumb_rect = Rect::new(
             thumb_x,
-            y,
+            center.y,
             thumb_width as u32,
             height as u32,
         );
@@ -68,7 +72,6 @@ impl Slider {
     }
 
     fn update_value(&mut self) {
-        // Popravljena formula za razpon 10-1000
         let relative_pos = self.thumb_rect.x() - self.track_rect.x();
         let total_range_pixels = self.track_rect.width() as i32 - self.thumb_rect.width() as i32;
         let value_range = self.max - self.min;
@@ -96,5 +99,13 @@ impl Slider {
 
     pub fn get_value(&self) -> i32 {
         self.value
+    }
+
+    pub fn init_raise_slider(canvas: &sdl2::render::Canvas<sdl2::video::Window>, min: i32, max: i32) -> Slider {
+        let rect_pos = ControlPosition::init_control_positon(canvas).slider; 
+        let slider = Slider::new(rect_pos, SLIDER_WIDTH, SLIDER_HEIGHT, min, max);
+        // Tukaj lahko slider shranite v stanje aplikacije ali vrnete, odvisno od vaše arhitekture.
+        // Primer: vrnite slider, če želite uporabiti to funkcijo za inicializacijo:
+        slider
     }
 }

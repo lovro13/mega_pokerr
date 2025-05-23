@@ -57,13 +57,13 @@ pub fn render_player_info(
     let texture_yellow = texture_creator.load_texture("assets/pokerchip_yellow.png")?;
     let texture_green = texture_creator.load_texture("assets/pokerchip_green.png")?;
     let texture_blue = texture_creator.load_texture("assets/pokerchip_blue.png")?;
-    let mut balance_with_chips_pos = player_name_position + Point::new(-(CARD_WIDTH as i32), 50);
+    let mut balance_with_chips_pos = player_name_position + Point::new(-(CARD_WIDTH as i32), 0);
     let mut copy_balance = player.chips.clone() as i32;
     while copy_balance > 0 {
         let target = Rect::from_center(balance_with_chips_pos, 30, 30);
-        if copy_balance >= 1000 {
+        if copy_balance >= 500 {
             canvas.copy(&texture_green, None, target)?;
-            copy_balance -= 1000;
+            copy_balance -= 500;
         } else if copy_balance >= 100 {
             canvas.copy(&texture_yellow, None, target)?;
             copy_balance -= 100;

@@ -6,12 +6,15 @@ use crate::logic::constants::SHOULD_QUIT;
 
 use super::{constants::BACKGROUND_COLOR, render_button::Button, render_screen::get_screen_center};
 
-
+const START_BUTTON: (i32, i32) = (0, 0);
+const EXIT_BUTTON: (i32, i32) = (0, 150);
+const START_BUTTON_HEIGHT: u32 = 100;
+const START_BUTTON_WIDTH: u32 = 600;
 
 pub fn start_screen_state(canvas: &mut Canvas<Window>, event_pump: &mut EventPump, font: &Font) -> bool {
-    let screen_center = get_screen_center(canvas);
-    let mut start_button = Button::new(&screen_center, 100, 600, String::from("START GAME"));
-    let mut exit_button = Button::new(&(screen_center + Point::new(0, 110)), 100, 600, String::from("EXIT"));
+    let sc_center = get_screen_center(canvas);
+    let mut start_button = Button::new(Point::from(START_BUTTON) + sc_center, START_BUTTON_HEIGHT, START_BUTTON_WIDTH, String::from("START GAME"));
+    let mut exit_button = Button::new(Point::from(EXIT_BUTTON) + sc_center, START_BUTTON_HEIGHT, START_BUTTON_WIDTH, String::from("EXIT"));
     loop {
         for event in event_pump.poll_iter() {
             Button::handle_button_events(&event, &mut start_button);
