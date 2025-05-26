@@ -12,6 +12,7 @@ pub fn draw_text(
     font: &sdl2::ttf::Font,
     text_color: Color,
     background: Option<Color>,
+    custom_background :bool
 ) -> Result<(), String> {
     let texture_creator = canvas.texture_creator();
     
@@ -32,7 +33,12 @@ pub fn draw_text(
     // Nariši ozadje (če je podano)
     if let Some(bg_color) = background {
         canvas.set_draw_color(bg_color);
-        canvas.fill_rect(dest_rect)?; // Celoten podani pravokotnik
+        if custom_background {
+        assert!(position.contains_rect(dest_rect), "when printing {text}");
+        canvas.fill_rect(position)?; // Celoten podani pravokotnik
+        } else {
+            canvas.fill_rect(dest_rect)?;
+        }
     }
 
     // Ustvari teksturo in nariši centrirano besedilo
@@ -54,7 +60,6 @@ pub fn write_info(
     let pos = Point::new(center.x, center.y - 100);
     let rect = Rect::from_center(pos, size, 60);
     canvas.set_draw_color(Color::RGB(255, 102, 102));
-    canvas.fill_rect(rect)?;
     draw_text(
         canvas,
         &string,
@@ -62,6 +67,7 @@ pub fn write_info(
         font,
         Color::RGB(0, 0, 0),
         Some(Color::RGB(INFO_B_COLOR.0, INFO_B_COLOR.1, INFO_B_COLOR.2)),
+        false
     )?;
     Ok(())
 }

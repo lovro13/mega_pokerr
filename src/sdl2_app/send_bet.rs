@@ -13,16 +13,22 @@ use crate::logic::player::Player;
 use crate::sdl2_app::render_button::Button;
 use crate::sdl2_app::render_text::write_info;
 
+use super::constants::PATH_TO_FONT;
+use super::positions::ControlPosition;
 use super::render_screen::render_screen;
 use super::slider::Slider;
 use super::tactic1::make_decision;
 
-pub fn make_bet_player1(
+const BUTTON_TEXT_SIZE: u16 = 18;
+const WRITE_INFO_SIZE: u16 = 40;
+const SLIDER_TEXT_SIZE: u16 = 15;
+
+pub fn make_bet_user(
     player: &Player,
     req_bet: u32,
     event_pump: &mut EventPump,
     canvas: &mut Canvas<Window>,
-    font: &Font,
+    ttf_context: &sdl2::ttf::Sdl2TtfContext,
     game: &Game,
 ) -> Result<Option<u32>, String> {
     if player.chips == 0 {
@@ -33,7 +39,8 @@ pub fn make_bet_player1(
     } else {
         req_bet
     };
-    let mut slider = Slider::new(1150, 840, 600, 20, req_bet as i32, player.chips as i32);
+    let slider_pos = ControlPosition::init_control_positon(canvas).slider;
+    let mut slider = Slider::new(slider_pos.x, slider_pos.y, 300, 40, req_bet as i32, player.chips as i32);
     // mogoče treba req_bet in player.chips mal bol obravnavat, da nau problemov k ma player edino možnost it all in
     let check_button = Button::init_check_button(canvas);
     let allin_button = Button::init_allin_button(canvas);
@@ -62,14 +69,15 @@ pub fn make_bet_player1(
             }
         }
         let raise_value = slider.get_value() as u32;
+        let font = ttf_context.load_font(PATH_TO_FONT, WRITE_INFO_SIZE).unwrap();
         if fold_button.is_clicked {
-            write_info(canvas, &format!("{:?} folded", player.id), font, 250)?;
+            write_info(canvas, &format!("{:?} folded", player.id), &font, 250)?;
             canvas.present();
             ::std::thread::sleep(Duration::from_millis(800));
             return Ok(None);
         } else if call_button.is_clicked {
             if req_bet <= player.chips {
-                write_info(canvas, &format!("{:?} called", player.id), font, 250)?;
+                write_info(canvas, &format!("{:?} called", player.id), &font, 250)?;
                 canvas.present();
                 ::std::thread::sleep(Duration::from_millis(800));
                 return Ok(Some(req_bet));
@@ -80,7 +88,7 @@ pub fn make_bet_player1(
                         "{:?} you dont have enough chips to call full bet, you went all in",
                         player.id
                     ),
-                    font,
+                    &font,
                     800,
                 )?;
                 canvas.present();
@@ -89,7 +97,7 @@ pub fn make_bet_player1(
             }
         } else if raise_button.is_clicked {
             if player.chips >= raise_value {
-                write_info(canvas, &format!("{:?} raised", player.id), font, 250)?;
+                write_info(canvas, &format!("{:?} raised", player.id), &font, 250)?;
                 canvas.present();
                 ::std::thread::sleep(Duration::from_millis(800));
                 return Ok(Some(raise_value));
@@ -100,7 +108,7 @@ pub fn make_bet_player1(
                         "{:?} you dont have enough chips, if u want to all in call",
                         player.id
                     ),
-                    font,
+                    &font,
                     400,
                 )?;
                 canvas.present();
@@ -109,18 +117,20 @@ pub fn make_bet_player1(
             }
         }
         let (r, g, b) = (173, 216, 230); // Light blue color
-        render_screen(canvas, Color::RGB(r, g, b), game, font)?;
-        Button::draw_button(&fold_button, canvas, &font)?;
+        let font = ttf_context.load_font(PATH_TO_FONT, 40).unwrap();
+        render_screen(canvas, Color::RGB(r, g, b), game, &font)?;
+        Button::draw_button(&fold_button, canvas, &ttf_context, BUTTON_TEXT_SIZE)?;
         if req_bet > 0 {
-            Button::draw_button(&call_button, canvas, &font)?;
+            Button::draw_button(&call_button, canvas, &ttf_context, BUTTON_TEXT_SIZE)?;
         } else {
-            Button::draw_button(&check_button, canvas, &font)?;
+            Button::draw_button(&check_button, canvas, &ttf_context, BUTTON_TEXT_SIZE)?;
         }
         if player.chips >= req_bet {
-            Button::draw_button(&raise_button, canvas, &font)?;
-            slider.draw(canvas, font)?;
+            Button::draw_button(&raise_button, canvas, &ttf_context, BUTTON_TEXT_SIZE)?;
+            let font = ttf_context.load_font(PATH_TO_FONT, SLIDER_TEXT_SIZE).unwrap();
+            slider.draw(canvas, &font)?;
         } else {
-            Button::draw_button(&allin_button, canvas, &font)?;
+            Button::draw_button(&allin_button, canvas, &ttf_context, BUTTON_TEXT_SIZE)?;
         }
         // render_turn_indicator(player, canvas)?;
         canvas.present();

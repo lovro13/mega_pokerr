@@ -1,4 +1,3 @@
-use sdl2::ttf::Font;
 use sdl2::{render::Canvas, video::Window, EventPump};
 
 use std::cell::RefCell;
@@ -11,11 +10,13 @@ use crate::logic::game::Game;
 use crate::logic::player::Id;
 use crate::sdl2_app::send_bet;
 
+use super::constants::PATH_TO_FONT;
+
 pub fn run_betting_state(
     canvas: &mut Canvas<Window>,
     event_pump: &mut EventPump,
     game: &Rc<RefCell<Game>>,
-    font: &Font
+    ttf_context: &sdl2::ttf::Sdl2TtfContext
 ) -> Result<(), String> {
     // Kloniraj Rc<RefCell<Game>> za uporabo v zaprtju
 
@@ -24,24 +25,24 @@ pub fn run_betting_state(
     let get_bet = {
         // Prenesi reference na canvas in font
         let event_pump = event_pump; // &mut EventPump
-        let font = font;
-
+        
         move |game: &Game, req_bet: u32| -> Option<u32> {
             let player = game.player_on_turn_immutable();
             let canvas = Rc::clone(&canvas_rc);
             let mut canvas_borrow = canvas.borrow_mut();
             if player.id == Id::Player1 {
-                send_bet::make_bet_player1(
+                send_bet::make_bet_user(
                     player,
                     req_bet,
                     event_pump,
                     &mut *canvas_borrow,
-                    font,
+                    &ttf_context,
                     game
                 )
                 .unwrap()
             } else {
-                send_bet::make_bet_bot(player, req_bet, event_pump, &mut *canvas_borrow, font, game).unwrap()
+                let font = ttf_context.load_font(PATH_TO_FONT, 40).unwrap();
+                send_bet::make_bet_bot(player, req_bet, event_pump, &mut *canvas_borrow, &font, game).unwrap()
             }
         }
     };

@@ -9,6 +9,10 @@ use sdl2::render::WindowCanvas;
 use crate::sdl2_app::positions::{CARD_WIDTH, CARD_HEIGHT};
 use crate::sdl2_app::render_text::draw_text;
 
+const PLAYER_NAME_POS: (i32, i32) = (25, 85);
+const PLAYER_NAME_WIDTH: u32  = 150;
+const PLAYER_NAME_HEIGHT: u32  = 75;
+
 pub fn get_screen_center(canvas: &WindowCanvas) -> Point {
     let (width, height) = canvas.output_size().unwrap();
     let screen_center = Point::new(width as i32 / 2, (height as i32) / 2 - 40);
@@ -33,10 +37,10 @@ pub fn render_player_info(
     // write player name near the player cards
     let name_text = player::Player::player_id_to_str(player);
 
-    let player_name_position = player_center + Point::new(25, 85);
-    let text_target = Rect::from_center(player_name_position, 150 as u32, 75 as u32);
+    let player_name_position = player_center + Point::from(PLAYER_NAME_POS);
+    let text_target = Rect::from_center(player_name_position, PLAYER_NAME_WIDTH, PLAYER_NAME_HEIGHT);
 
-    draw_text(canvas, &name_text, text_target, font, color, None)?;
+    draw_text(canvas, &name_text, text_target, font, color, None, false)?;
 
     let balance_color = Color::RGB(0, 0, 10);
     let balance_text = format!("Chips: {}", player.chips);
@@ -49,7 +53,8 @@ pub fn render_player_info(
         balance_text_target,
         font,
         balance_color,
-        None
+        None,
+        false
     );
 
     let texture_creator = canvas.texture_creator();
@@ -57,13 +62,13 @@ pub fn render_player_info(
     let texture_yellow = texture_creator.load_texture("assets/pokerchip_yellow.png")?;
     let texture_green = texture_creator.load_texture("assets/pokerchip_green.png")?;
     let texture_blue = texture_creator.load_texture("assets/pokerchip_blue.png")?;
-    let mut balance_with_chips_pos = player_name_position + Point::new(-(CARD_WIDTH as i32), 50);
+    let mut balance_with_chips_pos = player_name_position + Point::new(-(CARD_WIDTH as i32), 15);
     let mut copy_balance = player.chips.clone() as i32;
     while copy_balance > 0 {
         let target = Rect::from_center(balance_with_chips_pos, 30, 30);
-        if copy_balance >= 1000 {
+        if copy_balance >= 500 {
             canvas.copy(&texture_green, None, target)?;
-            copy_balance -= 1000;
+            copy_balance -= 500;
         } else if copy_balance >= 100 {
             canvas.copy(&texture_yellow, None, target)?;
             copy_balance -= 100;
@@ -83,7 +88,7 @@ pub fn render_player_info(
         let folded_text = String::from("Folded");
         let folded_text_position = player_name_position + Point::new(0, -100);
         let folded_text_target = Rect::from_center(folded_text_position, 150 as u32, 50 as u32);
-        draw_text(canvas, &folded_text, folded_text_target, font, folded_color, None)?;
+        draw_text(canvas, &folded_text, folded_text_target, font, folded_color, None, false)?;
     }
     let mut copy_curr_bet: i32 = player.current_bet.clone() as i32;
     let mut x_pos = -30;

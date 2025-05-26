@@ -84,10 +84,9 @@ impl Slider {
         // Risanje traku
         canvas.set_draw_color(Color::RGB(100, 100, 100));
         let value_text = self.value.to_string();
-        draw_text(canvas, &value_text, text_target, font, canvas.draw_color(), None)?;
+        draw_text(canvas, &value_text, text_target, font, canvas.draw_color(), None, false)?;
         canvas.fill_rect(self.track_rect)?;
-        
-        // Risanje drsaka
+
         canvas.set_draw_color(Color::RGB(200, 200, 200));
         canvas.fill_rect(self.thumb_rect)?;
         

@@ -131,3 +131,10 @@ pub fn make_bets(game: &mut Game, mut get_bet: impl FnMut(&Game, u32) -> Option<
     println!("finished make_bets");
     // zdaj imam seznam igralcev ki igrajo
 }
+
+pub fn validate_bet(req_bet: u32, chips: u32, bet: u32) -> bool {
+    if req_bet > chips {
+        return bet == chips;
+    }
+    req_bet <= bet && bet <= chips
+} 

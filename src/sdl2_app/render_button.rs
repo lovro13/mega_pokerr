@@ -6,7 +6,7 @@ use sdl2::render::WindowCanvas;
 
 use crate::sdl2_app::render_text::draw_text;
 use crate::sdl2_app::render_screen::get_screen_center;
-use super::constants::{BUTTON_COLOR, BUTTON_COLOR_PRESSED};
+use super::constants::{BUTTON_COLOR, BUTTON_COLOR_PRESSED, PATH_TO_FONT};
 use super::positions::{ControlPosition, BUTTON_END_OF_ROUND, BUTTON_END_OF_ROUND_HEIGHT, BUTTON_END_OF_ROUND_WIDTH};
 
 pub struct Button {
@@ -31,7 +31,8 @@ impl Button {
     pub fn draw_button(
         &self,
         canvas: &mut sdl2::render::WindowCanvas,
-        font: &sdl2::ttf::Font,
+        ttf_context: &sdl2::ttf::Sdl2TtfContext,
+        text_size: u16
     ) -> Result<(), String> {
         let color = if self.is_clicked {
             Color::RGB(BUTTON_COLOR_PRESSED.0, BUTTON_COLOR_PRESSED.1, BUTTON_COLOR_PRESSED.2)
@@ -40,8 +41,8 @@ impl Button {
         };
 
         let text_color = Color::RGB(0, 0, 0);
-
-        draw_text(canvas, &self.text, self.rect, font, text_color, Some(color))?;
+        let font = ttf_context.load_font(&PATH_TO_FONT, text_size)?;
+        draw_text(canvas, &self.text, self.rect, &font, text_color, Some(color), true)?;
         Ok(())
     }
 

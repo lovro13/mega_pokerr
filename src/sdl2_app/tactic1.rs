@@ -1,4 +1,4 @@
-use crate::logic::{card::Card, constants::BIG_BLIND};
+use crate::logic::{betting_system::validate_bet, card::Card, constants::BIG_BLIND};
 
 pub fn rank_cards_preflop(pair_of_cards: Vec<Card>) -> u32 {
     assert!(pair_of_cards.len() == 2);
@@ -66,18 +66,29 @@ pub fn make_decision(
     }
     let hand_cards_vec: Vec<_> = vec![player_cards.0.clone(), player_cards.1.clone()];
     let rank_points = rank_cards_preflop(hand_cards_vec);
-    if (rank_points < 10) || (rank_points < 25 && req_bet <= 2 * BIG_BLIND) {
+    if (rank_points < 20) || (rank_points < 35 && req_bet <= 2 * BIG_BLIND) {
         if req_bet > player_chips {
+            assert!(validate_bet(req_bet, player_chips, player_chips));
             return Some(player_chips);
         }
         if players_curr_bet <= 5 * BIG_BLIND && 5 * BIG_BLIND + req_bet <= player_chips {
-            Some(5 * BIG_BLIND + req_bet)
+            let bet = 5 * BIG_BLIND + req_bet;
+            assert!(validate_bet(req_bet, player_chips, bet));
+            Some(bet)
         } else {
+            assert!(validate_bet(req_bet, player_chips, req_bet));
             Some(req_bet)
         }
-    } else if rank_points < 35 && player_chips <= req_bet && players_curr_bet <= 2 * BIG_BLIND {
-        Some(req_bet)
+    } else if rank_points < 45 && player_chips <= req_bet && players_curr_bet <= 2 * BIG_BLIND {
+        if req_bet <= player_chips {
+            assert!(validate_bet(req_bet, player_chips, req_bet));
+            Some(req_bet)
+        } else {
+            assert!(validate_bet(req_bet, player_chips, player_chips));
+            Some(player_chips)
+        }
     } else if req_bet == 0 {
+        assert!(validate_bet(req_bet, player_chips, 0));
         return Some(0);
     } else {
         None

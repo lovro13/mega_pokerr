@@ -92,7 +92,7 @@ impl ControlPosition {
             fold_position + Point::new(BUTTON_WIDTH as i32 + BUTTON_SPACE as i32, 0);
         let raise_posisition =
             call_position + Point::new(BUTTON_WIDTH as i32 + BUTTON_SPACE as i32, 0);
-        let slider_position = raise_posisition + Point::new(2 * BUTTON_WIDTH as i32, 0);
+        let slider_position = raise_posisition + Point::new(BUTTON_WIDTH as i32 + 10, 0);
         ControlPosition {
             fold_button: fold_position,
             call_button: call_position,

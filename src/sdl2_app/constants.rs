@@ -13,5 +13,7 @@ pub const BUTTON_COLOR_PRESSED: (u8, u8, u8) = (100, 100, 100);
 
 pub const MAIN_PLAYER: Id = Id::Player1;
 
+pub const PATH_TO_FONT: &str = "assets/font/AovelSansRounded-rdDL.ttf";
+
 pub static DEBUG: AtomicBool = AtomicBool::new(false);
 
