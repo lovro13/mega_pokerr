@@ -10,8 +10,6 @@ use crate::logic::game::Game;
 use crate::logic::player::Id;
 use crate::sdl2_app::send_bet;
 
-use super::constants::PATH_TO_FONT;
-
 pub fn run_betting_state(
     canvas: &mut Canvas<Window>,
     event_pump: &mut EventPump,
@@ -41,8 +39,7 @@ pub fn run_betting_state(
                 )
                 .unwrap()
             } else {
-                let font = ttf_context.load_font(PATH_TO_FONT, 40).unwrap();
-                send_bet::make_bet_bot(player, req_bet, event_pump, &mut *canvas_borrow, &font, game).unwrap()
+                send_bet::make_bet_bot(player, req_bet, event_pump, &mut *canvas_borrow, ttf_context, game).unwrap()
             }
         }
     };

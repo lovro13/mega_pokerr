@@ -4,10 +4,12 @@ use sdl2::pixels::Color;
 use sdl2::rect::{Point, Rect};
 use sdl2::render::WindowCanvas;
 
-use crate::sdl2_app::render_text::draw_text;
+use super::constants::{BUTTON_COLOR, BUTTON_COLOR_PRESSED};
+use super::positions::{
+    ControlPosition, BUTTON_END_OF_ROUND, BUTTON_END_OF_ROUND_HEIGHT, BUTTON_END_OF_ROUND_WIDTH,
+};
 use crate::sdl2_app::render_screen::get_screen_center;
-use super::constants::{BUTTON_COLOR, BUTTON_COLOR_PRESSED, PATH_TO_FONT};
-use super::positions::{ControlPosition, BUTTON_END_OF_ROUND, BUTTON_END_OF_ROUND_HEIGHT, BUTTON_END_OF_ROUND_WIDTH};
+use crate::sdl2_app::render_text::draw_text;
 
 pub struct Button {
     pub rect: Rect,
@@ -32,17 +34,29 @@ impl Button {
         &self,
         canvas: &mut sdl2::render::WindowCanvas,
         ttf_context: &sdl2::ttf::Sdl2TtfContext,
-        text_size: u16
+        text_size: u16,
     ) -> Result<(), String> {
         let color = if self.is_clicked {
-            Color::RGB(BUTTON_COLOR_PRESSED.0, BUTTON_COLOR_PRESSED.1, BUTTON_COLOR_PRESSED.2)
+            Color::RGB(
+                BUTTON_COLOR_PRESSED.0,
+                BUTTON_COLOR_PRESSED.1,
+                BUTTON_COLOR_PRESSED.2,
+            )
         } else {
             Color::RGB(BUTTON_COLOR.0, BUTTON_COLOR.1, BUTTON_COLOR.2)
         };
 
         let text_color = Color::RGB(0, 0, 0);
-        let font = ttf_context.load_font(&PATH_TO_FONT, text_size)?;
-        draw_text(canvas, &self.text, self.rect, &font, text_color, Some(color), true)?;
+        draw_text(
+            canvas,
+            &self.text,
+            self.rect,
+            &ttf_context,
+            text_size,
+            text_color,
+            Some(color),
+            true,
+        )?;
         Ok(())
     }
 
@@ -118,7 +132,11 @@ impl Button {
     pub fn init_end_of_round_button(canvas: &mut WindowCanvas) -> Self {
         let screen_center = get_screen_center(canvas);
         let button_position = screen_center + Point::from(BUTTON_END_OF_ROUND);
-        let button_target = Rect::from_center(button_position, BUTTON_END_OF_ROUND_WIDTH, BUTTON_END_OF_ROUND_HEIGHT);
+        let button_target = Rect::from_center(
+            button_position,
+            BUTTON_END_OF_ROUND_WIDTH,
+            BUTTON_END_OF_ROUND_HEIGHT,
+        );
         Button {
             rect: button_target,
             text: String::from("START NEW ROUND"),

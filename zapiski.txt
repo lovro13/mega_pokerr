@@ -8,7 +8,7 @@ PRAVILA za funkcijo get_bet
 SDL2 app:
 -- start screen mal lepši
 -- option screen
--- pri gumbih se še vedno lah najdemo izboljšave sploh pr sliderju
+-- treba vse font ki so podani narest z ttf context, in pol definirat konstante za use size
 -- mogoče treba req_bet in player.chips mal bl obravnavat, da nau problemov k ma player edino možnost it all in
 v make_bet_player1 to zgoraj
 -- urediti positione na screenu da ne bo tko po kavbojsk == HIGH PRIRORITY

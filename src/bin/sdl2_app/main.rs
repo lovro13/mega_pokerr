@@ -12,10 +12,6 @@ use mega_pokerr::logic::game;
 use mega_pokerr::logic::player;
 use mega_pokerr::logic::round::begin_round;
 use mega_pokerr::sdl2_app::start_screen::start_screen_state;
-pub enum GameState {
-    Paused,
-    Played(player::Player),
-}
 
 fn main() -> Result<(), String> {
     let app_context = init_app_context()?;

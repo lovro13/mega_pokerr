@@ -10,7 +10,7 @@ use crate::logic::{choose_winner::choose_winner, game::Game, constants::SHOULD_Q
 use crate::sdl2_app::render_text::write_info;
 use crate::sdl2_app::render_button::Button;
 
-use super::constants::PATH_TO_FONT;
+use super::constants::WRITE_INFO_SIZE;
 use super::render_screen::render_screen;
 
 pub fn end_round(
@@ -45,13 +45,12 @@ pub fn end_round(
             }
         }
         let (r, g, b) = (173, 216, 230); // Light blue color
-        let font = ttf_context.load_font(PATH_TO_FONT, 40)?;
-        render_screen(canvas, Color::RGB(r, g, b), game, &font)?;
+        render_screen(canvas, Color::RGB(r, g, b), game, ttf_context)?;
         write_info(
             canvas,
             &format!("{:?} won the round and {} chips", print_winners, winnings),
-            &font,
-            500
+            &ttf_context,
+            WRITE_INFO_SIZE
         )?;
         continue_button.draw_button(canvas, &ttf_context, 20)?;
         canvas.present();

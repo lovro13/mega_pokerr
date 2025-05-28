@@ -1,6 +1,5 @@
 use sdl2::keyboard::Keycode;
 use sdl2::render::Canvas;
-use sdl2::ttf::Font;
 use sdl2::video::Window;
 use sdl2::EventPump;
 use sdl2::{event::Event, pixels::Color};
@@ -13,15 +12,16 @@ use crate::logic::player::Player;
 use crate::sdl2_app::render_button::Button;
 use crate::sdl2_app::render_text::write_info;
 
-use super::constants::PATH_TO_FONT;
+
+use super::constants::WRITE_INFO_SIZE;
 use super::positions::ControlPosition;
 use super::render_screen::render_screen;
 use super::slider::Slider;
 use super::tactic1::make_decision;
 
-const BUTTON_TEXT_SIZE: u16 = 18;
-const WRITE_INFO_SIZE: u16 = 40;
-const SLIDER_TEXT_SIZE: u16 = 15;
+const BUTTON_TEXT_SIZE: u16 = 30;
+
+
 
 pub fn make_bet_user(
     player: &Player,
@@ -69,15 +69,14 @@ pub fn make_bet_user(
             }
         }
         let raise_value = slider.get_value() as u32;
-        let font = ttf_context.load_font(PATH_TO_FONT, WRITE_INFO_SIZE).unwrap();
         if fold_button.is_clicked {
-            write_info(canvas, &format!("{:?} folded", player.id), &font, 250)?;
+            write_info(canvas, &format!("{:?} folded", player.id), ttf_context, 250)?;
             canvas.present();
             ::std::thread::sleep(Duration::from_millis(800));
             return Ok(None);
         } else if call_button.is_clicked {
             if req_bet <= player.chips {
-                write_info(canvas, &format!("{:?} called", player.id), &font, 250)?;
+                write_info(canvas, &format!("{:?} called", player.id), &ttf_context, WRITE_INFO_SIZE)?;
                 canvas.present();
                 ::std::thread::sleep(Duration::from_millis(800));
                 return Ok(Some(req_bet));
@@ -88,8 +87,8 @@ pub fn make_bet_user(
                         "{:?} you dont have enough chips to call full bet, you went all in",
                         player.id
                     ),
-                    &font,
-                    800,
+                    &ttf_context,
+                    WRITE_INFO_SIZE,
                 )?;
                 canvas.present();
                 ::std::thread::sleep(Duration::from_millis(800));
@@ -97,7 +96,7 @@ pub fn make_bet_user(
             }
         } else if raise_button.is_clicked {
             if player.chips >= raise_value {
-                write_info(canvas, &format!("{:?} raised", player.id), &font, 250)?;
+                write_info(canvas, &format!("{:?} raised", player.id), &ttf_context, WRITE_INFO_SIZE)?;
                 canvas.present();
                 ::std::thread::sleep(Duration::from_millis(800));
                 return Ok(Some(raise_value));
@@ -108,8 +107,8 @@ pub fn make_bet_user(
                         "{:?} you dont have enough chips, if u want to all in call",
                         player.id
                     ),
-                    &font,
-                    400,
+                    &ttf_context,
+                    WRITE_INFO_SIZE,
                 )?;
                 canvas.present();
                 ::std::thread::sleep(Duration::from_millis(800));
@@ -117,8 +116,7 @@ pub fn make_bet_user(
             }
         }
         let (r, g, b) = (173, 216, 230); // Light blue color
-        let font = ttf_context.load_font(PATH_TO_FONT, 40).unwrap();
-        render_screen(canvas, Color::RGB(r, g, b), game, &font)?;
+        render_screen(canvas, Color::RGB(r, g, b), game, &ttf_context)?;
         Button::draw_button(&fold_button, canvas, &ttf_context, BUTTON_TEXT_SIZE)?;
         if req_bet > 0 {
             Button::draw_button(&call_button, canvas, &ttf_context, BUTTON_TEXT_SIZE)?;
@@ -127,8 +125,7 @@ pub fn make_bet_user(
         }
         if player.chips >= req_bet {
             Button::draw_button(&raise_button, canvas, &ttf_context, BUTTON_TEXT_SIZE)?;
-            let font = ttf_context.load_font(PATH_TO_FONT, SLIDER_TEXT_SIZE).unwrap();
-            slider.draw(canvas, &font)?;
+            slider.draw(canvas, ttf_context)?;
         } else {
             Button::draw_button(&allin_button, canvas, &ttf_context, BUTTON_TEXT_SIZE)?;
         }
@@ -146,7 +143,7 @@ pub fn make_bet_bot(
     req_bet: u32,
     event_pump: &mut EventPump,
     canvas: &mut Canvas<Window>,
-    font: &Font,
+    ttf_context: &sdl2::ttf::Sdl2TtfContext,
     game: &Game,
 ) -> Result<Option<u32>, String> {
     let _: Vec<_> = event_pump.poll_iter().collect();
@@ -159,7 +156,7 @@ pub fn make_bet_bot(
     );
     let (r, g, b) = (173, 216, 230);
     if let Some(bet) = decision { // to bi se tut dal lepš!!
-        render_screen(canvas, Color::RGB(r, g, b), game, font)?;
+        render_screen(canvas, Color::RGB(r, g, b), game, &ttf_context)?;
         let string = if bet == req_bet {
             // println!("pišem write_info v send_bet ko bot dela odloćiitve");
             format!("{:?} called", player.id)
@@ -182,8 +179,8 @@ pub fn make_bet_bot(
                     _ => {}
                 }
             }
-            render_screen(canvas, Color::RGB(r, g, b), game, font)?;
-            write_info(canvas, &string, font, 250)?;
+            render_screen(canvas, Color::RGB(r, g, b), game, &ttf_context)?;
+            write_info(canvas, &string, ttf_context, WRITE_INFO_SIZE)?;
             canvas.present();
             ::std::thread::sleep(Duration::from_millis(30));
         }
@@ -204,8 +201,8 @@ pub fn make_bet_bot(
                     _ => {}
                 }
             }
-            render_screen(canvas, Color::RGB(r, g, b), game, font)?;
-            write_info(canvas, &format!("{:?} folded", player.id), font, 250)?;
+            render_screen(canvas, Color::RGB(r, g, b), game, &ttf_context)?;
+            write_info(canvas, &format!("{:?} folded", player.id), ttf_context, WRITE_INFO_SIZE)?;
             canvas.present();
             ::std::thread::sleep(Duration::from_millis(30));
         }

@@ -4,7 +4,10 @@ use crate::logic::player::Id;
 pub const SCREEN_HEIGHT: u32 = 1080;
 pub const SCREEN_WIDTH: u32 = 1920;
 
-
+pub const PLAYER_INFO_FONT_SIZE: u16 = 40;
+pub const BUTTON_FONT_SIZE: u16 = 40;
+pub const SLIDER_FONT_SIZE: u16 = 30;
+pub const WRITE_INFO_SIZE: u16 = 40;
 
 pub const BACKGROUND_COLOR: (u8, u8, u8) = (200, 200, 255);
 pub const INFO_B_COLOR: (u8, u8, u8) = (255, 102, 102);

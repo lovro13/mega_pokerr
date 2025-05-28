@@ -66,7 +66,7 @@ pub fn make_decision(
     }
     let hand_cards_vec: Vec<_> = vec![player_cards.0.clone(), player_cards.1.clone()];
     let rank_points = rank_cards_preflop(hand_cards_vec);
-    if (rank_points < 20) || (rank_points < 35 && req_bet <= 2 * BIG_BLIND) {
+    if (rank_points < 30) || (rank_points < 50 && req_bet <= 2 * BIG_BLIND) {
         if req_bet > player_chips {
             assert!(validate_bet(req_bet, player_chips, player_chips));
             return Some(player_chips);

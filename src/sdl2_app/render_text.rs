@@ -2,14 +2,15 @@ use sdl2::pixels::Color;
 use sdl2::rect::{Point, Rect};
 use sdl2::render::WindowCanvas;
 
-use super::constants::INFO_B_COLOR;
+use super::constants::{INFO_B_COLOR, PATH_TO_FONT};
 use super::render_screen::get_screen_center;
 
 pub fn draw_text(
     canvas: &mut WindowCanvas,
     text: &str,
     position: Rect, // Ta Rect definira območje (x, y, width, height) kjer naj bo besedilo centrirano
-    font: &sdl2::ttf::Font,
+    ttf_context: &sdl2::ttf::Sdl2TtfContext,
+    font_size: u16,
     text_color: Color,
     background: Option<Color>,
     custom_background :bool
@@ -17,6 +18,7 @@ pub fn draw_text(
     let texture_creator = canvas.texture_creator();
     
     // Ustvari površino s tekstom
+    let font = ttf_context.load_font(PATH_TO_FONT, font_size)?;
     let text_surface = font
         .render(text)
         .blended(text_color)
@@ -53,18 +55,19 @@ pub fn draw_text(
 pub fn write_info(
     canvas: &mut WindowCanvas,
     string: &String,
-    font: &sdl2::ttf::Font,
-    size: u32,
+    ttf_context: &sdl2::ttf::Sdl2TtfContext,
+    point_size: u16,
 ) -> Result<(), String> {
     let center = get_screen_center(&canvas);
     let pos = Point::new(center.x, center.y - 100);
-    let rect = Rect::from_center(pos, size, 60);
+    let rect = Rect::from_center(pos, 0, 0);
     canvas.set_draw_color(Color::RGB(255, 102, 102));
     draw_text(
         canvas,
         &string,
         rect,
-        font,
+        &ttf_context,
+        point_size,
         Color::RGB(0, 0, 0),
         Some(Color::RGB(INFO_B_COLOR.0, INFO_B_COLOR.1, INFO_B_COLOR.2)),
         false
