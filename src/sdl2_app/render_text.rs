@@ -24,15 +24,13 @@ pub fn draw_text(
         .blended(text_color)
         .map_err(|e| e.to_string())?;
 
-    // Dobi dimenzije besedila
     let (text_width, text_height) = (text_surface.width(), text_surface.height());
 
-    // Izračunaj pozicijo za centriranje
+
     let x = position.x() + (position.width() as i32 - text_width as i32) / 2;
     let y = position.y() + (position.height() as i32 - text_height as i32) / 2;
     let dest_rect = Rect::new(x, y, text_width, text_height);
 
-    // Nariši ozadje (če je podano)
     if let Some(bg_color) = background {
         canvas.set_draw_color(bg_color);
         if custom_background {
@@ -43,7 +41,10 @@ pub fn draw_text(
         }
     }
 
-    // Ustvari teksturo in nariši centrirano besedilo
+    // if !position.contains_rect(dest_rect) {
+    //     println!("premjahen rect za text narisat (draw_text)");
+    // }
+
     let text_texture = texture_creator
         .create_texture_from_surface(&text_surface)
         .map_err(|e| e.to_string())?;

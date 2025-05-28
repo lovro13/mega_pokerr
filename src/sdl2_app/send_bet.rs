@@ -6,15 +6,14 @@ use sdl2::{event::Event, pixels::Color};
 use std::sync::atomic::Ordering;
 use std::time::Duration;
 
-use crate::logic::constants::SHOULD_QUIT;
+use crate::logic::constants::{BIG_BLIND, SHOULD_QUIT};
 use crate::logic::game::Game;
 use crate::logic::player::Player;
 use crate::sdl2_app::render_button::Button;
 use crate::sdl2_app::render_text::write_info;
 
-
 use super::constants::WRITE_INFO_SIZE;
-use super::positions::ControlPosition;
+
 use super::render_screen::render_screen;
 use super::slider::Slider;
 use super::tactic1::make_decision;
@@ -39,8 +38,7 @@ pub fn make_bet_user(
     } else {
         req_bet
     };
-    let slider_pos = ControlPosition::init_control_positon(canvas).slider;
-    let mut slider = Slider::new(slider_pos.x, slider_pos.y, 300, 40, req_bet as i32, player.chips as i32);
+    let mut slider = Slider::init_raise_slider(&canvas, (req_bet + BIG_BLIND) as i32, player.chips as i32);
     // mogoče treba req_bet in player.chips mal bol obravnavat, da nau problemov k ma player edino možnost it all in
     let check_button = Button::init_check_button(canvas);
     let allin_button = Button::init_allin_button(canvas);
@@ -70,7 +68,7 @@ pub fn make_bet_user(
         }
         let raise_value = slider.get_value() as u32;
         if fold_button.is_clicked {
-            write_info(canvas, &format!("{:?} folded", player.id), ttf_context, 250)?;
+            write_info(canvas, &format!("{:?} folded", player.id), ttf_context, WRITE_INFO_SIZE)?;
             canvas.present();
             ::std::thread::sleep(Duration::from_millis(800));
             return Ok(None);

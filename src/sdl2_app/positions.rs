@@ -20,14 +20,13 @@ pub const PLAYER6_CARDS: (i32, i32) = (500, 275);
 pub const PLAYER7_CARDS: (i32, i32) = (700, 0);
 pub const PLAYER8_CARDS: (i32, i32) = (500, -300);
 
-pub const CARD_HEIGHT: u32 = 120;
+pub const CARD_HEIGHT: u32 = 130;
 pub const CARD_WIDTH: u32 = 95;
 
-pub const FOLD_BUTTON: (i32, i32) = (-80, 440);
+pub const CALL_BUTTON: (i32, i32) = (0, 440);
 pub const BUTTON_WIDTH: u32 = 120;
 pub const BUTTON_HEIGHT: u32 = 50;
 pub const BUTTON_SPACE: u32 = 10;
-
 
 pub const BUTTON_END_OF_ROUND: (i32, i32) = (0, 125);
 pub const BUTTON_END_OF_ROUND_WIDTH: u32 = 200;
@@ -42,7 +41,8 @@ pub struct PlayerScreenPosition {
 
 impl Id {
     pub fn get_card_position(&self) -> (i32, i32) {
-        match self {            Id::Player1 => PLAYER1_CARDS,
+        match self {
+            Id::Player1 => PLAYER1_CARDS,
             Id::Player2 => PLAYER2_CARDS,
             Id::Player3 => PLAYER3_CARDS,
             Id::Player4 => PLAYER4_CARDS,
@@ -87,12 +87,12 @@ pub struct ControlPosition {
 impl ControlPosition {
     pub fn init_control_positon(canvas: &Canvas<Window>) -> ControlPosition {
         let screen_center = get_screen_center(canvas);
-        let fold_position = screen_center + Point::from(FOLD_BUTTON);
-        let call_position =
-            fold_position + Point::new(BUTTON_WIDTH as i32 + BUTTON_SPACE as i32, 0);
+        let call_position = screen_center + Point::from(CALL_BUTTON);
+        let fold_position = call_position - Point::new(BUTTON_WIDTH as i32 + BUTTON_SPACE as i32, 0);
         let raise_posisition =
             call_position + Point::new(BUTTON_WIDTH as i32 + BUTTON_SPACE as i32, 0);
-        let slider_position = raise_posisition + Point::new(BUTTON_WIDTH as i32 + 10, 0);
+        let slider_position =
+            raise_posisition + Point::new(BUTTON_WIDTH as i32 + BUTTON_SPACE as i32, 0);
         ControlPosition {
             fold_button: fold_position,
             call_button: call_position,

@@ -8,8 +8,14 @@ use sdl2::render::WindowCanvas;
 
 use crate::sdl2_app::positions::{CARD_HEIGHT, CARD_WIDTH};
 use crate::sdl2_app::render_text::draw_text;
-
 use super::constants::PLAYER_INFO_FONT_SIZE;
+
+const CARD2_POS: i32 = 30; // relative to first card, so same height but 30 pixels right, x
+
+const BALANCE_POS: i32 = 50; // relative to player center, y
+const BALANCE_WIDTH: u32 = 150;
+const BALANCE_HEIGHT: u32 = 75;
+
 
 const PLAYER_NAME_POS: (i32, i32) = (25, 85);
 const PLAYER_NAME_WIDTH: u32 = 150;
@@ -30,7 +36,7 @@ pub fn render_player_info(
     // nariše karte, ime, balance, dealer žeton, če je treba
     let player_center = player.id.get_player_screen_center(canvas);
     // tukaj je center v player_position z normalnim kartezičnim
-    let card2_pos = player_center + Point::new(30, 0);
+    let card2_pos = player_center + Point::new(CARD2_POS, 0);
     if player.playing {
         player
             .hand_cards
@@ -63,9 +69,10 @@ pub fn render_player_info(
     let balance_color = Color::RGB(0, 0, 10);
     let balance_text = format!("Chips: {}", player.chips);
 
-    let balance_screen_position = player_name_position + Point::new(0, 50);
-    let balance_text_target = Rect::from_center(balance_screen_position, 150 as u32, 75 as u32);
-    let _ = draw_text(
+    let balance_screen_position = player_name_position + Point::new(0, BALANCE_POS);
+    let balance_text_target =
+        Rect::from_center(balance_screen_position, BALANCE_WIDTH, BALANCE_HEIGHT);
+    draw_text(
         canvas,
         &balance_text,
         balance_text_target,
@@ -74,14 +81,14 @@ pub fn render_player_info(
         balance_color,
         None,
         false,
-    );
+    )?;
 
     let texture_creator = canvas.texture_creator();
     let texture_red = texture_creator.load_texture("assets/pokerchip_red.png")?;
     let texture_yellow = texture_creator.load_texture("assets/pokerchip_yellow.png")?;
     let texture_green = texture_creator.load_texture("assets/pokerchip_green.png")?;
     let texture_blue = texture_creator.load_texture("assets/pokerchip_blue.png")?;
-    let mut balance_with_chips_pos = player_name_position + Point::new(-(CARD_WIDTH as i32), 15);
+    let mut balance_with_chips_pos = player_name_position + Point::new(-(CARD_WIDTH as i32), 0);
     let mut copy_balance = player.chips.clone() as i32;
     while copy_balance > 0 {
         let target = Rect::from_center(balance_with_chips_pos, 30, 30);
