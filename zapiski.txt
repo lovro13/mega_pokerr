@@ -1,8 +1,6 @@
 PRAVILA za funkcijo get_bet
 // vrne Some(u32), če je pravilno vnešeno in če je prazno vrne None ko hoče foldat
-// ne dovoli staviti več denarja kot ga ima player
-// če je vnešeno karkoli razen u32 ali prazno je treba vnesti ponovno
-// treba še preveriti kakšno stavo mora staviti da ne stavi premalo
+// ne dovoli staviti več denarja kot ga ima player, in če ma dost dnarja vsaj req_bet
 
 
 SDL2 app:
@@ -15,7 +13,7 @@ v make_bet_player1 to zgoraj
 -- pokaži pot size
 
 LOGIC:
--- treba bl zrihtat bote, ampak kr uredu delajo
+-- treba bl zrihtat bote, ampak kr uredu delajo, če ne gledaš na to kok dobri so
 -- loh bi več stvari avtomatiziral, npr end_round, pa še mal bl uredi
 -- game pa player mata pomoje mal preveč stvari v enumu zih bi se ksne dal znebit al pa ksn nov enum narest
 -- narest eno funkcijo validate_bet, ki bo olajašala življenje, maybe vrne tipa Option, Option hehe

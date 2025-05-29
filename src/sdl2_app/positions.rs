@@ -31,6 +31,22 @@ pub const BUTTON_SPACE: u32 = 10;
 pub const BUTTON_END_OF_ROUND: (i32, i32) = (0, 125);
 pub const BUTTON_END_OF_ROUND_WIDTH: u32 = 200;
 pub const BUTTON_END_OF_ROUND_HEIGHT: u32 = 50;
+pub const BUTTON_TEXT_SIZE: u16 = 30;
+
+pub const POT_POSITION: (u32, u32) = (0, 100);
+pub const POT_SIZE: u16 = 40;
+
+
+pub const CARD2_POS: i32 = 30; // relative to first card, so same height but 30 pixels right, x
+
+pub const BALANCE_POS: i32 = 50; // relative to player center, y
+pub const BALANCE_WIDTH: u32 = 150;
+pub const BALANCE_HEIGHT: u32 = 75;
+
+
+pub const PLAYER_NAME_POS: (i32, i32) = (25, 85);
+pub const PLAYER_NAME_WIDTH: u32 = 150;
+pub const PLAYER_NAME_HEIGHT: u32 = 75;
 
 pub struct PlayerScreenPosition {
     // to se da še zelo nadgraditi, npr z velikostmi, ...

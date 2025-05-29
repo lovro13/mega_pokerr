@@ -38,13 +38,9 @@ impl Button {
         text_size: u16,
     ) -> Result<(), String> {
         let color = if self.is_clicked {
-            Color::RGB(
-                BUTTON_COLOR_PRESSED.0,
-                BUTTON_COLOR_PRESSED.1,
-                BUTTON_COLOR_PRESSED.2,
-            )
+            BUTTON_COLOR_PRESSED
         } else {
-            Color::RGB(BUTTON_COLOR.0, BUTTON_COLOR.1, BUTTON_COLOR.2)
+            BUTTON_COLOR
         };
 
         let text_color = Color::RGB(0, 0, 0);

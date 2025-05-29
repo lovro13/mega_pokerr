@@ -6,20 +6,13 @@ use sdl2::pixels::Color;
 use sdl2::rect::{Point, Rect};
 use sdl2::render::WindowCanvas;
 
+use super::constants::{BALANCE_COLOR, FOLDED_COLOR, PLAYER_INFO_FONT_SIZE};
+use super::positions::{
+    BALANCE_HEIGHT, BALANCE_POS, BALANCE_WIDTH, CARD2_POS, PLAYER_NAME_HEIGHT, PLAYER_NAME_POS,
+    PLAYER_NAME_WIDTH,
+};
 use crate::sdl2_app::positions::{CARD_HEIGHT, CARD_WIDTH};
 use crate::sdl2_app::render_text::draw_text;
-use super::constants::PLAYER_INFO_FONT_SIZE;
-
-const CARD2_POS: i32 = 30; // relative to first card, so same height but 30 pixels right, x
-
-const BALANCE_POS: i32 = 50; // relative to player center, y
-const BALANCE_WIDTH: u32 = 150;
-const BALANCE_HEIGHT: u32 = 75;
-
-
-const PLAYER_NAME_POS: (i32, i32) = (25, 85);
-const PLAYER_NAME_WIDTH: u32 = 150;
-const PLAYER_NAME_HEIGHT: u32 = 75;
 
 pub fn get_screen_center(canvas: &WindowCanvas) -> Point {
     let (width, height) = canvas.output_size().unwrap();
@@ -66,7 +59,6 @@ pub fn render_player_info(
         false,
     )?;
 
-    let balance_color = Color::RGB(0, 0, 10);
     let balance_text = format!("Chips: {}", player.chips);
 
     let balance_screen_position = player_name_position + Point::new(0, BALANCE_POS);
@@ -78,7 +70,7 @@ pub fn render_player_info(
         balance_text_target,
         ttf_context,
         PLAYER_INFO_FONT_SIZE,
-        balance_color,
+        BALANCE_COLOR,
         None,
         false,
     )?;
@@ -110,7 +102,6 @@ pub fn render_player_info(
         balance_with_chips_pos += Point::new(0, -10);
     }
     if !player.playing {
-        let folded_color = Color::RGB(128, 128, 128);
         let folded_text = String::from("Folded");
         let folded_text_position = player_name_position + Point::new(0, -100);
         let folded_text_target = Rect::from_center(folded_text_position, 150 as u32, 50 as u32);
@@ -120,7 +111,7 @@ pub fn render_player_info(
             folded_text_target,
             ttf_context,
             PLAYER_INFO_FONT_SIZE,
-            folded_color,
+            FOLDED_COLOR,
             None,
             false,
         )?;
@@ -188,7 +179,7 @@ pub fn render_screen(
         let color = Color::RGB(0, 0, 0);
         if player.position == game.position_on_turn {
             let background = Color::RGB(255, 105, 105);
-            let player_name_position =
+            let player_name_position =  
                 player.id.get_player_screen_center(canvas) + Point::new(25, 85);
             let text_target = Rect::from_center(player_name_position, 150 as u32, 50 as u32);
             canvas.set_draw_color(background);

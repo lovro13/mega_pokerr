@@ -1,7 +1,7 @@
 use std::{sync::atomic::Ordering, time::Duration};
 
 use sdl2::{
-    event::Event, keyboard::Keycode, pixels::Color, rect::Point, render::Canvas, video::Window,
+    event::Event, keyboard::Keycode, rect::Point, render::Canvas, video::Window,
     EventPump,
 };
 
@@ -55,11 +55,7 @@ pub fn start_screen_state(
         } else if start_button.is_clicked {
             return true;
         }
-        canvas.set_draw_color(Color::RGB(
-            BACKGROUND_COLOR.0,
-            BACKGROUND_COLOR.1,
-            BACKGROUND_COLOR.2,
-        ));
+        canvas.set_draw_color(BACKGROUND_COLOR);
         canvas.clear();
         start_button
             .draw_button(canvas, &ttf_context, START_SCREEN_TEXT_SIZE)

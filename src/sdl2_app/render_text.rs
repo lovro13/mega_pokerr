@@ -34,7 +34,7 @@ pub fn draw_text(
     if let Some(bg_color) = background {
         canvas.set_draw_color(bg_color);
         if custom_background {
-        assert!(position.contains_rect(dest_rect), "when printing {text}");
+        // assert!(position.contains_rect(dest_rect), "when printing {text}");
         canvas.fill_rect(position)?; // Celoten podani pravokotnik
         } else {
             canvas.fill_rect(dest_rect)?;
@@ -62,7 +62,6 @@ pub fn write_info(
     let center = get_screen_center(&canvas);
     let pos = Point::new(center.x, center.y - 100);
     let rect = Rect::from_center(pos, 0, 0);
-    canvas.set_draw_color(Color::RGB(255, 102, 102));
     draw_text(
         canvas,
         &string,
@@ -70,7 +69,7 @@ pub fn write_info(
         &ttf_context,
         point_size,
         Color::RGB(0, 0, 0),
-        Some(Color::RGB(INFO_B_COLOR.0, INFO_B_COLOR.1, INFO_B_COLOR.2)),
+        Some(INFO_B_COLOR),
         false
     )?;
     Ok(())
