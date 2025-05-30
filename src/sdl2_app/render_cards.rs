@@ -42,6 +42,7 @@ impl Card {
         canvas: &mut WindowCanvas,
         position: Point,
         opened: bool,
+        angle: f64
     ) -> Result<(), String> {
         let card_target = Rect::from_center(position, CARD_WIDTH, CARD_HEIGHT);
         let filename = if opened {
@@ -51,7 +52,7 @@ impl Card {
         };
         let texture_creator = canvas.texture_creator();
         let texture = texture_creator.load_texture(filename)?;
-        canvas.copy(&texture, None, card_target)?;
+        canvas.copy_ex(&texture, None, card_target, angle, None, false, false)?;
         Ok(())
     }
 }

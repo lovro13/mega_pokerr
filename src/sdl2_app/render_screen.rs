@@ -34,11 +34,11 @@ pub fn render_player_info(
         player
             .hand_cards
             .0
-            .draw_card(canvas, player_center, player.opened_cards)?;
+            .draw_card(canvas, player_center, player.opened_cards, 0.)?;
         player
             .hand_cards
             .1
-            .draw_card(canvas, card2_pos, player.opened_cards)?;
+            .draw_card(canvas, card2_pos, player.opened_cards, 0.)?;
     }
 
     // write player name near the player cards
@@ -179,7 +179,7 @@ pub fn render_screen(
         let color = Color::RGB(0, 0, 0);
         if player.position == game.position_on_turn {
             let background = Color::RGB(255, 105, 105);
-            let player_name_position =  
+            let player_name_position =
                 player.id.get_player_screen_center(canvas) + Point::new(25, 85);
             let text_target = Rect::from_center(player_name_position, 150 as u32, 50 as u32);
             canvas.set_draw_color(background);
@@ -192,7 +192,7 @@ pub fn render_screen(
     let screen_center = get_screen_center(canvas);
     let mut card_position = screen_center - Point::new((2.5 * CARD_WIDTH as f32) as i32, 0);
     for card in game.table_cards.iter() {
-        card.draw_card(canvas, card_position, true)?;
+        card.draw_card(canvas, card_position, true, 0.)?;
         card_position.x += (CARD_WIDTH + 10) as i32;
     }
     Ok(())

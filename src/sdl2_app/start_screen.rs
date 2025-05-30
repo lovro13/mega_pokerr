@@ -5,7 +5,7 @@ use sdl2::{
     EventPump,
 };
 
-use crate::logic::constants::SHOULD_QUIT;
+use crate::logic::{card::Card, constants::SHOULD_QUIT};
 
 use super::{constants::BACKGROUND_COLOR, render_button::Button, render_screen::get_screen_center};
 
@@ -14,6 +14,10 @@ const EXIT_BUTTON: (i32, i32) = (0, 150);
 const START_BUTTON_HEIGHT: u32 = 100;
 const START_BUTTON_WIDTH: u32 = 600;
 const START_SCREEN_TEXT_SIZE: u16 = 80;
+
+const RIGHT_CARD: (i32, i32) = (200, 0);
+const CARD: Card = Card {number: crate::logic::card::CardNumber::NA, color: crate::logic::card::CardColor::Hearts};
+const ANGLE: f64 = 20.;
 
 pub fn start_screen_state(
     canvas: &mut Canvas<Window>,
@@ -63,7 +67,11 @@ pub fn start_screen_state(
         exit_button
             .draw_button(canvas, &ttf_context, START_SCREEN_TEXT_SIZE)
             .unwrap();
+
+        CARD.draw_card(canvas, Point::from(RIGHT_CARD), true, ANGLE).unwrap();        
+
         canvas.present();
         ::std::thread::sleep(Duration::from_millis(30));
+
     }
 }
