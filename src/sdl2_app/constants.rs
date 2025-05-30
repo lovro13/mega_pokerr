@@ -17,6 +17,7 @@ pub const BUTTON_COLOR: Color = Color { r: 200, g: 200, b: 200, a: 0xff };
 pub const BUTTON_COLOR_PRESSED: Color = Color { r: 100, g: 100, b: 100, a: 0xff };
 pub const BALANCE_COLOR: Color = Color { r: 0, g: 0, b: 10, a: 0xff };
 pub const FOLDED_COLOR: Color = Color { r: 128, g: 128, b: 128, a: 0xff };
+pub const BLACK: Color = Color { r: 0, g: 0, b: 10, a: 0xff };
 
 pub const MAIN_PLAYER: Id = Id::Player1;
 

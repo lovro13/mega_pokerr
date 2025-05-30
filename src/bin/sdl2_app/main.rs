@@ -28,7 +28,7 @@ fn main() -> Result<(), String> {
     // GLAVNA ZANKA
     let start = start_screen_state(&mut canvas, &mut event_pump, &app_context.ttf_context);
 
-    if !start {
+    if !start? {
         return Ok(());
     }
     loop {

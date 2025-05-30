@@ -42,9 +42,14 @@ impl Card {
         canvas: &mut WindowCanvas,
         position: Point,
         opened: bool,
-        angle: f64
+        angle: f64,
+        size: f64,
     ) -> Result<(), String> {
-        let card_target = Rect::from_center(position, CARD_WIDTH, CARD_HEIGHT);
+        let card_target = Rect::from_center(
+            position,
+            (CARD_WIDTH as f64 * size) as u32,
+            (CARD_HEIGHT as f64 * size) as u32
+        );
         let filename = if opened {
             self.card_to_file()
         } else {

@@ -13,11 +13,11 @@ use super::render_screen::get_screen_center;
 
 pub const PLAYER1_CARDS: (i32, i32) = (-50, -300);
 pub const PLAYER2_CARDS: (i32, i32) = (-500, -300);
-pub const PLAYER3_CARDS: (i32, i32) = (-775, 0);
-pub const PLAYER4_CARDS: (i32, i32) = (-500, 275);
-pub const PLAYER5_CARDS: (i32, i32) = (-50, 275);
-pub const PLAYER6_CARDS: (i32, i32) = (500, 275);
-pub const PLAYER7_CARDS: (i32, i32) = (700, 0);
+pub const PLAYER3_CARDS: (i32, i32) = (-775, 50);
+pub const PLAYER4_CARDS: (i32, i32) = (-500, 325);
+pub const PLAYER5_CARDS: (i32, i32) = (-50, 325);
+pub const PLAYER6_CARDS: (i32, i32) = (500, 325);
+pub const PLAYER7_CARDS: (i32, i32) = (700, 50);
 pub const PLAYER8_CARDS: (i32, i32) = (500, -300);
 
 pub const CARD_HEIGHT: u32 = 130;

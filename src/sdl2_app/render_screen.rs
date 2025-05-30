@@ -34,11 +34,11 @@ pub fn render_player_info(
         player
             .hand_cards
             .0
-            .draw_card(canvas, player_center, player.opened_cards, 0.)?;
+            .draw_card(canvas, player_center, player.opened_cards, 0., 1.)?;
         player
             .hand_cards
             .1
-            .draw_card(canvas, card2_pos, player.opened_cards, 0.)?;
+            .draw_card(canvas, card2_pos, player.opened_cards, 0., 1.)?;
     }
 
     // write player name near the player cards
@@ -192,7 +192,7 @@ pub fn render_screen(
     let screen_center = get_screen_center(canvas);
     let mut card_position = screen_center - Point::new((2.5 * CARD_WIDTH as f32) as i32, 0);
     for card in game.table_cards.iter() {
-        card.draw_card(canvas, card_position, true, 0.)?;
+        card.draw_card(canvas, card_position, true, 0., 1.)?;
         card_position.x += (CARD_WIDTH + 10) as i32;
     }
     Ok(())
