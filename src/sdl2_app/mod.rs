@@ -8,6 +8,7 @@ pub mod render_screen;
 pub mod render_text;
 pub mod resources;
 pub mod send_bet;
+pub mod option_screen;
 pub mod slider;
 pub mod start_screen;
 pub mod tactic1;

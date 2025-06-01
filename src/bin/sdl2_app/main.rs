@@ -31,6 +31,7 @@ fn main() -> Result<(), String> {
     if !start? {
         return Ok(());
     }
+    
     loop {
         {
             let mut mut_game = game.borrow_mut();

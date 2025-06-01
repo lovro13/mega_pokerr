@@ -4,12 +4,31 @@ use sdl2::{
     video::Window,
 };
 
-use crate::logic::player::Id;
+use crate::logic::{card::Card, player::Id};
 
 use super::render_screen::get_screen_center;
 
 // vse točke naj bojo sredina tistega okrog česa se potem naredi pravoktnik, kar ni nujno najbolše
 // glede na screen_center kot izhodišče
+
+pub const START_BUTTON: (i32, i32) = (0, 0);
+pub const EXIT_BUTTON: (i32, i32) = (0, 150);
+pub const START_BUTTON_HEIGHT: u32 = 100;
+pub const START_BUTTON_WIDTH: u32 = 600;
+pub const START_SCREEN_TEXT_SIZE: u16 = 80;
+
+pub const CARD_SIZE: f64 = 3.;
+
+pub const RIGHT_CARD: (i32, i32) = (500, 0);
+pub const LEFT_CARD: (i32, i32) = (-500, 0);
+pub const CARD: Card = Card {
+    number: crate::logic::card::CardNumber::NA,
+    color: crate::logic::card::CardColor::Hearts,
+};
+pub const ANGLE: f64 = 20.; 
+pub const TITLE_SIZE: u16 = 120;
+pub const TITLE_POS: (i32, i32) = (0, -200);
+
 
 pub const PLAYER1_CARDS: (i32, i32) = (-50, -300);
 pub const PLAYER2_CARDS: (i32, i32) = (-500, -300);
