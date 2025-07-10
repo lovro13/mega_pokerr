@@ -2,7 +2,7 @@ use sdl2::pixels::Color;
 use sdl2::rect::{Point, Rect};
 use sdl2::render::WindowCanvas;
 
-use super::constants::{INFO_B_COLOR, PATH_TO_FONT};
+use super::constants::*;
 use super::render_screen::get_screen_center;
 
 pub fn draw_text(
@@ -60,7 +60,7 @@ pub fn write_info(
     point_size: u16,
 ) -> Result<(), String> {
     let center = get_screen_center(&canvas);
-    let pos = Point::new(center.x, center.y - 100);
+    let pos = Point::new(center.x, center.y + SCREEN_CENTER_Y_OFFSET);
     let rect = Rect::from_center(pos, 0, 0);
     draw_text(
         canvas,

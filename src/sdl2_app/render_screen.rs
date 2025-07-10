@@ -1,4 +1,4 @@
-use crate::logic::constants::{BIG_BLIND, SMALL_BLIND};
+use crate::logic::constants::*;
 use crate::logic::game::Game;
 use crate::logic::player::{self, Id, Player};
 use sdl2::image::LoadTexture;
@@ -6,12 +6,8 @@ use sdl2::pixels::Color;
 use sdl2::rect::{Point, Rect};
 use sdl2::render::WindowCanvas;
 
-use super::constants::{BALANCE_COLOR, FOLDED_COLOR, PLAYER_INFO_FONT_SIZE};
-use super::positions::{
-    BALANCE_HEIGHT, BALANCE_POS, BALANCE_WIDTH, CARD2_POS, PLAYER_NAME_HEIGHT, PLAYER_NAME_POS,
-    PLAYER_NAME_WIDTH,
-};
-use crate::sdl2_app::positions::{CARD_HEIGHT, CARD_WIDTH};
+use super::constants::*;
+
 use crate::sdl2_app::render_text::draw_text;
 
 pub fn get_screen_center(canvas: &WindowCanvas) -> Point {
@@ -59,7 +55,7 @@ pub fn render_player_info(
         false,
     )?;
 
-    let balance_text = format!("Chips: {}", player.chips);
+    let balance_text = format!("{}{}", CHIPS_TEXT_PREFIX, player.chips);
 
     let balance_screen_position = player_name_position + Point::new(0, BALANCE_POS);
     let balance_text_target =
@@ -76,20 +72,20 @@ pub fn render_player_info(
     )?;
 
     let texture_creator = canvas.texture_creator();
-    let texture_red = texture_creator.load_texture("assets/pokerchip_red.png")?;
-    let texture_yellow = texture_creator.load_texture("assets/pokerchip_yellow.png")?;
-    let texture_green = texture_creator.load_texture("assets/pokerchip_green.png")?;
-    let texture_blue = texture_creator.load_texture("assets/pokerchip_blue.png")?;
+    let texture_red = texture_creator.load_texture(PATH_TO_POKERCHIP_RED)?;
+    let texture_yellow = texture_creator.load_texture(PATH_TO_POKERCHIP_YELLOW)?;
+    let texture_green = texture_creator.load_texture(PATH_TO_POKERCHIP_GREEN)?;
+    let texture_blue = texture_creator.load_texture(PATH_TO_POKERCHIP_BLUE)?;
     let mut balance_with_chips_pos = player_name_position + Point::new(-(CARD_WIDTH as i32), 0);
     let mut copy_balance = player.chips.clone() as i32;
     while copy_balance > 0 {
         let target = Rect::from_center(balance_with_chips_pos, 30, 30);
-        if copy_balance >= 500 {
+        if copy_balance >= CHIP_DENOMINATION_LARGE as i32 {
             canvas.copy(&texture_green, None, target)?;
-            copy_balance -= 500;
-        } else if copy_balance >= 100 {
+            copy_balance -= CHIP_DENOMINATION_LARGE as i32;
+        } else if copy_balance >= CHIP_DENOMINATION_SMALL as i32 {
             canvas.copy(&texture_yellow, None, target)?;
-            copy_balance -= 100;
+            copy_balance -= CHIP_DENOMINATION_SMALL as i32;
         } else if copy_balance >= BIG_BLIND as i32 {
             canvas.copy(&texture_red, None, target)?;
             copy_balance -= BIG_BLIND as i32;
@@ -102,8 +98,8 @@ pub fn render_player_info(
         balance_with_chips_pos += Point::new(0, -10);
     }
     if !player.playing {
-        let folded_text = String::from("Folded");
-        let folded_text_position = player_name_position + Point::new(0, -100);
+        let folded_text = String::from(FOLDED_TEXT);
+        let folded_text_position = player_name_position + Point::new(0, FOLDED_TEXT_Y_OFFSET);
         let folded_text_target = Rect::from_center(folded_text_position, 150 as u32, 50 as u32);
         draw_text(
             canvas,
@@ -126,12 +122,12 @@ pub fn render_player_info(
         } else if player.id == Id::Player7 {
             player_center + Point::new(x_pos - 75, 70)
         } else {
-            player_center + Point::new(x_pos + 160, 70)
+            player_center + Point::new(x_pos + BET_DISPLAY_X_OFFSET, BET_DISPLAY_Y_OFFSET)
         };
         let curr_bet_target = Rect::from_center(curr_bet_pos, 30, 30);
-        if copy_curr_bet as u32 >= 100 {
+        if copy_curr_bet as u32 >= CHIP_DENOMINATION_SMALL {
             canvas.copy(&texture_yellow, None, curr_bet_target)?;
-            copy_curr_bet -= 100 as i32;
+            copy_curr_bet -= CHIP_DENOMINATION_SMALL as i32;
         } else if copy_curr_bet as u32 >= BIG_BLIND {
             canvas.copy(&texture_red, None, curr_bet_target)?;
             copy_curr_bet -= BIG_BLIND as i32;
@@ -146,7 +142,7 @@ pub fn render_player_info(
 
     if player.position == player::PlayerPosition::Dealer {
         let texture_creator = canvas.texture_creator();
-        let texture = texture_creator.load_texture("assets/dealer_token.png")?;
+        let texture = texture_creator.load_texture(PATH_TO_DEALER_TOKEN)?;
         let screen_position4 = player_name_position + Point::new(95, -60);
         let screen_rect_dealer = Rect::from_center(screen_position4, 70, 70);
         canvas.copy(&texture, None, screen_rect_dealer)?;
@@ -159,7 +155,7 @@ pub fn render_turn_indicator(player: &Player, canvas: &mut WindowCanvas) -> Resu
     let player_name_position = player_center + Point::new(25, 85);
     let indincator_target = player_name_position + Point::new(0, 80);
     let target = Rect::from_center(indincator_target, 150, 10);
-    canvas.set_draw_color(Color::RGB(200, 0, 0));
+    canvas.set_draw_color(RED_COLOR);
     canvas.fill_rect(target)?;
     Ok(())
 }
@@ -178,10 +174,10 @@ pub fn render_screen(
         // let _ = player::Player::render_player_info(canvas, player, font);
         let color = Color::RGB(0, 0, 0);
         if player.position == game.position_on_turn {
-            let background = Color::RGB(255, 105, 105);
+            let background = LIGHT_RED;
             let player_name_position =
                 player.id.get_player_screen_center(canvas) + Point::new(25, 85);
-            let text_target = Rect::from_center(player_name_position, 150 as u32, 50 as u32);
+            let text_target = Rect::from_center(player_name_position, PLAYER_NAME_WIDTH, PLAYER_NAME_HEIGHT);
             canvas.set_draw_color(background);
             canvas.fill_rect(text_target)?;
         }

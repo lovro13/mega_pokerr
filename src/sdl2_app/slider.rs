@@ -1,13 +1,12 @@
 use sdl2::event::Event;
-use sdl2::pixels::Color;
+
 use sdl2::rect::{Point, Rect};
 
-use super::constants::SLIDER_FONT_SIZE;
+use super::constants::*;
 use super::positions::ControlPosition;
 use super::render_text::draw_text;
 
-const SLIDER_HEIGHT: u32 = 30;
-const SLIDER_WIDTH: u32 = 300;
+
 
 pub struct Slider {
     pub track_rect: Rect,  // celotnega traku
@@ -19,8 +18,8 @@ pub struct Slider {
 }
 
 impl Slider {
-    pub fn new(center: Point, width: u32, height: u32, min: i32, max: i32) -> Self {
-        let track_rect = Rect::new(center.x, center.y, width as u32, height as u32);
+    pub fn new(center: Point, width: u32, _height: u32, min: i32, max: i32) -> Self {
+        let track_rect = Rect::new(center.x, center.y, width as u32, SLIDER_HEIGHT as u32);
         let thumb_width = 20;
 
         let value = min;
@@ -31,7 +30,7 @@ impl Slider {
             thumb_x,
             center.y,
             thumb_width as u32,
-            height as u32,
+            SLIDER_HEIGHT as u32,
         );
         
         Slider {
@@ -89,7 +88,7 @@ impl Slider {
         let text_target = Rect::from_center(text_position, 60, 30);
 
         // Risanje traku
-        canvas.set_draw_color(Color::RGB(100, 100, 100));
+        canvas.set_draw_color(GRAY_COLOR);
         let value_text = self.value.to_string();
         draw_text(
             canvas,
@@ -103,7 +102,7 @@ impl Slider {
         )?;
         canvas.fill_rect(self.track_rect)?;
 
-        canvas.set_draw_color(Color::RGB(200, 200, 200));
+        canvas.set_draw_color(LIGHT_GRAY);
         canvas.fill_rect(self.thumb_rect)?;
 
         Ok(())

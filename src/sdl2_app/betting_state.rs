@@ -7,7 +7,7 @@ use std::sync::atomic::Ordering;
 use crate::logic::betting_system::make_bets;
 use crate::logic::constants::SHOULD_QUIT;
 use crate::logic::game::Game;
-use crate::logic::player::Id;
+
 use crate::sdl2_app::send_bet;
 
 pub fn run_betting_state(
@@ -28,19 +28,15 @@ pub fn run_betting_state(
             let player = game.player_on_turn_immutable();
             let canvas = Rc::clone(&canvas_rc);
             let mut canvas_borrow = canvas.borrow_mut();
-            if player.id == Id::Player1 {
-                send_bet::make_bet_user(
-                    player,
-                    req_bet,
-                    event_pump,
-                    &mut *canvas_borrow,
-                    &ttf_context,
-                    game
-                )
-                .unwrap()
-            } else {
-                send_bet::make_bet_bot(player, req_bet, event_pump, &mut *canvas_borrow, ttf_context, game).unwrap()
-            }
+            send_bet::make_bet(
+                player,
+                req_bet,
+                event_pump,
+                &mut *canvas_borrow,
+                &ttf_context,
+                game
+            )
+            .unwrap()
         }
     };
 

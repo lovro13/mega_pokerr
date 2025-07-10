@@ -2,7 +2,7 @@ use sdl2::keyboard::Keycode;
 use sdl2::render::Canvas;
 use sdl2::video::Window;
 use sdl2::EventPump;
-use sdl2::{event::Event, pixels::Color};
+use sdl2::event::Event;
 use std::sync::atomic::Ordering;
 use std::time::Duration;
 
@@ -11,18 +11,13 @@ use crate::logic::game::Game;
 use crate::logic::player::Player;
 use crate::sdl2_app::render_button::Button;
 use crate::sdl2_app::render_text::write_info;
-
-use super::constants::WRITE_INFO_SIZE;
+use crate::sdl2_app::constants::*;
 
 use super::render_screen::render_screen;
 use super::slider::Slider;
 use super::tactic1::make_decision;
 
-const BUTTON_TEXT_SIZE: u16 = 30;
-
-
-
-pub fn make_bet_user(
+pub fn make_bet(
     player: &Player,
     req_bet: u32,
     event_pump: &mut EventPump,
@@ -30,9 +25,28 @@ pub fn make_bet_user(
     ttf_context: &sdl2::ttf::Sdl2TtfContext,
     game: &Game,
 ) -> Result<Option<u32>, String> {
+    // Check if player is a bot (Player1 is the main player, others are bots)
+    let is_bot = player.id != MAIN_PLAYER;
+    
     if player.chips == 0 {
         return Ok(Some(0));
     }
+
+    if is_bot {
+        make_bet_bot_logic(player, req_bet, event_pump, canvas, ttf_context, game)
+    } else {
+        make_bet_user_logic(player, req_bet, event_pump, canvas, ttf_context, game)
+    }
+}
+
+fn make_bet_user_logic(
+    player: &Player,
+    req_bet: u32,
+    event_pump: &mut EventPump,
+    canvas: &mut Canvas<Window>,
+    ttf_context: &sdl2::ttf::Sdl2TtfContext,
+    game: &Game,
+) -> Result<Option<u32>, String> {
     let req_bet = if player.chips <= req_bet {
         player.chips
     } else {
@@ -70,13 +84,13 @@ pub fn make_bet_user(
         if fold_button.is_clicked {
             write_info(canvas, &format!("{:?} folded", player.id), ttf_context, WRITE_INFO_SIZE)?;
             canvas.present();
-            ::std::thread::sleep(Duration::from_millis(800));
+            ::std::thread::sleep(Duration::from_millis(ANIMATION_DURATION_MS));
             return Ok(None);
         } else if call_button.is_clicked {
             if req_bet <= player.chips {
                 write_info(canvas, &format!("{:?} called", player.id), &ttf_context, WRITE_INFO_SIZE)?;
                 canvas.present();
-                ::std::thread::sleep(Duration::from_millis(800));
+                ::std::thread::sleep(Duration::from_millis(ANIMATION_DURATION_MS));
                 return Ok(Some(req_bet));
             } else {
                 write_info(
@@ -89,14 +103,14 @@ pub fn make_bet_user(
                     WRITE_INFO_SIZE,
                 )?;
                 canvas.present();
-                ::std::thread::sleep(Duration::from_millis(800));
+                ::std::thread::sleep(Duration::from_millis(ANIMATION_DURATION_MS));
                 return Ok(Some(player.chips));
             }
         } else if raise_button.is_clicked {
             if player.chips >= raise_value {
                 write_info(canvas, &format!("{:?} raised", player.id), &ttf_context, WRITE_INFO_SIZE)?;
                 canvas.present();
-                ::std::thread::sleep(Duration::from_millis(800));
+                ::std::thread::sleep(Duration::from_millis(ANIMATION_DURATION_MS));
                 return Ok(Some(raise_value));
             } else {
                 write_info(
@@ -109,12 +123,11 @@ pub fn make_bet_user(
                     WRITE_INFO_SIZE,
                 )?;
                 canvas.present();
-                ::std::thread::sleep(Duration::from_millis(800));
+                ::std::thread::sleep(Duration::from_millis(ANIMATION_DURATION_MS));
                 continue;
             }
         }
-        let (r, g, b) = (173, 216, 230); // Light blue color
-        render_screen(canvas, Color::RGB(r, g, b), game, &ttf_context)?;
+        render_screen(canvas, LIGHT_BLUE, game, &ttf_context)?;
         Button::draw_button(&fold_button, canvas, &ttf_context, BUTTON_TEXT_SIZE)?;
         if req_bet > 0 {
             Button::draw_button(&call_button, canvas, &ttf_context, BUTTON_TEXT_SIZE)?;
@@ -130,13 +143,13 @@ pub fn make_bet_user(
         // render_turn_indicator(player, canvas)?;
         canvas.present();
         if fold_button.is_clicked || call_button.is_clicked || raise_button.is_clicked {
-            ::std::thread::sleep(Duration::from_millis(200));
+            ::std::thread::sleep(Duration::from_millis(SHORT_ANIMATION_DURATION_MS));
         }
-        ::std::thread::sleep(Duration::from_millis(33));
+        ::std::thread::sleep(Duration::from_millis(FRAME_DURATION_MS));
     }
 }
 
-pub fn make_bet_bot(
+fn make_bet_bot_logic(
     player: &Player,
     req_bet: u32,
     event_pump: &mut EventPump,
@@ -152,9 +165,9 @@ pub fn make_bet_bot(
         player.current_bet,
         player.chips,
     );
-    let (r, g, b) = (173, 216, 230);
+    
     if let Some(bet) = decision { // to bi se tut dal lepš!!
-        render_screen(canvas, Color::RGB(r, g, b), game, &ttf_context)?;
+        render_screen(canvas, LIGHT_BLUE, game, &ttf_context)?;
         let string = if bet == req_bet {
             // println!("pišem write_info v send_bet ko bot dela odloćiitve");
             format!("{:?} called", player.id)
@@ -163,7 +176,7 @@ pub fn make_bet_bot(
             format!("{:?} raised", player.id)
         };
         let start_time = std::time::Instant::now();
-        while start_time.elapsed() < Duration::from_millis(800) {
+        while start_time.elapsed() < Duration::from_millis(ANIMATION_DURATION_MS) {
             for event in event_pump.poll_iter() {
                 match event {
                     Event::Quit { .. }
@@ -177,15 +190,15 @@ pub fn make_bet_bot(
                     _ => {}
                 }
             }
-            render_screen(canvas, Color::RGB(r, g, b), game, &ttf_context)?;
+            render_screen(canvas, LIGHT_BLUE, game, &ttf_context)?;
             write_info(canvas, &string, ttf_context, WRITE_INFO_SIZE)?;
             canvas.present();
-            ::std::thread::sleep(Duration::from_millis(30));
+            ::std::thread::sleep(Duration::from_millis(BOT_DECISION_DELAY_MS));
         }
         return Ok(Some(bet));
     } else {
         let start_time = std::time::Instant::now();
-        while start_time.elapsed() < Duration::from_millis(800) {
+        while start_time.elapsed() < Duration::from_millis(ANIMATION_DURATION_MS) {
             for event in event_pump.poll_iter() {
                 match event {
                     Event::Quit { .. }
@@ -199,10 +212,10 @@ pub fn make_bet_bot(
                     _ => {}
                 }
             }
-            render_screen(canvas, Color::RGB(r, g, b), game, &ttf_context)?;
+            render_screen(canvas, LIGHT_BLUE, game, &ttf_context)?;
             write_info(canvas, &format!("{:?} folded", player.id), ttf_context, WRITE_INFO_SIZE)?;
             canvas.present();
-            ::std::thread::sleep(Duration::from_millis(30));
+            ::std::thread::sleep(Duration::from_millis(BOT_DECISION_DELAY_MS));
         }
         return Ok(None);
     }

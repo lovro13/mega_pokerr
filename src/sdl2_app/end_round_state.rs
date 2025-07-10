@@ -2,7 +2,7 @@ use std::sync::atomic::Ordering;
 use std::time::Duration;
 
 use sdl2::keyboard::Keycode;
-use sdl2::pixels::Color;
+
 use sdl2::render::WindowCanvas;
 use sdl2::{event::Event, EventPump};
 
@@ -10,7 +10,7 @@ use crate::logic::{choose_winner::choose_winner, game::Game, constants::SHOULD_Q
 use crate::sdl2_app::render_text::write_info;
 use crate::sdl2_app::render_button::Button;
 
-use super::constants::WRITE_INFO_SIZE;
+use super::constants::*;
 use super::render_screen::render_screen;
 
 pub fn end_round(
@@ -44,8 +44,8 @@ pub fn end_round(
                 _ => {}
             }
         }
-        let (r, g, b) = (173, 216, 230); // Light blue color
-        render_screen(canvas, Color::RGB(r, g, b), game, ttf_context)?;
+
+        render_screen(canvas, LIGHT_BLUE, game, ttf_context)?;
         write_info(
             canvas,
             &format!("{:?} won the round and {} chips", print_winners, winnings),

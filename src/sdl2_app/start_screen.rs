@@ -12,7 +12,7 @@ use sdl2::{
 use crate::logic::constants::SHOULD_QUIT;
 
 use super::{
-    constants::{BACKGROUND_COLOR, BLACK}, positions::{ANGLE, CARD, CARD_SIZE, EXIT_BUTTON, LEFT_CARD, RIGHT_CARD, START_BUTTON, START_BUTTON_HEIGHT, START_BUTTON_WIDTH, START_SCREEN_TEXT_SIZE, TITLE_POS, TITLE_SIZE}, render_button::Button, render_screen::get_screen_center, render_text::draw_text
+    constants::*, positions::*, render_button::Button, render_screen::get_screen_center, render_text::draw_text
 };
 
 
@@ -26,13 +26,13 @@ pub fn start_screen_state(
         screen_center + Point::from(START_BUTTON),
         START_BUTTON_HEIGHT,
         START_BUTTON_WIDTH,
-        String::from("START GAME"),
+        String::from(START_GAME_TEXT),
     );
     let mut exit_button = Button::new(
         screen_center + Point::from(EXIT_BUTTON),
         START_BUTTON_HEIGHT,
         START_BUTTON_WIDTH,
-        String::from("EXIT"),
+        String::from(EXIT_TEXT),
     );
 
     let screen_center = get_screen_center(canvas);
@@ -85,7 +85,7 @@ pub fn start_screen_state(
         .unwrap();
         draw_text(
             canvas,
-            "MEGA POKER",
+            GAME_TITLE,
             Rect::from_center(screen_center + Point::from(TITLE_POS), 1, 1),
             ttf_context,
             TITLE_SIZE,

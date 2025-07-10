@@ -6,8 +6,7 @@ use crate::logic::player;
 use crate::logic::game::Game;
 use crate::logic::game::Streets;
 
-use super::constants::BIG_BLIND;
-use super::constants::SMALL_BLIND;
+use super::constants::*;
 
 pub struct Round {
     
@@ -20,7 +19,7 @@ pub fn begin_round(game: &mut Game) {
     game.pot = 0;
     for player in game.players.iter_mut() {
         if player.chips == 0 {
-            player.chips = 1000;
+            player.chips = BUY_IN;
             player.debt += 1;
         }
         player.position = player::PlayerPosition::next_player_position(&player.position);

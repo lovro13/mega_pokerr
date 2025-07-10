@@ -4,11 +4,8 @@ use sdl2::pixels::Color;
 use sdl2::rect::{Point, Rect};
 use sdl2::render::WindowCanvas;
 
-use super::constants::{BUTTON_COLOR, BUTTON_COLOR_PRESSED};
-use super::positions::{
-    ControlPosition, BUTTON_END_OF_ROUND, BUTTON_END_OF_ROUND_HEIGHT, BUTTON_END_OF_ROUND_WIDTH,
-    BUTTON_HEIGHT, BUTTON_WIDTH,
-};
+use super::constants::*;
+use super::positions::*;
 use crate::sdl2_app::render_screen::get_screen_center;
 use crate::sdl2_app::render_text::draw_text;
 
