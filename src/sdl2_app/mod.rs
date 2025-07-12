@@ -1,6 +1,7 @@
 pub mod betting_state;
 pub mod constants;
 pub mod end_round_state;
+pub mod option_screen;
 pub mod positions;
 pub mod render_button;
 pub mod render_cards;
@@ -8,7 +9,7 @@ pub mod render_screen;
 pub mod render_text;
 pub mod resources;
 pub mod send_bet;
-pub mod option_screen;
+pub mod settings;
 pub mod slider;
 pub mod start_screen;
 pub mod tactic1;

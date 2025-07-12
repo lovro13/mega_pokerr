@@ -40,7 +40,8 @@ pub const JACK_VALUE: u32 = 11;
 pub const TEN_VALUE: u32 = 10;
 pub const TWO_VALUE: u32 = 2;
 
-// Game state constants
+// Game state constants - konfigurabilno število igralcev
+pub const DEFAULT_PLAYER_COUNT: usize = 6; // Spremenjeno iz 8 na 6 kot privzeto
 pub const MAX_PLAYERS: usize = 8;
 pub const MIN_PLAYERS: usize = 2;
 

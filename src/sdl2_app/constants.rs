@@ -93,9 +93,21 @@ pub const BET_DISPLAY_Y_OFFSET: i32 = 70;
 // Text constants
 pub const GAME_TITLE: &str = "MEGA POKER";
 pub const START_GAME_TEXT: &str = "START GAME";
+pub const SETTINGS_TEXT: &str = "SETTINGS";
 pub const EXIT_TEXT: &str = "EXIT";
 pub const FOLDED_TEXT: &str = "Folded";
 pub const CHIPS_TEXT_PREFIX: &str = "Chips: ";
+
+// Settings constants
+pub const SETTINGS_BUTTON_HEIGHT: u32 = 100;
+pub const SETTINGS_BUTTON_WIDTH: u32 = 600;
+pub const SETTINGS_WINDOW_WIDTH: u32 = 800;
+pub const SETTINGS_WINDOW_HEIGHT: u32 = 600;
+pub const SETTINGS_FONT_SIZE: u16 = 40;
+pub const SETTINGS_TITLE_SIZE: u16 = 60;
+pub const PLAYER_COUNT_LABEL: &str = "Number of Players:";
+pub const BACK_TEXT: &str = "BACK";
+pub const APPLY_TEXT: &str = "APPLY";
 
 // Debug and control
 pub static DEBUG: AtomicBool = AtomicBool::new(false);

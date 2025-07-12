@@ -6,15 +6,12 @@ edition = "2021"
 [features]
 default = []
 run_with_sdl2 = ["sdl2"]
-run_with_sauron = ["sauron"]
 
 [dependencies]
 rand = "0.8"
 itertools = "0.14.0"
-
-[dependencies.sauron]
-version = "0.49"
-optional = true
+log = "0.4"
+env_logger = "0.10"
 
 [dependencies.sdl2]
 version = "0.32.1"

@@ -38,7 +38,8 @@ pub struct Game {
     pub table_cards: Vec<card::Card>, // katere karte so na mizi
     pub position_on_turn: player::PlayerPosition, // kateri igralec je na vrsti, imamo poziicijo, torej kje sedi
     pub round_number: u32,
-    pub quit: bool                        // okrasek, koliko rund smo že odigral
+    pub quit: bool,                   // okrasek, koliko rund smo že odigral
+    pub player_count: usize,          // število igralcev v igri
 }
 
 impl Game {
@@ -50,7 +51,8 @@ impl Game {
         // uporablja se v make_bets v while true loopu namesto for zanka
         // ker je vsakič drugi začetni igralec
     
-        let next_player = self.position_on_turn.next_player_on_turn();
+        let next_player = self.position_on_turn.next_player_on_turn_for_count(self.player_count);
+        log::debug!("Moving from position {:?} to {:?} (player_count: {})", self.position_on_turn, next_player, self.player_count);
         self.position_on_turn = next_player;
     }
 
@@ -96,6 +98,7 @@ impl Game {
 pub fn init_game(player_list: Vec<player::Player>) -> Rc<RefCell<Game>> {
     let deck = card::Card::make_ordered_deck();
     let deck = card::Card::scramble_deck(deck);
+    let player_count = player_list.len();
     let mut players_in_game = vec![];
     for player in player_list.iter() {
         players_in_game.push(player.id.clone());
@@ -109,6 +112,7 @@ pub fn init_game(player_list: Vec<player::Player>) -> Rc<RefCell<Game>> {
         table_cards: Vec::new(),
         position_on_turn: player::PlayerPosition::UnderTheGun,
         round_number: 0,
-        quit: false
+        quit: false,
+        player_count
     }))
 }

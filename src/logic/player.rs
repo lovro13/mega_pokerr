@@ -27,7 +27,7 @@ pub enum PlayerPosition {
 }
 
 impl PlayerPosition {
-    // uu to bo treba še popravt, če nočem da je edina možna stvar 8 playerjov, ampak tud druge številke
+
     pub fn next_player_position(&self) -> PlayerPosition {
         match self {
             PlayerPosition::Dealer => PlayerPosition::Cutoff,
@@ -44,6 +44,70 @@ impl PlayerPosition {
         }
     }
 
+    pub fn next_player_position_for_count(&self, player_count: usize) -> PlayerPosition {
+        match player_count {
+            2 => {
+                match self {
+                    PlayerPosition::Dealer => PlayerPosition::SmallBlind,
+                    PlayerPosition::SmallBlind => PlayerPosition::Dealer,
+                    _ => self.next_player_position(),
+                }
+            }
+            3 => {
+                match self {
+                    PlayerPosition::Dealer => PlayerPosition::SmallBlind,
+                    PlayerPosition::SmallBlind => PlayerPosition::BigBlind,
+                    PlayerPosition::BigBlind => PlayerPosition::Dealer,
+                    _ => self.next_player_position(),
+                }
+            }
+            4 => {
+                match self {
+                    PlayerPosition::Dealer => PlayerPosition::SmallBlind,
+                    PlayerPosition::SmallBlind => PlayerPosition::BigBlind,
+                    PlayerPosition::BigBlind => PlayerPosition::UnderTheGun,
+                    PlayerPosition::UnderTheGun => PlayerPosition::Dealer,
+                    _ => self.next_player_position(),
+                }
+            }
+            5 => {
+                match self {
+                    PlayerPosition::Dealer => PlayerPosition::SmallBlind,
+                    PlayerPosition::SmallBlind => PlayerPosition::BigBlind,
+                    PlayerPosition::BigBlind => PlayerPosition::UnderTheGun,
+                    PlayerPosition::UnderTheGun => PlayerPosition::MiddlePosition,
+                    PlayerPosition::MiddlePosition => PlayerPosition::Dealer,
+                    _ => self.next_player_position(),
+                }
+            }
+            6 => {
+                match self {
+                    PlayerPosition::Dealer => PlayerPosition::SmallBlind,
+                    PlayerPosition::SmallBlind => PlayerPosition::BigBlind,
+                    PlayerPosition::BigBlind => PlayerPosition::UnderTheGun,
+                    PlayerPosition::UnderTheGun => PlayerPosition::MiddlePosition,
+                    PlayerPosition::MiddlePosition => PlayerPosition::Cutoff,
+                    PlayerPosition::Cutoff => PlayerPosition::Dealer,
+                    _ => self.next_player_position(),
+                }
+            }
+            7 => {
+                match self {
+                    PlayerPosition::Dealer => PlayerPosition::SmallBlind,
+                    PlayerPosition::SmallBlind => PlayerPosition::BigBlind,
+                    PlayerPosition::BigBlind => PlayerPosition::UnderTheGun,
+                    PlayerPosition::UnderTheGun => PlayerPosition::MiddlePosition,
+                    PlayerPosition::MiddlePosition => PlayerPosition::Hijack,
+                    PlayerPosition::Hijack => PlayerPosition::Cutoff,
+                    PlayerPosition::Cutoff => PlayerPosition::Dealer,
+                    _ => self.next_player_position(),
+                }
+            }
+            8 => self.next_player_position(),
+            _ => self.next_player_position(),
+        }
+    }
+
     pub fn next_player_on_turn(&self) -> PlayerPosition {
         match self {
             PlayerPosition::Dealer => PlayerPosition::SmallBlind,
@@ -57,6 +121,70 @@ impl PlayerPosition {
             PlayerPosition::NotPlaying => {
                 panic!("NotPlaying position should not be evaluated (next_player_on_turn)")
             }
+        }
+    }
+
+    pub fn next_player_on_turn_for_count(&self, player_count: usize) -> PlayerPosition {
+        match player_count {
+            2 => {
+                match self {
+                    PlayerPosition::Dealer => PlayerPosition::SmallBlind,
+                    PlayerPosition::SmallBlind => PlayerPosition::Dealer,
+                    _ => self.next_player_on_turn(),
+                }
+            }
+            3 => {
+                match self {
+                    PlayerPosition::Dealer => PlayerPosition::SmallBlind,
+                    PlayerPosition::SmallBlind => PlayerPosition::BigBlind,
+                    PlayerPosition::BigBlind => PlayerPosition::Dealer,
+                    _ => self.next_player_on_turn(),
+                }
+            }
+            4 => {
+                match self {
+                    PlayerPosition::Dealer => PlayerPosition::SmallBlind,
+                    PlayerPosition::SmallBlind => PlayerPosition::BigBlind,
+                    PlayerPosition::BigBlind => PlayerPosition::UnderTheGun,
+                    PlayerPosition::UnderTheGun => PlayerPosition::Dealer,
+                    _ => self.next_player_on_turn(),
+                }
+            }
+            5 => {
+                match self {
+                    PlayerPosition::Dealer => PlayerPosition::SmallBlind,
+                    PlayerPosition::SmallBlind => PlayerPosition::BigBlind,
+                    PlayerPosition::BigBlind => PlayerPosition::UnderTheGun,
+                    PlayerPosition::UnderTheGun => PlayerPosition::MiddlePosition,
+                    PlayerPosition::MiddlePosition => PlayerPosition::Dealer,
+                    _ => self.next_player_on_turn(),
+                }
+            }
+            6 => {
+                match self {
+                    PlayerPosition::Dealer => PlayerPosition::SmallBlind,
+                    PlayerPosition::SmallBlind => PlayerPosition::BigBlind,
+                    PlayerPosition::BigBlind => PlayerPosition::UnderTheGun,
+                    PlayerPosition::UnderTheGun => PlayerPosition::MiddlePosition,
+                    PlayerPosition::MiddlePosition => PlayerPosition::Cutoff,
+                    PlayerPosition::Cutoff => PlayerPosition::Dealer,
+                    _ => self.next_player_on_turn(),
+                }
+            }
+            7 => {
+                match self {
+                    PlayerPosition::Dealer => PlayerPosition::SmallBlind,
+                    PlayerPosition::SmallBlind => PlayerPosition::BigBlind,
+                    PlayerPosition::BigBlind => PlayerPosition::UnderTheGun,
+                    PlayerPosition::UnderTheGun => PlayerPosition::MiddlePosition,
+                    PlayerPosition::MiddlePosition => PlayerPosition::Hijack,
+                    PlayerPosition::Hijack => PlayerPosition::Cutoff,
+                    PlayerPosition::Cutoff => PlayerPosition::Dealer,
+                    _ => self.next_player_on_turn(),
+                }
+            }
+            8 => self.next_player_on_turn(),
+            _ => self.next_player_on_turn(),
         }
     }
 
@@ -120,13 +248,30 @@ impl Id {
 
 impl Player {
     pub fn init_players() -> Vec<Player> {
+        Self::init_players_with_count(crate::logic::constants::DEFAULT_PLAYER_COUNT)
+    }
+
+    pub fn init_players_with_count(player_count: usize) -> Vec<Player> {
+        log::info!("Initializing {} players", player_count);
         let mut list_of_players = Vec::new();
         let mut last_position = PlayerPosition::Dealer;
-        let names = Id::all_names(); // 1, 2, ... , 8
+        
+        // Ustvari seznam ID-jev glede na število igralcev
+        let names = match player_count {
+            2 => vec![Id::Player1, Id::Player2],
+            3 => vec![Id::Player1, Id::Player2, Id::Player3],
+            4 => vec![Id::Player1, Id::Player2, Id::Player3, Id::Player4],
+            5 => vec![Id::Player1, Id::Player2, Id::Player3, Id::Player4, Id::Player5],
+            6 => vec![Id::Player1, Id::Player2, Id::Player3, Id::Player4, Id::Player5, Id::Player6],
+            7 => vec![Id::Player1, Id::Player2, Id::Player3, Id::Player4, Id::Player5, Id::Player6, Id::Player7],
+            8 => vec![Id::Player1, Id::Player2, Id::Player3, Id::Player4, Id::Player5, Id::Player6, Id::Player7, Id::Player8],
+            _ => panic!("Invalid player count: {}", player_count),
+        };
 
         for name in names {
-            let curr_position = PlayerPosition::next_player_on_turn(&last_position);
+            let curr_position = PlayerPosition::next_player_on_turn_for_count(&last_position, player_count);
             last_position = curr_position.clone();
+            log::debug!("Player {:?} assigned position {:?}", name, curr_position);
             let curr_player = Player {
                 id: name,
                 hand_cards: (
@@ -148,6 +293,7 @@ impl Player {
             };
             list_of_players.push(curr_player);
         }
+        log::info!("Successfully initialized {} players", list_of_players.len());
         list_of_players
     }
 

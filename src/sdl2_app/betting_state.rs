@@ -14,7 +14,8 @@ pub fn run_betting_state(
     canvas: &mut Canvas<Window>,
     event_pump: &mut EventPump,
     game: &Rc<RefCell<Game>>,
-    ttf_context: &sdl2::ttf::Sdl2TtfContext
+    ttf_context: &sdl2::ttf::Sdl2TtfContext,
+    player_count: usize,
 ) -> Result<(), String> {
     // Kloniraj Rc<RefCell<Game>> za uporabo v zaprtju
 
@@ -34,13 +35,13 @@ pub fn run_betting_state(
                 event_pump,
                 &mut *canvas_borrow,
                 &ttf_context,
-                game
+                game,
+                player_count,
             )
             .unwrap()
         }
     };
 
-    // Ločen scope za mutabilen dostop v make_bets
     {
         let mut game_mut  = game.borrow_mut();
         make_bets(&mut *game_mut, get_bet);

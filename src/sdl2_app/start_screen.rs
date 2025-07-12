@@ -12,21 +12,34 @@ use sdl2::{
 use crate::logic::constants::SHOULD_QUIT;
 
 use super::{
-    constants::*, positions::*, render_button::Button, render_screen::get_screen_center, render_text::draw_text
+    constants::*, positions::*, render_button::Button, render_screen::get_screen_center, render_text::draw_text, settings::GameSettings
 };
 
+
+pub enum StartScreenAction {
+    StartGame,
+    OpenSettings,
+    Exit,
+}
 
 pub fn start_screen_state(
     canvas: &mut Canvas<Window>,
     event_pump: &mut EventPump,
     ttf_context: &sdl2::ttf::Sdl2TtfContext,
-) -> Result<bool, String> {
+    settings: &mut GameSettings,
+) -> Result<StartScreenAction, String> {
     let screen_center = get_screen_center(canvas);
     let mut start_button = Button::new(
         screen_center + Point::from(START_BUTTON),
         START_BUTTON_HEIGHT,
         START_BUTTON_WIDTH,
         String::from(START_GAME_TEXT),
+    );
+    let mut settings_button = Button::new(
+        screen_center + Point::from(SETTINGS_BUTTON),
+        START_BUTTON_HEIGHT,
+        START_BUTTON_WIDTH,
+        String::from(SETTINGS_TEXT),
     );
     let mut exit_button = Button::new(
         screen_center + Point::from(EXIT_BUTTON),
@@ -39,6 +52,7 @@ pub fn start_screen_state(
     loop {
         for event in event_pump.poll_iter() {
             Button::handle_button_events(&event, &mut start_button);
+            Button::handle_button_events(&event, &mut settings_button);
             Button::handle_button_events(&event, &mut exit_button);
             match event {
                 Event::Quit { .. }
@@ -47,20 +61,28 @@ pub fn start_screen_state(
                     ..
                 } => {
                     SHOULD_QUIT.store(true, Ordering::Relaxed);
-                    return Ok(false); // Signal za izhod
+                    return Ok(StartScreenAction::Exit);
                 }
                 _ => {}
             }
         }
         if exit_button.is_clicked {
             SHOULD_QUIT.store(true, Ordering::Relaxed);
-            return Ok(false);
+            log::info!("Exit button clicked");
+            return Ok(StartScreenAction::Exit);
         } else if start_button.is_clicked {
-            return Ok(true);
+            log::info!("Start game button clicked");
+            return Ok(StartScreenAction::StartGame);
+        } else if settings_button.is_clicked {
+            log::info!("Settings button clicked");
+            return Ok(StartScreenAction::OpenSettings);
         }
         canvas.set_draw_color(BACKGROUND_COLOR);
         canvas.clear();
         start_button
+            .draw_button(canvas, &ttf_context, START_SCREEN_TEXT_SIZE)
+            .unwrap();
+        settings_button
             .draw_button(canvas, &ttf_context, START_SCREEN_TEXT_SIZE)
             .unwrap();
         exit_button

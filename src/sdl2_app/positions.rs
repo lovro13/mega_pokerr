@@ -14,6 +14,7 @@ use super::render_screen::get_screen_center;
 
 // Start screen positions
 pub const START_BUTTON: (i32, i32) = (0, 0);
+pub const SETTINGS_BUTTON: (i32, i32) = (0, 75);
 pub const EXIT_BUTTON: (i32, i32) = (0, 150);
 pub const TITLE_POS: (i32, i32) = (0, -200);
 
@@ -64,11 +65,85 @@ impl Id {
         }
     }
 
+    pub fn get_card_position_for_count(&self, player_count: usize) -> (i32, i32) {
+        match player_count {
+            2 => {
+                match self {
+                    Id::Player1 => (-300, -200),
+                    Id::Player2 => (300, -200),
+                    _ => self.get_card_position(),
+                }
+            }
+            3 => {
+                match self {
+                    Id::Player1 => (-400, -200),
+                    Id::Player2 => (0, -200),
+                    Id::Player3 => (400, -200),
+                    _ => self.get_card_position(),
+                }
+            }
+            4 => {
+                match self {
+                    Id::Player1 => (-400, -200),
+                    Id::Player2 => (400, -200),
+                    Id::Player3 => (-400, 200),
+                    Id::Player4 => (400, 200),
+                    _ => self.get_card_position(),
+                }
+            }
+            5 => {
+                match self {
+                    Id::Player1 => (-400, -200),
+                    Id::Player2 => (0, -200),
+                    Id::Player3 => (400, -200),
+                    Id::Player4 => (-200, 200),
+                    Id::Player5 => (200, 200),
+                    _ => self.get_card_position(),
+                }
+            }
+            6 => {
+                match self {
+                    Id::Player1 => (-400, -200),
+                    Id::Player2 => (0, -200),
+                    Id::Player3 => (400, -200),
+                    Id::Player4 => (-400, 200),
+                    Id::Player5 => (0, 200),
+                    Id::Player6 => (400, 200),
+                    _ => self.get_card_position(),
+                }
+            }
+            7 => {
+                match self {
+                    Id::Player1 => (-400, -200),
+                    Id::Player2 => (0, -200),
+                    Id::Player3 => (400, -200),
+                    Id::Player4 => (-400, 200),
+                    Id::Player5 => (0, 200),
+                    Id::Player6 => (400, 200),
+                    Id::Player7 => (0, 0),
+                    _ => self.get_card_position(),
+                }
+            }
+            8 => self.get_card_position(),
+            _ => self.get_card_position(),
+        }
+    }
+
     pub fn get_player_screen_center(&self, canvas: &WindowCanvas) -> Point {
         // is on the middle of the first card
         let (width, height) = canvas.output_size().unwrap();
         let screen_center = Point::new(width as i32 / 2, (height as i32) / 2 + SCREEN_CENTER_Y_OFFSET);
         let card_position = self.get_card_position();
+        let player_center = // is on the middle of the first card
+        Point::new(card_position.0, -card_position.1) + screen_center;
+        return player_center;
+    }
+
+    pub fn get_player_screen_center_for_count(&self, canvas: &WindowCanvas, player_count: usize) -> Point {
+        // is on the middle of the first card
+        let (width, height) = canvas.output_size().unwrap();
+        let screen_center = Point::new(width as i32 / 2, (height as i32) / 2 + SCREEN_CENTER_Y_OFFSET);
+        let card_position = self.get_card_position_for_count(player_count);
         let player_center = // is on the middle of the first card
         Point::new(card_position.0, -card_position.1) + screen_center;
         return player_center;

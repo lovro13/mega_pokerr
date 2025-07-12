@@ -41,16 +41,21 @@ pub fn make_bet(
     canvas: &mut Canvas<Window>,
     ttf_context: &sdl2::ttf::Sdl2TtfContext,
     game: &Game,
+    player_count: usize,
 ) -> Result<Option<u32>, String> {
     // Check if player is a bot (Player1 is the main player, others are bots)
     let is_bot = player.id != MAIN_PLAYER;
+    log::debug!("Player {:?} making bet (is_bot: {}, req_bet: {}, chips: {})", 
+                player.id, is_bot, req_bet, player.chips);
     
     if player.chips == 0 {
+        log::debug!("Player {:?} has no chips, returning 0", player.id);
         return Ok(Some(0));
     }
 
     // Initialize state based on player type
     let mut state = if is_bot {
+        log::debug!("Bot {:?} making decision", player.id);
         let decision = make_decision(
             &player.hand_cards,
             &game.table_cards,
@@ -69,12 +74,15 @@ pub fn make_bet(
             format!("{:?} folded", player.id)
         };
         
+        log::info!("Bot {:?} decision: {}", player.id, message);
+        
         BetState::BotBet {
             decision,
             start_time: std::time::Instant::now(),
             message,
         }
     } else {
+        log::debug!("Human player {:?} making bet", player.id);
         let req_bet = if player.chips <= req_bet {
             player.chips
         } else {
@@ -176,7 +184,7 @@ pub fn make_bet(
                 }
                 
                 // Render user interface
-                render_screen(canvas, LIGHT_BLUE, game, &ttf_context)?;
+                render_screen(canvas, LIGHT_BLUE, game, &ttf_context, player_count)?;
                 Button::draw_button(&fold_button, canvas, &ttf_context, BUTTON_TEXT_SIZE)?;
                 if *req_bet > 0 {
                     Button::draw_button(&call_button, canvas, &ttf_context, BUTTON_TEXT_SIZE)?;
@@ -202,7 +210,7 @@ pub fn make_bet(
                 }
                 
                 // Render bot decision animation
-                render_screen(canvas, LIGHT_BLUE, game, &ttf_context)?;
+                render_screen(canvas, LIGHT_BLUE, game, &ttf_context, player_count)?;
                 write_info(canvas, message, ttf_context, WRITE_INFO_SIZE)?;
                 canvas.present();
                 ::std::thread::sleep(Duration::from_millis(BOT_DECISION_DELAY_MS));
