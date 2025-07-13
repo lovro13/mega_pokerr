@@ -13,12 +13,12 @@ use super::render_screen::get_screen_center;
 // glede na screen_center kot izhodišče
 
 // Start screen positions
-pub const START_BUTTON: (i32, i32) = (0, 0);
+pub const START_BUTTON: (i32, i32) = (0, -50);
 pub const SETTINGS_BUTTON: (i32, i32) = (0, 75);
-pub const EXIT_BUTTON: (i32, i32) = (0, 150);
+pub const EXIT_BUTTON: (i32, i32) = (0, 200);
 pub const TITLE_POS: (i32, i32) = (0, -200);
 
-// Card positions
+// Card positions on Start Screen
 pub const RIGHT_CARD: (i32, i32) = (500, 0);
 pub const LEFT_CARD: (i32, i32) = (-500, 0);
 pub const CARD: Card = Card {

@@ -8,3 +8,4 @@ pub mod game;
 pub mod hand_ranking;
 pub mod player;
 pub mod round;
+pub mod save_game;

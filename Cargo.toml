@@ -6,17 +6,25 @@ edition = "2021"
 [features]
 default = []
 run_with_sdl2 = ["sdl2"]
+run_with_sauron = ["sauron"]
 
 [dependencies]
 rand = "0.8"
 itertools = "0.14.0"
 log = "0.4"
 env_logger = "0.10"
+rusqlite = { version = "0.37.0", features = ["bundled"] }
+serde_json = "1.0.140"
+serde = { version = "1.0", features = ["derive"] }
 
 [dependencies.sdl2]
 version = "0.32.1"
 default-features = false
 features = ["image", "ttf"]
+optional = true
+
+[dependencies.sauron]
+version = "0.70.0"
 optional = true
 
 [[bin]]

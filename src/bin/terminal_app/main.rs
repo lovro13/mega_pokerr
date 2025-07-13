@@ -11,7 +11,7 @@ fn main() {
 
     let game = init_game(players);
     let mut mut_game = game.borrow_mut();
-    begin_round(&mut mut_game);
+    begin_round(&mut mut_game, 8);
     print_game_info(&mut_game);
     make_bets(&mut mut_game, get_bet); // PREFLOP
     print_game_info(&mut_game);

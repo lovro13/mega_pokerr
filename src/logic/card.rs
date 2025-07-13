@@ -1,7 +1,8 @@
 use rand::seq::SliceRandom;
 use rand::thread_rng;
+use serde::{Deserialize, Serialize};
 
-#[derive(Clone, Debug, PartialEq, Eq)] // rabim clone da lahko naredim več kart, z istimi številkami
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)] // rabim clone da lahko naredim več kart, z istimi številkami
 pub enum CardNumber {
     // označeno N ker je večini številk-Number, to sem si izmislil
     // nevem če je to izraz
@@ -99,7 +100,7 @@ impl PartialOrd for CardNumber {
 }
 
 
-#[derive(Clone, PartialEq)] // rabim clone da lahko naredim več kart, z istimi barvami
+#[derive(Clone, PartialEq, Serialize, Deserialize)] // rabim clone da lahko naredim več kart, z istimi barvami
 pub enum CardColor {
     Hearts,
     Spades,
@@ -126,7 +127,7 @@ impl std::fmt::Debug for CardColor {
     }
 }
 
-#[derive(Debug, PartialEq, Clone)]
+#[derive(Debug, PartialEq, Clone, Serialize, Deserialize)]
 pub struct Card {
     pub color: CardColor,
     pub number: CardNumber,
