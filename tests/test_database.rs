@@ -20,6 +20,10 @@ mod tests {
         let mut connection = Connection::open(DATABASE_PATH).unwrap();
         let tx = connection.transaction().unwrap();
         let game = load_game(1, &tx).unwrap();
+        match game {
+            Some(x) => {println!("{}", x.pot);},
+            None => {println!("no game with id 1")},
+        }
         // println!("{:?}", game);
     }
 }
