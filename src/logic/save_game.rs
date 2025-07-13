@@ -1,52 +1,50 @@
-use rusqlite::{Result, Transaction};
+use rusqlite::{params, Result, Transaction};
+
+use crate::logic::game::{self, Game};
 
 pub fn create_tables(tx: &Transaction) -> Result<()> {
-    log::debug!("Creating tables");
-    tx.execute_batch(
-    "CREATE TABLE IF NOT EXISTS game_state (
-            round INTEGER PRIMARY KEY,
-            street TEXT NOT NULL,
-            pot INTEGER NOT NULL,
-            position_on_turn TEXT NOT NULL,
-            quit BOOLEAN NOT NULL,
-            player_count INTEGER NOT NULL
-        );"
-    )
+    let _ = tx.execute_batch(
+        "CREATE TABLE IF NOT EXISTS saves (
+            game_id INTEGER PRIMARY KEY AUTOINCREMENT,
+            game_state TEXT NOT NULL,
+            created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+            );"
+        );
+    log::debug!("Created table if it didnt exist before");
+    Ok(())
 }
 
-// fn save_game_state(tx: &Transaction, game: &Game) -> Result<()> {
-//     tx.execute("INSERT OR REPLACE INTO game_state
-//                 (round, street, pot, position_on_turn, quit, player_count)
-//                 VALUES(?1, ?2, ?3, ?4, ?5, ?6)", 
-//                 params![
-//                     game.round_number as i64,
-//                     serde_json::to_string(&game.street).unwrap(),
-//                     game.pot as i64,
-//                     serde_json::to_string(&game.position_on_turn).unwrap(),
-//                     game.quit,
-//                     game.player_count as i64
-//                     ])?; 
-//     Ok(())
-// }
+pub fn save_game(game: &Game, tx: &Transaction) -> Result<()> {
+    log::debug!("Saving game");
+    let game_state = serde_json::to_string(game).unwrap();
+    log::debug!("converted game to json: {game_state}");
+    let update = tx.execute(
+        "INSERT INTO saves (game_state) VALUES(?1)",
+        params![game_state],
+    )?;
+    log::debug!("database changed: {update}");
+    Ok(())
+}
 
-// fn save_player(tx: &Transaction, player: Player, round: i32) -> Result<()> {
-//     tx.execute("INSERT OR REPLACE INTO game_state
-//                 (round, id, hand_cards, position_on_turn, quit, player_count)
-//                 VALUES(?1, ?2, ?3, ?4, ?5, ?6)", params)?;
-//     Ok(())
-// }
+pub fn load_game(game_id: i64, tx: &Transaction) -> Result<Option<Game>> {
+    let mut stmt = tx.prepare("SELECT game_state FROM saves WHERE game_id = ?1")?;
 
-// pub fn save_game(game: Game) -> Result<()> {
-//     let conn = Connection::open_in_memory()?;
+    let game_result = stmt.query_row([game_id], |row| {
+        let game_state: String = row.get(0)?;
+        Ok(game_state)
+    });
 
-//     conn.execute("CREATE TABLE game (
-//             id   INTEGER PRIMARY KEY,
-//             name TEXT NOT NULL,
-//             data BLOB
-//         )", ())?;
-
-        
-
-//     let mut stmt = conn.prepare("SELECT");
-//     Ok(())
-// }
+    match game_result {
+        Ok(game_state) => {
+            let game: Game = serde_json::from_str(&game_state)
+                .map_err(|e| rusqlite::Error::FromSqlConversionFailure(
+                    0, 
+                    rusqlite::types::Type::Text, 
+                    Box::new(e)
+                ))?;
+            Ok(Some(game))
+        }
+        Err(rusqlite::Error::QueryReturnedNoRows) => Ok(None),
+        Err(e) => Err(e),
+    }
+}

@@ -1,8 +1,5 @@
 use std::sync::atomic::Ordering;
-
-use mega_pokerr::logic::constants::DATABASE_PATH;
 use mega_pokerr::logic::round::next_turn;
-use mega_pokerr::logic::save_game::create_tables;
 use mega_pokerr::sdl2_app::betting_state::run_betting_state;
 use mega_pokerr::sdl2_app::constants::DEBUG;
 use mega_pokerr::sdl2_app::constants::MAIN_PLAYER;
@@ -16,7 +13,6 @@ use mega_pokerr::logic::player;
 use mega_pokerr::logic::round::begin_round;
 use mega_pokerr::sdl2_app::start_screen::{start_screen_state, StartScreenAction};
 use mega_pokerr::sdl2_app::settings::settings_screen_state;
-use rusqlite::Connection;
 
 fn main() -> Result<(), String> {
     env_logger::init();
@@ -30,12 +26,6 @@ fn main() -> Result<(), String> {
     let mut event_pump = app_context.sdl_context.event_pump().unwrap(); // zazna inpute
     let mut canvas = app_context.canvas;
 
-    let mut connection = Connection::open(DATABASE_PATH).unwrap();
-
-    log::info!("DB path: {:?}", std::fs::canonicalize(DATABASE_PATH));
-    let tx = connection.transaction().unwrap();
-    let _ = create_tables(&tx);
-    let _  = tx.commit();
     // GLAVNA ZANKA
     'mainloop: loop {
         match start_screen_state(&mut canvas, &mut event_pump, &app_context.ttf_context)? {
