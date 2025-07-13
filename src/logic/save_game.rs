@@ -1,6 +1,6 @@
 use rusqlite::{params, Result, Transaction};
 
-use crate::logic::game::{self, Game};
+use crate::logic::game::{Game};
 
 pub fn create_tables(tx: &Transaction) -> Result<()> {
     let _ = tx.execute_batch(
