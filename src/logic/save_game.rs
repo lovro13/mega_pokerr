@@ -1,8 +1,4 @@
-use rusqlite::{params, Connection, Result, Transaction};
-
-use crate::logic::{game::Game, player::Player};
-
-use serde_json;
+use rusqlite::{Result, Transaction};
 
 pub fn create_tables(tx: &Transaction) -> Result<()> {
     log::debug!("Creating tables");

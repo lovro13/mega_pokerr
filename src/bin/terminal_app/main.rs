@@ -6,6 +6,7 @@ use mega_pokerr::logic::player;
 use mega_pokerr::terminal_app::get_bet::get_bet;
 use mega_pokerr::terminal_app::prints::print_game_info;
 
+
 fn main() {
     let players = player::Player::init_players();
 
