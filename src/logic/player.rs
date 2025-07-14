@@ -1,7 +1,9 @@
+use serde::{Deserialize, Serialize};
+
 use crate::logic::card;
 use crate::logic::constants::BUY_IN;
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub enum Id {
     Player1,
     Player2,
@@ -13,7 +15,7 @@ pub enum Id {
     Player8,
 }
 
-#[derive(PartialEq, Debug, Clone)]
+#[derive(PartialEq, Debug, Clone, Serialize, Deserialize)]
 pub enum PlayerPosition {
     Dealer,
     SmallBlind,
@@ -219,7 +221,7 @@ impl PlayerPosition {
     }
 }
 
-#[derive(Debug, Clone)] // PAZIII CLONE SAMO RISANJE PLAYERJEV
+#[derive(Debug, Clone, Serialize, Deserialize)] // PAZIII CLONE SAMO RISANJE PLAYERJEV
 pub struct Player {
     pub id: Id, // from Player1, ...,  Player8
     pub hand_cards: (card::Card, card::Card),

@@ -103,7 +103,6 @@ impl Button {
     }
     pub fn init_call_button(canvas: &mut WindowCanvas) -> Self {
         let button_position = ControlPosition::init_control_positon(canvas).call_button;
-                println!("call button  is at {:?}", button_position);
         Button {
             center: button_position,
             height: BUTTON_HEIGHT,
@@ -151,6 +150,55 @@ impl Button {
             height: BUTTON_END_OF_ROUND_HEIGHT,
             width: BUTTON_END_OF_ROUND_WIDTH,
             text: String::from("START NEW ROUND"),
+            is_clicked: false,
+        }
+    }
+
+    pub fn init_settings_button() -> Self {
+        let button_position = Point::from((SETTINGS_BUTTON_GAME.0 + SETTINGS_BUTTON_GAME_WIDTH as i32, SETTINGS_BUTTON_GAME.1 / 2 as i32));
+        Button {
+            center: button_position,
+            height: SETTINGS_BUTTON_GAME_HEGITH,
+            width: SETTINGS_BUTTON_GAME_WIDTH,
+            text: String::from("Settings"),
+            is_clicked: false,
+        }
+    }
+    
+
+    pub fn init_resume_button(canvas: &mut WindowCanvas) -> Self {
+        let screen_center = get_screen_center(canvas);
+        let offset = -((SETTINGS_BUTTON_HEIGTH as i32) + SETTINGS_BUTTON_SPACING);
+        let button_position = screen_center + Point::new(0, offset);
+        Button {
+            center: button_position,
+            height: SETTINGS_BUTTON_HEIGTH,
+            width: SETTINGS_BUTTON_WIDTH,
+            text: String::from("RESUME"),
+            is_clicked: false,
+        }
+    }
+
+    pub fn init_save_button(canvas: &mut WindowCanvas) -> Self {
+        let screen_center = get_screen_center(canvas);
+        Button {
+            center: screen_center,
+            height: SETTINGS_BUTTON_HEIGTH,
+            width: SETTINGS_BUTTON_WIDTH,
+            text: String::from("SAVE GAME"),
+            is_clicked: false,
+        }
+    }
+
+    pub fn init_exit_button(canvas: &mut WindowCanvas) -> Self {
+        let screen_center = get_screen_center(canvas);
+        let offset = (SETTINGS_BUTTON_HEIGTH as i32) + SETTINGS_BUTTON_SPACING;
+        let button_position = screen_center + Point::new(0, offset);
+        Button {
+            center: button_position,
+            height: SETTINGS_BUTTON_HEIGTH,
+            width: SETTINGS_BUTTON_WIDTH,
+            text: String::from("EXIT"),
             is_clicked: false,
         }
     }

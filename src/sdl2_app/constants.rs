@@ -1,7 +1,7 @@
 use std::sync::atomic::AtomicBool;
 use sdl2::pixels::Color;
 
-use crate::logic::player::Id;
+use crate::logic::{card::Card, player::Id};
 
 // Screen dimensions
 pub const SCREEN_HEIGHT: u32 = 1080;
@@ -16,6 +16,7 @@ pub const START_SCREEN_TEXT_SIZE: u16 = 80;
 pub const TITLE_SIZE: u16 = 120;
 pub const BUTTON_TEXT_SIZE: u16 = 30;
 pub const POT_SIZE: u16 = 40;
+pub const SETTINGS_FONT_SIZE: u16 = 40;
 
 // Colors
 pub const BACKGROUND_COLOR: Color = Color { r: 200, g: 200, b: 255, a: 0xff };
@@ -31,6 +32,7 @@ pub const LIGHT_RED: Color = Color { r: 255, g: 105, b: 105, a: 0xff };
 pub const DARK_BLUE: Color = Color { r: 0, g: 0, b: 139, a: 255 };
 pub const GRAY_COLOR: Color = Color { r: 100, g: 100, b: 100, a: 0xff };
 pub const LIGHT_GRAY: Color = Color { r: 200, g: 200, b: 200, a: 0xff };
+
 
 // Game configuration
 pub const MAIN_PLAYER: Id = Id::Player1;
@@ -99,15 +101,61 @@ pub const FOLDED_TEXT: &str = "Folded";
 pub const CHIPS_TEXT_PREFIX: &str = "Chips: ";
 
 // Settings constants
-pub const SETTINGS_BUTTON_HEIGHT: u32 = 100;
-pub const SETTINGS_BUTTON_WIDTH: u32 = 600;
-pub const SETTINGS_WINDOW_WIDTH: u32 = 800;
-pub const SETTINGS_WINDOW_HEIGHT: u32 = 600;
-pub const SETTINGS_FONT_SIZE: u16 = 40;
-pub const SETTINGS_TITLE_SIZE: u16 = 60;
+pub const SETTINGS_START_BUTTON_HEIGHT: u32 = 100;
+pub const SETTINGS_START_BUTTON_WIDTH: u32 = 600;
+pub const SETTINGS_START_WINDOW_WIDTH: u32 = 800;
+pub const SETTINGS_START_WINDOW_HEIGHT: u32 = 600;
+pub const SETTINGS_START_FONT_SIZE: u16 = 40;
+pub const SETTINGS_START_TITLE_SIZE: u16 = 60;
 pub const PLAYER_COUNT_LABEL: &str = "Number of Players:";
 pub const BACK_TEXT: &str = "BACK";
 pub const APPLY_TEXT: &str = "APPLY";
+
+
+// Start screen positions
+pub const START_BUTTON: (i32, i32) = (0, -50);
+pub const SETTINGS_BUTTON_START: (i32, i32) = (0, 75);
+pub const SETTINGS_BUTTON_GAME_WIDTH: u32 = 180; // it was meant to be a square
+pub const SETTINGS_BUTTON_GAME_HEGITH: u32 = 60; // it was meant to be a square
+pub const EXIT_BUTTON: (i32, i32) = (0, 200);
+pub const TITLE_POS: (i32, i32) = (0, -200);
+
+// Card positions on Start Screen
+pub const RIGHT_CARD: (i32, i32) = (500, 0);
+pub const LEFT_CARD: (i32, i32) = (-500, 0);
+pub const CARD: Card = Card {
+    number: crate::logic::card::CardNumber::NA,
+    color: crate::logic::card::CardColor::Hearts,
+};
+pub const ANGLE: f64 = 20.;
+
+// Player card positions
+pub const PLAYER1_CARDS: (i32, i32) = (-50, -300);
+pub const PLAYER2_CARDS: (i32, i32) = (-500, -300);
+pub const PLAYER3_CARDS: (i32, i32) = (-775, 50);
+pub const PLAYER4_CARDS: (i32, i32) = (-500, 325);
+pub const PLAYER5_CARDS: (i32, i32) = (-50, 325);
+pub const PLAYER6_CARDS: (i32, i32) = (500, 325);
+pub const PLAYER7_CARDS: (i32, i32) = (700, 50);
+pub const PLAYER8_CARDS: (i32, i32) = (500, -300);
+
+// Button positions
+pub const CALL_BUTTON: (i32, i32) = (0, 440);
+pub const BUTTON_END_OF_ROUND: (i32, i32) = (0, 125);
+pub const SETTINGS_BUTTON_GAME: (i32, i32) = (0, 125);
+
+// Pot position
+pub const POT_POSITION: (u32, u32) = (0, 100);
+
+// Settings position
+pub const SETTINGS_WINDOW_POS: (i32, i32) = (0, 0);
+pub const SETTINGS_WINDOW_HEIGHT: u32 = 500;
+pub const SETTINGS_WINDOW_WIDTH: u32 = 300;
+
+// Settings sizes
+pub const SETTINGS_BUTTON_HEIGTH: u32 = 90;
+pub const SETTINGS_BUTTON_WIDTH: u32 = 300;
+pub const SETTINGS_BUTTON_SPACING: i32 = 30;
 
 // Debug and control
 pub static DEBUG: AtomicBool = AtomicBool::new(false);

@@ -12,7 +12,7 @@ use sdl2::{
 use crate::logic::constants::SHOULD_QUIT;
 
 use super::{
-    constants::*, positions::*, render_button::Button, render_screen::get_screen_center, render_text::draw_text, settings::GameSettings
+    constants::*, button::Button, render_screen::get_screen_center, render_text::draw_text
 };
 
 
@@ -25,8 +25,7 @@ pub enum StartScreenAction {
 pub fn start_screen_state(
     canvas: &mut Canvas<Window>,
     event_pump: &mut EventPump,
-    ttf_context: &sdl2::ttf::Sdl2TtfContext,
-    settings: &mut GameSettings,
+    ttf_context: &sdl2::ttf::Sdl2TtfContext
 ) -> Result<StartScreenAction, String> {
     let screen_center = get_screen_center(canvas);
     let mut start_button = Button::new(
@@ -36,7 +35,7 @@ pub fn start_screen_state(
         String::from(START_GAME_TEXT),
     );
     let mut settings_button = Button::new(
-        screen_center + Point::from(SETTINGS_BUTTON),
+        screen_center + Point::from(SETTINGS_BUTTON_START),
         START_BUTTON_HEIGHT,
         START_BUTTON_WIDTH,
         String::from(SETTINGS_TEXT),

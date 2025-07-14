@@ -5,10 +5,13 @@ use crate::logic::player;
 use crate::logic::player::Player;
 use std::rc::Rc;
 use std::cell::RefCell;
+use serde::{Deserialize, Serialize};
+
 
 use super::player::Id;
 
-#[derive(Debug, PartialEq, Clone)]
+
+#[derive(Debug, PartialEq, Clone, Serialize, Deserialize)]
 pub enum Streets {
     PreFlop,
     Flop,
@@ -29,7 +32,8 @@ impl Streets {
     }
 }
 
-#[derive(Clone, Debug)] // CLONE SAMO ZA RISANJE PO ZASLONU PAZIIII!!!!
+
+#[derive(Serialize, Deserialize, Debug)]
 pub struct Game {
     pub street: Streets,              // v bistvu pove koliko kart je na mizi
     pub pot: u32,                     // koliko je stav na mizi

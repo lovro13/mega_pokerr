@@ -1,18 +1,18 @@
 use std::{sync::atomic::Ordering, time::Duration};
 
+use rusqlite::{Connection};
 use sdl2::{
-    event::Event,
-    keyboard::Keycode,
-    rect::{Point, Rect},
-    render::Canvas,
-    video::Window,
-    EventPump,
+    event::Event, keyboard::Keycode, rect::{Point, Rect}, render::{Canvas, WindowCanvas}, video::Window, EventPump
 };
 
-use crate::logic::constants::{DEFAULT_PLAYER_COUNT, MAX_PLAYERS, MIN_PLAYERS, SHOULD_QUIT};
+use crate::logic::{
+    constants::{DATABASE_PATH, DEFAULT_PLAYER_COUNT, MAX_PLAYERS, MIN_PLAYERS, SHOULD_QUIT},
+    game::Game,
+    save_game,
+};
 
 use super::{
-    constants::*, render_button::Button, render_screen::get_screen_center, render_text::draw_text
+    button::Button, constants::*, render_screen::get_screen_center, render_text::draw_text,
 };
 
 #[derive(Debug, Clone)]
@@ -28,25 +28,25 @@ impl Default for GameSettings {
     }
 }
 
-pub fn settings_screen_state(
+pub fn settings_start_screen_state(
     canvas: &mut Canvas<Window>,
     event_pump: &mut EventPump,
     ttf_context: &sdl2::ttf::Sdl2TtfContext,
     settings: &mut GameSettings,
 ) -> Result<bool, String> {
     let screen_center = get_screen_center(canvas);
-    
+
     let mut back_button = Button::new(
         screen_center + Point::from((0, 200)),
-        SETTINGS_BUTTON_HEIGHT,
-        SETTINGS_BUTTON_WIDTH,
+        SETTINGS_START_BUTTON_HEIGHT,
+        SETTINGS_START_BUTTON_WIDTH,
         String::from(BACK_TEXT),
     );
-    
+
     let mut apply_button = Button::new(
         screen_center + Point::from((0, 100)),
-        SETTINGS_BUTTON_HEIGHT,
-        SETTINGS_BUTTON_WIDTH,
+        SETTINGS_START_BUTTON_HEIGHT,
+        SETTINGS_START_BUTTON_WIDTH,
         String::from(APPLY_TEXT),
     );
 
@@ -56,7 +56,7 @@ pub fn settings_screen_state(
         for event in event_pump.poll_iter() {
             Button::handle_button_events(&event, &mut back_button);
             Button::handle_button_events(&event, &mut apply_button);
-            
+
             match event {
                 Event::Quit { .. }
                 | Event::KeyDown {
@@ -85,7 +85,7 @@ pub fn settings_screen_state(
                 _ => {}
             }
         }
-        
+
         if back_button.is_clicked {
             return Ok(false);
         } else if apply_button.is_clicked {
@@ -103,7 +103,7 @@ pub fn settings_screen_state(
             "SETTINGS",
             Rect::from_center(screen_center + Point::from((0, -200)), 1, 1),
             ttf_context,
-            SETTINGS_TITLE_SIZE,
+            SETTINGS_START_TITLE_SIZE,
             BLACK,
             None,
             false,
@@ -115,7 +115,7 @@ pub fn settings_screen_state(
             PLAYER_COUNT_LABEL,
             Rect::from_center(screen_center + Point::from((-200, -50)), 1, 1),
             ttf_context,
-            SETTINGS_FONT_SIZE,
+            SETTINGS_START_FONT_SIZE,
             BLACK,
             None,
             false,
@@ -127,7 +127,7 @@ pub fn settings_screen_state(
             &player_count.to_string(),
             Rect::from_center(screen_center + Point::from((200, -50)), 1, 1),
             ttf_context,
-            SETTINGS_FONT_SIZE,
+            SETTINGS_START_FONT_SIZE,
             BLACK,
             None,
             false,
@@ -146,13 +146,60 @@ pub fn settings_screen_state(
         // )?;
 
         back_button
-            .draw_button(canvas, &ttf_context, SETTINGS_FONT_SIZE)
+            .draw_button(canvas, &ttf_context, SETTINGS_START_FONT_SIZE)
             .unwrap();
         apply_button
-            .draw_button(canvas, &ttf_context, SETTINGS_FONT_SIZE)
+            .draw_button(canvas, &ttf_context, SETTINGS_START_FONT_SIZE)
             .unwrap();
 
         canvas.present();
         ::std::thread::sleep(Duration::from_millis(30));
     }
-} 
+}
+
+pub fn menu_screen_render(
+    canvas: &mut WindowCanvas,
+    resume_button: &mut Button,
+    save_button: &mut Button,
+    exit_to_start_screen_button: &mut Button,
+    ttf_context: &sdl2::ttf::Sdl2TtfContext,
+) -> Result<(), String> {
+    let screen_center = get_screen_center(canvas);
+
+    let background_rect = Rect::from_center(
+        screen_center,
+        SETTINGS_WINDOW_WIDTH,
+        SETTINGS_WINDOW_HEIGHT,
+    );
+    canvas.set_draw_color(DARK_BLUE);
+    canvas.fill_rect(background_rect)?;
+    resume_button.draw_button(canvas, ttf_context, SETTINGS_FONT_SIZE)?;
+    save_button.draw_button(canvas, ttf_context, SETTINGS_FONT_SIZE)?;
+    exit_to_start_screen_button.draw_button(canvas, ttf_context, SETTINGS_FONT_SIZE)?;
+    Ok(())
+}
+
+pub fn menu_screen_handle_events(
+    event: &Event,
+    resume_button: &mut Button,
+    save_button: &mut Button,
+    exit_to_start_screen_button: &mut Button,
+    game: &Game,
+    settings_window: &mut bool
+) -> Result<(), String> {
+    Button::handle_button_events(event, resume_button);
+    Button::handle_button_events(event, save_button);
+    Button::handle_button_events(event, exit_to_start_screen_button);
+    if resume_button.is_clicked {
+        *settings_window = false;
+    }
+    if save_button.is_clicked {
+        let mut connection = Connection::open(DATABASE_PATH).unwrap();
+        let _ = save_game::save_game(game, &mut connection).unwrap();
+    }
+    if exit_to_start_screen_button.is_clicked {
+        SHOULD_QUIT.store(true, Ordering::Relaxed);
+        *settings_window = false;
+    }
+    Ok(())
+}

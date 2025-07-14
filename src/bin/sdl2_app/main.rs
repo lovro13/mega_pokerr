@@ -1,19 +1,18 @@
 use std::sync::atomic::Ordering;
-
 use mega_pokerr::logic::round::next_turn;
 use mega_pokerr::sdl2_app::betting_state::run_betting_state;
 use mega_pokerr::sdl2_app::constants::DEBUG;
 use mega_pokerr::sdl2_app::constants::MAIN_PLAYER;
 use mega_pokerr::sdl2_app::end_round_state::end_round;
-use mega_pokerr::sdl2_app::resources::init_app_context;
-use mega_pokerr::sdl2_app::settings::GameSettings;
+use mega_pokerr::sdl2_app::app_context::init_app_context;
+use mega_pokerr::sdl2_app::menu::GameSettings;
 
 use mega_pokerr::logic::constants::SHOULD_QUIT;
 use mega_pokerr::logic::game;
 use mega_pokerr::logic::player;
 use mega_pokerr::logic::round::begin_round;
 use mega_pokerr::sdl2_app::start_screen::{start_screen_state, StartScreenAction};
-use mega_pokerr::sdl2_app::settings::settings_screen_state;
+use mega_pokerr::sdl2_app::menu::settings_start_screen_state;
 
 fn main() -> Result<(), String> {
     env_logger::init();
@@ -29,10 +28,10 @@ fn main() -> Result<(), String> {
 
     // GLAVNA ZANKA
     'mainloop: loop {
-        match start_screen_state(&mut canvas, &mut event_pump, &app_context.ttf_context, &mut settings)? {
+        match start_screen_state(&mut canvas, &mut event_pump, &app_context.ttf_context)? {
             StartScreenAction::Exit => break,
             StartScreenAction::OpenSettings => {
-                let _ = settings_screen_state(&mut canvas, &mut event_pump, &app_context.ttf_context, &mut settings);
+                let _ = settings_start_screen_state(&mut canvas, &mut event_pump, &app_context.ttf_context, &mut settings);
                 continue 'mainloop;
             }
             StartScreenAction::StartGame => {
