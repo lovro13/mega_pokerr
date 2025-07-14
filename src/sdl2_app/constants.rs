@@ -33,6 +33,7 @@ pub const DARK_BLUE: Color = Color { r: 0, g: 0, b: 139, a: 255 };
 pub const GRAY_COLOR: Color = Color { r: 100, g: 100, b: 100, a: 0xff };
 pub const LIGHT_GRAY: Color = Color { r: 200, g: 200, b: 200, a: 0xff };
 
+
 // Game configuration
 pub const MAIN_PLAYER: Id = Id::Player1;
 
@@ -114,7 +115,8 @@ pub const APPLY_TEXT: &str = "APPLY";
 // Start screen positions
 pub const START_BUTTON: (i32, i32) = (0, -50);
 pub const SETTINGS_BUTTON_START: (i32, i32) = (0, 75);
-pub const SETTINGS_BUTTON_GAME_SIZE: u32 = 70; // it was meant to be a square
+pub const SETTINGS_BUTTON_GAME_WIDTH: u32 = 180; // it was meant to be a square
+pub const SETTINGS_BUTTON_GAME_HEGITH: u32 = 60; // it was meant to be a square
 pub const EXIT_BUTTON: (i32, i32) = (0, 200);
 pub const TITLE_POS: (i32, i32) = (0, -200);
 
@@ -151,7 +153,8 @@ pub const SETTINGS_WINDOW_HEIGHT: u32 = 500;
 pub const SETTINGS_WINDOW_WIDTH: u32 = 300;
 
 // Settings sizes
-pub const SETTINGS_BUTTON_SIZE: u32 = 180;
+pub const SETTINGS_BUTTON_HEIGTH: u32 = 90;
+pub const SETTINGS_BUTTON_WIDTH: u32 = 300;
 pub const SETTINGS_BUTTON_SPACING: i32 = 30;
 
 // Debug and control

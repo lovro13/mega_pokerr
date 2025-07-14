@@ -9,10 +9,8 @@ mod tests {
         let mut connection = Connection::open(DATABASE_PATH).unwrap();
         let player_list = player::Player::init_players();
         let game = init_game(player_list);
-        let tx = connection.transaction().unwrap();
-        let _ = create_tables(&tx);
-        let _ = save_game(&game.borrow(), &tx);
-        let _ = tx.commit();
+        let _ = create_tables(&mut connection);
+        let _ = save_game(&game.borrow(), &mut connection);
     }
 
     #[test]

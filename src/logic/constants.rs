@@ -48,4 +48,4 @@ pub const MIN_PLAYERS: usize = 2;
 // Threading and control constants
 pub static SHOULD_QUIT: AtomicBool = AtomicBool::new(false);
 
-pub static DATABASE_PATH: &str = "poker.db";
+pub const  DATABASE_PATH: &str = "poker.db";

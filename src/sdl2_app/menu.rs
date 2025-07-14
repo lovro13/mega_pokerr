@@ -2,12 +2,7 @@ use std::{sync::atomic::Ordering, time::Duration};
 
 use rusqlite::{Connection};
 use sdl2::{
-    event::Event,
-    keyboard::Keycode,
-    rect::{Point, Rect},
-    render::{Canvas, WindowCanvas},
-    video::Window,
-    EventPump,
+    event::Event, keyboard::Keycode, rect::{Point, Rect}, render::{Canvas, WindowCanvas}, video::Window, EventPump
 };
 
 use crate::logic::{
@@ -162,18 +157,21 @@ pub fn settings_start_screen_state(
     }
 }
 
-pub fn settings_screen_render(
+pub fn menu_screen_render(
     canvas: &mut WindowCanvas,
     resume_button: &mut Button,
     save_button: &mut Button,
     exit_to_start_screen_button: &mut Button,
     ttf_context: &sdl2::ttf::Sdl2TtfContext,
 ) -> Result<(), String> {
+    let screen_center = get_screen_center(canvas);
+
     let background_rect = Rect::from_center(
-        SETTINGS_WINDOW_POS,
+        screen_center,
         SETTINGS_WINDOW_WIDTH,
         SETTINGS_WINDOW_HEIGHT,
     );
+    canvas.set_draw_color(DARK_BLUE);
     canvas.fill_rect(background_rect)?;
     resume_button.draw_button(canvas, ttf_context, SETTINGS_FONT_SIZE)?;
     save_button.draw_button(canvas, ttf_context, SETTINGS_FONT_SIZE)?;
@@ -181,7 +179,7 @@ pub fn settings_screen_render(
     Ok(())
 }
 
-pub fn settings_screen_handle_events(
+pub fn menu_screen_handle_events(
     event: &Event,
     resume_button: &mut Button,
     save_button: &mut Button,
@@ -200,8 +198,8 @@ pub fn settings_screen_handle_events(
         let _ = save_game::save_game(game, &mut connection).unwrap();
     }
     if exit_to_start_screen_button.is_clicked {
-        //TODO
-        return Ok(());
+        SHOULD_QUIT.store(true, Ordering::Relaxed);
+        *settings_window = false;
     }
     Ok(())
 }

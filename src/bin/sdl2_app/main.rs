@@ -5,14 +5,14 @@ use mega_pokerr::sdl2_app::constants::DEBUG;
 use mega_pokerr::sdl2_app::constants::MAIN_PLAYER;
 use mega_pokerr::sdl2_app::end_round_state::end_round;
 use mega_pokerr::sdl2_app::app_context::init_app_context;
-use mega_pokerr::sdl2_app::settings::GameSettings;
+use mega_pokerr::sdl2_app::menu::GameSettings;
 
 use mega_pokerr::logic::constants::SHOULD_QUIT;
 use mega_pokerr::logic::game;
 use mega_pokerr::logic::player;
 use mega_pokerr::logic::round::begin_round;
 use mega_pokerr::sdl2_app::start_screen::{start_screen_state, StartScreenAction};
-use mega_pokerr::sdl2_app::settings::settings_start_screen_state;
+use mega_pokerr::sdl2_app::menu::settings_start_screen_state;
 
 fn main() -> Result<(), String> {
     env_logger::init();

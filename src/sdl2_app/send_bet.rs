@@ -12,7 +12,7 @@ use crate::logic::player::Player;
 use crate::sdl2_app::button::Button;
 use crate::sdl2_app::constants::*;
 use crate::sdl2_app::render_text::write_info;
-use crate::sdl2_app::settings::{settings_screen_handle_events, settings_screen_render};
+use crate::sdl2_app::menu::{menu_screen_handle_events, menu_screen_render};
 
 use super::render_screen::render_screen;
 use super::slider::Slider;
@@ -115,7 +115,7 @@ pub fn make_bet(
     };
 
     let _: Vec<_> = event_pump.poll_iter().collect();
-    let mut settings_button = Button::init_settings_button(canvas);
+    let mut settings_button = Button::init_settings_button();
     let mut settings_window = false;
     let mut resume_button = Button::init_resume_button(canvas);
     let mut save_button = Button::init_save_button(canvas);
@@ -126,7 +126,7 @@ pub fn make_bet(
         for event in event_pump.poll_iter() {
             Button::handle_button_events(&event, &mut settings_button);
             if settings_window {
-                settings_screen_handle_events(
+                menu_screen_handle_events(
                     &event,
                     &mut resume_button,
                     &mut save_button,
@@ -171,7 +171,8 @@ pub fn make_bet(
             }
         }
         if settings_window {
-            settings_screen_render(
+            render_screen(canvas, BACKGROUND_COLOR, game, ttf_context, player_count)?;
+            menu_screen_render(
                 canvas,
                 &mut resume_button,
                 &mut save_button,
