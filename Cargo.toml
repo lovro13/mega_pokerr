@@ -3,12 +3,18 @@ name = "mega_pokerr"
 version = "0.1.0"
 edition = "2021"
 
+[lib]
+crate-type = ["cdylib", "rlib"]
+
 [features]
 default = []
 run_with_sdl2 = ["sdl2"]
+compile_with_sauron = ["sauron"]
+
 
 [dependencies]
 rand = "0.8"
+getrandom = { version = "0.2.16", features = ["js"] }
 itertools = "0.14.0"
 log = "0.4"
 env_logger = "0.10"
@@ -19,6 +25,10 @@ default-features = false
 features = ["image", "ttf"]
 optional = true
 
+[dependencies.sauron]
+version = "0.70.0"
+optional = true
+
 [[bin]]
 name = "sdl2_app"
 path = "src/bin/sdl2_app/main.rs"
@@ -26,3 +36,7 @@ path = "src/bin/sdl2_app/main.rs"
 [[bin]]
 name = "terminal_app"
 path = "src/bin/terminal_app/main.rs"
+
+
+
+
