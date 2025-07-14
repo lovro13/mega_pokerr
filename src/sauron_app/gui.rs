@@ -52,5 +52,4 @@ impl Application for App {
 #[wasm_bindgen(start)]
 pub fn start() {
     web_sys::console::log_1(&"WASM started".into());
-    Program::mount_to_body(App::new());
 }
