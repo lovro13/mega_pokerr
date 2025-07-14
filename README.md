@@ -32,6 +32,11 @@ cargo run --bin sdl2_app --features run_with_sdl2
 ```
 
 Sauron app:
+* posodobitev sauron verzije:
 ```bash
-TODO
+wasm-pack build --release --target=web --features compile_with_sauron
+```
+* zagon serverja:
+```bash
+basic-http-server
 ```
