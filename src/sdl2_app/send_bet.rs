@@ -9,9 +9,10 @@ use std::time::Duration;
 use crate::logic::constants::{BIG_BLIND, SHOULD_QUIT};
 use crate::logic::game::Game;
 use crate::logic::player::Player;
+use crate::sdl2_app::button::Button;
 use crate::sdl2_app::constants::*;
-use crate::sdl2_app::render_button::Button;
 use crate::sdl2_app::render_text::write_info;
+use crate::sdl2_app::settings::{settings_screen_handle_events, settings_screen_render};
 
 use super::render_screen::render_screen;
 use super::slider::Slider;
@@ -114,10 +115,26 @@ pub fn make_bet(
     };
 
     let _: Vec<_> = event_pump.poll_iter().collect();
+    let mut settings_button = Button::init_settings_button(canvas);
+    let mut settings_window = false;
+    let mut resume_button = Button::init_resume_button(canvas);
+    let mut save_button = Button::init_save_button(canvas);
+    let mut exit_button = Button::init_exit_button(canvas);
 
     loop {
         // Handle events
         for event in event_pump.poll_iter() {
+            Button::handle_button_events(&event, &mut settings_button);
+            if settings_window {
+                settings_screen_handle_events(
+                    &event,
+                    &mut resume_button,
+                    &mut save_button,
+                    &mut exit_button,
+                    game,
+                    &mut settings_window,
+                )?;
+            }
             match event {
                 Event::Quit { .. }
                 | Event::KeyDown {
@@ -134,6 +151,8 @@ pub fn make_bet(
             match &mut state {
                 BetState::UserBet {
                     slider,
+                    check_button,
+                    allin_button,
                     call_button,
                     raise_button,
                     fold_button,
@@ -142,12 +161,25 @@ pub fn make_bet(
                     Button::handle_button_events(&event, fold_button);
                     Button::handle_button_events(&event, call_button);
                     Button::handle_button_events(&event, raise_button);
+                    Button::handle_button_events(&event, check_button);
+                    Button::handle_button_events(&event, allin_button);
                     slider.handle_event(&event);
                 }
                 BetState::BotBet { .. } => {
                     // Bot doesn't handle user input events
                 }
             }
+        }
+        if settings_window {
+            settings_screen_render(
+                canvas,
+                &mut resume_button,
+                &mut save_button,
+                &mut exit_button,
+                ttf_context,
+            )?;
+            canvas.present();
+            continue;
         }
 
         // Process state and check for completion
@@ -201,11 +233,14 @@ pub fn make_bet(
                 // Render bot decision animation
                 render_screen(canvas, LIGHT_BLUE, game, &ttf_context, player_count)?;
                 write_info(canvas, message, ttf_context, WRITE_INFO_SIZE)?;
-                canvas.present();
                 ::std::thread::sleep(Duration::from_millis(BOT_DECISION_DELAY_MS));
             }
         }
-
+        settings_button.draw_button(canvas, ttf_context, BUTTON_FONT_SIZE)?;
+        if settings_button.is_clicked {
+            settings_window = true;
+        }
+        canvas.present();
         ::std::thread::sleep(Duration::from_millis(FRAME_DURATION_MS));
     }
 }
@@ -282,7 +317,6 @@ pub fn user_bet(
                 &ttf_context,
                 WRITE_INFO_SIZE,
             )?;
-            canvas.present();
             ::std::thread::sleep(Duration::from_millis(ANIMATION_DURATION_MS));
             return Err(String::from("CONTINUE"));
         }

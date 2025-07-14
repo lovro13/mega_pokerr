@@ -6,7 +6,7 @@ use sdl2::{event::Event, EventPump};
 
 use crate::logic::{choose_winner, game::Game, constants::SHOULD_QUIT};
 use crate::sdl2_app::render_text::write_info;
-use crate::sdl2_app::render_button::Button;
+use crate::sdl2_app::button::Button;
 
 use super::constants::*;
 use super::render_screen::render_screen;

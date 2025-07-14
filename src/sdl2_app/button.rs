@@ -103,7 +103,6 @@ impl Button {
     }
     pub fn init_call_button(canvas: &mut WindowCanvas) -> Self {
         let button_position = ControlPosition::init_control_positon(canvas).call_button;
-        println!("call button  is at {:?}", button_position);
         Button {
             center: button_position,
             height: BUTTON_HEIGHT,
@@ -163,6 +162,44 @@ impl Button {
             height: SETTINGS_BUTTON_GAME_SIZE,
             width: SETTINGS_BUTTON_GAME_SIZE,
             text: String::from("S"),
+            is_clicked: false,
+        }
+    }
+    
+
+    pub fn init_resume_button(canvas: &mut WindowCanvas) -> Self {
+        let screen_center = get_screen_center(canvas);
+        let offset = -((SETTINGS_BUTTON_SIZE as i32) + SETTINGS_BUTTON_SPACING);
+        let button_position = screen_center + Point::new(offset, 0);
+        Button {
+            center: button_position,
+            height: SETTINGS_BUTTON_SIZE,
+            width: SETTINGS_BUTTON_SIZE,
+            text: String::from("RESUME"),
+            is_clicked: false,
+        }
+    }
+
+    pub fn init_save_button(canvas: &mut WindowCanvas) -> Self {
+        let screen_center = get_screen_center(canvas);
+        Button {
+            center: screen_center,
+            height: SETTINGS_BUTTON_SIZE,
+            width: SETTINGS_BUTTON_SIZE,
+            text: String::from("SAVE GAME"),
+            is_clicked: false,
+        }
+    }
+
+    pub fn init_exit_button(canvas: &mut WindowCanvas) -> Self {
+        let screen_center = get_screen_center(canvas);
+        let offset = (SETTINGS_BUTTON_SIZE as i32) + SETTINGS_BUTTON_SPACING;
+        let button_position = screen_center + Point::new(offset, 0);
+        Button {
+            center: button_position,
+            height: SETTINGS_BUTTON_SIZE,
+            width: SETTINGS_BUTTON_SIZE,
+            text: String::from("EXIT"),
             is_clicked: false,
         }
     }

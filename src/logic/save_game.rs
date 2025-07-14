@@ -1,8 +1,9 @@
-use rusqlite::{params, Result, Transaction};
+use rusqlite::{params, Connection, Result, Transaction};
 
 use crate::logic::game::{Game};
 
-pub fn create_tables(tx: &Transaction) -> Result<()> {
+pub fn create_tables(conn: &mut Connection) -> Result<()> {
+    let tx = conn.transaction()?;
     let _ = tx.execute_batch(
         "CREATE TABLE IF NOT EXISTS saves (
             game_id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -10,37 +11,40 @@ pub fn create_tables(tx: &Transaction) -> Result<()> {
             created_at DATETIME DEFAULT CURRENT_TIMESTAMP
             );"
         );
-    log::debug!("Created table if it didnt exist before");
-    Ok(())
-}
-
-pub fn save_game(game: &Game, tx: &Transaction) -> Result<()> {
+        log::debug!("Created table if it didnt exist before");
+        tx.commit()?;
+        Ok(())
+    }
+    
+    pub fn save_game(game: &Game, conn: &mut Connection) -> Result<()> {
+    let tx = conn.transaction()?;
     log::debug!("Saving game");
     let game_state = serde_json::to_string(game).unwrap();
-    log::debug!("converted game to json: {game_state}");
+    log::debug!("converted game to json: {game_state:#?}");
     let update = tx.execute(
         "INSERT INTO saves (game_state) VALUES(?1)",
         params![game_state],
     )?;
     log::debug!("database changed: {update}");
+    tx.commit()?;
     Ok(())
 }
 
 pub fn load_game(game_id: i64, tx: &Transaction) -> Result<Option<Game>> {
     let mut stmt = tx.prepare("SELECT game_state FROM saves WHERE game_id = ?1")?;
-
+    
     let game_result = stmt.query_row([game_id], |row| {
         let game_state: String = row.get(0)?;
         Ok(game_state)
     });
-
+    
     match game_result {
         Ok(game_state) => {
             let game: Game = serde_json::from_str(&game_state)
-                .map_err(|e| rusqlite::Error::FromSqlConversionFailure(
-                    0, 
-                    rusqlite::types::Type::Text, 
-                    Box::new(e)
+            .map_err(|e| rusqlite::Error::FromSqlConversionFailure(
+                0, 
+                rusqlite::types::Type::Text, 
+                Box::new(e)
                 ))?;
             Ok(Some(game))
         }

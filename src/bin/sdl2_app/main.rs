@@ -12,7 +12,7 @@ use mega_pokerr::logic::game;
 use mega_pokerr::logic::player;
 use mega_pokerr::logic::round::begin_round;
 use mega_pokerr::sdl2_app::start_screen::{start_screen_state, StartScreenAction};
-use mega_pokerr::sdl2_app::settings::settings_screen_state;
+use mega_pokerr::sdl2_app::settings::settings_start_screen_state;
 
 fn main() -> Result<(), String> {
     env_logger::init();
@@ -31,7 +31,7 @@ fn main() -> Result<(), String> {
         match start_screen_state(&mut canvas, &mut event_pump, &app_context.ttf_context)? {
             StartScreenAction::Exit => break,
             StartScreenAction::OpenSettings => {
-                let _ = settings_screen_state(&mut canvas, &mut event_pump, &app_context.ttf_context, &mut settings);
+                let _ = settings_start_screen_state(&mut canvas, &mut event_pump, &app_context.ttf_context, &mut settings);
                 continue 'mainloop;
             }
             StartScreenAction::StartGame => {

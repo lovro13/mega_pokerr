@@ -12,7 +12,7 @@ use sdl2::{
 use crate::logic::constants::SHOULD_QUIT;
 
 use super::{
-    constants::*, positions::*, render_button::Button, render_screen::get_screen_center, render_text::draw_text
+    constants::*, button::Button, render_screen::get_screen_center, render_text::draw_text
 };
 
 

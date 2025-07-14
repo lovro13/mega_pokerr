@@ -6,13 +6,9 @@ use crate::logic::{constants::SHOULD_QUIT, game::Game};
 
 use super::{
     constants::*,
-    positions::*,
-    render_button::Button,
+    button::Button,
     render_screen::{get_screen_center, render_screen},
 };
-
-
-
 
 pub fn option_state(
     canvas: &mut WindowCanvas,
@@ -59,13 +55,12 @@ pub fn option_state(
         }
 
         render_screen(canvas, BACKGROUND_COLOR, game, ttf_context, 6)?; // Privzeto 6 igralcev
-        // Set the draw color to DARK_BLUE
+                                                                        // Set the draw color to DARK_BLUE
         canvas.set_draw_color(DARK_BLUE);
 
         // Calculate the center of the screen and the rect's top-left corner
 
-        let rect =
-            sdl2::rect::Rect::from_center(screen_center, RECT_WIDTH, RECT_HEIGHT);
+        let rect = sdl2::rect::Rect::from_center(screen_center, RECT_WIDTH, RECT_HEIGHT);
         canvas.fill_rect(rect)?;
         resume_button
             .draw_button(canvas, &ttf_context, START_SCREEN_TEXT_SIZE)
@@ -78,5 +73,3 @@ pub fn option_state(
         ::std::thread::sleep(Duration::from_millis(30));
     }
 }
-
-
