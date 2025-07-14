@@ -4,7 +4,7 @@ use mega_pokerr::sdl2_app::betting_state::run_betting_state;
 use mega_pokerr::sdl2_app::constants::DEBUG;
 use mega_pokerr::sdl2_app::constants::MAIN_PLAYER;
 use mega_pokerr::sdl2_app::end_round_state::end_round;
-use mega_pokerr::sdl2_app::resources::init_app_context;
+use mega_pokerr::sdl2_app::app_context::init_app_context;
 use mega_pokerr::sdl2_app::settings::GameSettings;
 
 use mega_pokerr::logic::constants::SHOULD_QUIT;

@@ -7,7 +7,7 @@ pub mod render_button;
 pub mod render_cards;
 pub mod render_screen;
 pub mod render_text;
-pub mod resources;
+pub mod app_context;
 pub mod send_bet;
 pub mod settings;
 pub mod slider;

@@ -14,7 +14,8 @@ use super::render_screen::get_screen_center;
 
 // Start screen positions
 pub const START_BUTTON: (i32, i32) = (0, -50);
-pub const SETTINGS_BUTTON: (i32, i32) = (0, 75);
+pub const SETTINGS_BUTTON_START: (i32, i32) = (0, 75);
+pub const SETTINGS_BUTTON_GAME_SIZE: u32 = 70; // it was meant to be a square
 pub const EXIT_BUTTON: (i32, i32) = (0, 200);
 pub const TITLE_POS: (i32, i32) = (0, -200);
 
@@ -40,6 +41,7 @@ pub const PLAYER8_CARDS: (i32, i32) = (500, -300);
 // Button positions
 pub const CALL_BUTTON: (i32, i32) = (0, 440);
 pub const BUTTON_END_OF_ROUND: (i32, i32) = (0, 125);
+pub const SETTINGS_BUTTON_GAME: (i32, i32) = (0, 125);
 
 // Pot position
 pub const POT_POSITION: (u32, u32) = (0, 100);

@@ -103,7 +103,7 @@ impl Button {
     }
     pub fn init_call_button(canvas: &mut WindowCanvas) -> Self {
         let button_position = ControlPosition::init_control_positon(canvas).call_button;
-                println!("call button  is at {:?}", button_position);
+        println!("call button  is at {:?}", button_position);
         Button {
             center: button_position,
             height: BUTTON_HEIGHT,
@@ -151,6 +151,18 @@ impl Button {
             height: BUTTON_END_OF_ROUND_HEIGHT,
             width: BUTTON_END_OF_ROUND_WIDTH,
             text: String::from("START NEW ROUND"),
+            is_clicked: false,
+        }
+    }
+
+    pub fn init_settings_button(canvas: &mut WindowCanvas) -> Self {
+        let screen_center = get_screen_center(canvas);
+        let button_position = screen_center + Point::from(SETTINGS_BUTTON_GAME);
+        Button {
+            center: button_position,
+            height: SETTINGS_BUTTON_GAME_SIZE,
+            width: SETTINGS_BUTTON_GAME_SIZE,
+            text: String::from("S"),
             is_clicked: false,
         }
     }

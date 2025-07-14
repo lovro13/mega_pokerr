@@ -35,7 +35,7 @@ pub fn start_screen_state(
         String::from(START_GAME_TEXT),
     );
     let mut settings_button = Button::new(
-        screen_center + Point::from(SETTINGS_BUTTON),
+        screen_center + Point::from(SETTINGS_BUTTON_START),
         START_BUTTON_HEIGHT,
         START_BUTTON_WIDTH,
         String::from(SETTINGS_TEXT),
