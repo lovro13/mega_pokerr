@@ -1,7 +1,8 @@
 
 #[cfg(test)]
 mod tests {
-    use mega_pokerr::logic::{constants::DATABASE_PATH, game::init_game, player, save_game::{create_tables, load_game, save_game}};
+    use mega_pokerr::logic::{constants::DATABASE_PATH, game::init_game, player};
+    use mega_pokerr::sdl2_app::save_game::{create_tables, load_game, save_game};
     use rusqlite::Connection;
 
     #[test]
