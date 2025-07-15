@@ -44,6 +44,7 @@ pub fn run_betting_state(
 
     {
         let mut game_mut  = game.borrow_mut();
+        log::debug!("game before make_bets: {:#?}", game_mut.players);
         make_bets(&mut *game_mut, get_bet);
         if SHOULD_QUIT.load(Ordering::Relaxed) {
             return Ok(());

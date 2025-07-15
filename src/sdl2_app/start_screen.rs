@@ -9,10 +9,9 @@ use sdl2::{
     EventPump,
 };
 
-use crate::logic::constants::{DATABASE_PATH, DEFAULT_PLAYER_COUNT, SHOULD_QUIT};
-use crate::logic::game::{self, Game};
-use crate::logic::player;
-use crate::logic::save_game::{list_saved_games, load_game, save_game};
+use crate::logic::constants::{DATABASE_PATH, SHOULD_QUIT};
+use crate::logic::game::Game;
+use crate::logic::save_game::{list_saved_games, load_game};
 use rusqlite::Connection;
 
 use super::{
@@ -21,7 +20,7 @@ use super::{
 
 pub enum StartScreenAction {
     StartNewGame,
-    LoadGame,
+    LoadGame(Game),
     Exit,
 }
 
@@ -85,6 +84,7 @@ fn load_game_screen(
             if btn.is_clicked {
                 let tx = conn.transaction().map_err(|e| e.to_string())?;
                 if let Some(game) = load_game(*game_id, &tx).map_err(|e| e.to_string())? {
+                    log::debug!("game loaded with players ( load_game_screen function): {:#?}", game.players);
                     return Ok(Some(game));
                 }
             }
@@ -140,18 +140,11 @@ pub fn start_screen_state(
             log::info!("Exit button clicked");
             return Ok(StartScreenAction::Exit);
         } else if start_button.is_clicked {
-            // Create and save a new game
-            let player_list = player::Player::init_players_with_count(DEFAULT_PLAYER_COUNT);
-            let game = game::init_game(player_list);
-            let mut conn = Connection::open(DATABASE_PATH).map_err(|e| e.to_string())?;
-            save_game(&game.borrow(), &mut conn).map_err(|e| e.to_string())?;
-            log::info!("New game created and saved");
-            // You may want to return the game object or start the game loop here
             return Ok(StartScreenAction::StartNewGame);
         } else if load_game_button.is_clicked {
-            if let Some(_game) = load_game_screen(canvas, event_pump, ttf_context)? {
-                // You may want to return the loaded game object or start the game loop here
-                return Ok(StartScreenAction::LoadGame);
+            match load_game_screen(canvas, event_pump, ttf_context)? {
+                Some(game) => return Ok(StartScreenAction::LoadGame(game)),
+                None => return Ok(StartScreenAction::Exit)
             }
         }
         canvas.set_draw_color(BACKGROUND_COLOR);

@@ -110,7 +110,8 @@ pub const SETTINGS_START_FONT_SIZE: u16 = 40;
 pub const SETTINGS_START_TITLE_SIZE: u16 = 60;
 pub const PLAYER_COUNT_LABEL: &str = "Number of Players:";
 pub const BACK_TEXT: &str = "BACK";
-pub const APPLY_TEXT: &str = "APPLY";
+pub const APPLY_AND_START_NEW_GAME_TEXT: &str = "START NEW GAME";
+pub const APPLY_BUTTON_POS: (i32, i32) = (0, 100);
 
 
 // Start screen positions
@@ -122,7 +123,7 @@ pub const EXIT_BUTTON: (i32, i32) = (0, 200);
 pub const TITLE_POS: (i32, i32) = (0, -300);
 
 // Load Screen
-pub const LOAD_GAME_SCREEN_TITLE_Y: i32 = -600;
+pub const LOAD_GAME_SCREEN_TITLE_Y: i32 = -400;
 pub const LOAD_GAME_SCREEN_BUTTON_HEIGHT: u32 = 80;
 pub const LOAD_GAME_SCREEN_BUTTON_WIDTH: u32 = 600;
 pub const LOAD_GAME_SCREEN_BUTTON_SPACING: i32 = 30;

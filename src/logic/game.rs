@@ -3,13 +3,11 @@ use core::panic;
 use crate::logic::card;
 use crate::logic::player;
 use crate::logic::player::Player;
-use std::rc::Rc;
-use std::cell::RefCell;
 use serde::{Deserialize, Serialize};
-
+use std::cell::RefCell;
+use std::rc::Rc;
 
 use super::player::Id;
-
 
 #[derive(Debug, PartialEq, Clone, Serialize, Deserialize)]
 pub enum Streets {
@@ -32,7 +30,6 @@ impl Streets {
     }
 }
 
-
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Game {
     pub street: Streets,              // v bistvu pove koliko kart je na mizi
@@ -42,8 +39,8 @@ pub struct Game {
     pub table_cards: Vec<card::Card>, // katere karte so na mizi
     pub position_on_turn: player::PlayerPosition, // kateri igralec je na vrsti, imamo poziicijo, torej kje sedi
     pub round_number: u32,
-    pub quit: bool,                   // okrasek, koliko rund smo že odigral
-    pub player_count: usize,          // število igralcev v igri
+    pub quit: bool,          // okrasek, koliko rund smo že odigral
+    pub player_count: usize, // število igralcev v igri
 }
 
 impl Game {
@@ -54,20 +51,43 @@ impl Game {
     pub fn go_to_next_player(&mut self) {
         // uporablja se v make_bets v while true loopu namesto for zanka
         // ker je vsakič drugi začetni igralec
-    
-        let next_player = self.position_on_turn.next_player_on_turn_for_count(self.player_count);
-        log::debug!("Moving from position {:?} to {:?} (player_count: {})", self.position_on_turn, next_player, self.player_count);
+
+        let next_player = self
+            .position_on_turn
+            .next_player_on_turn_for_count(self.player_count);
+        log::debug!(
+            "Moving from position {:?} to {:?} (player_count: {})",
+            self.position_on_turn,
+            next_player,
+            self.player_count
+        );
         self.position_on_turn = next_player;
     }
 
     pub fn player_on_turn(&mut self) -> &mut Player {
-        // isto se uporablja samo v make_bets
-        for player in self.players.iter_mut() {
-            if player.position == self.position_on_turn {
-                return player;
-            }
-        }
-        panic!("Player not found (go_to_next_street)");
+        let position = self.position_on_turn.clone();
+
+        // Najprej poiščemo indeks
+        let index = self
+            .players
+            .iter()
+            .position(|p| p.position == position)
+            .unwrap_or_else(|| {
+                let players_copy = self
+                    .players
+                    .iter()
+                    .map(|p| (p.id.clone(), p.position.clone()))
+                    .collect::<Vec<_>>();
+                log::error!(
+                    "Player not found, player positions: {:#?}, position_on_turn: {:#?}",
+                    players_copy,
+                    self.position_on_turn
+                );
+                panic!("Player not found (go_to_next_street)");
+            });
+
+        // Naredimo mutabilni dostop samo do iskanega igralca
+        &mut self.players[index]
     }
 
     pub fn player_on_turn_immutable(&self) -> &Player {
@@ -95,7 +115,10 @@ impl Game {
                 return player;
             }
         }
-        panic!("Player with name '{:?}' not found (get_player_from_name)", name);
+        panic!(
+            "Player with name '{:?}' not found (get_player_from_name)",
+            name
+        );
     }
 }
 
@@ -117,6 +140,6 @@ pub fn init_game(player_list: Vec<player::Player>) -> Rc<RefCell<Game>> {
         position_on_turn: player::PlayerPosition::UnderTheGun,
         round_number: 0,
         quit: false,
-        player_count
+        player_count,
     }))
 }

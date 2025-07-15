@@ -36,7 +36,7 @@ pub enum MenuAction {
     ExitToStartScreen,
 }
 
-pub fn settings_start_screen_state(
+pub fn new_game_start_screen_state(
     canvas: &mut Canvas<Window>,
     event_pump: &mut EventPump,
     ttf_context: &sdl2::ttf::Sdl2TtfContext,
@@ -52,10 +52,10 @@ pub fn settings_start_screen_state(
     );
 
     let mut apply_button = Button::new(
-        screen_center + Point::from((0, 100)),
+        screen_center + Point::from(APPLY_BUTTON_POS),
         SETTINGS_START_BUTTON_HEIGHT,
         SETTINGS_START_BUTTON_WIDTH,
-        String::from(APPLY_TEXT),
+        String::from(APPLY_AND_START_NEW_GAME_TEXT),
     );
 
     let mut player_count = settings.player_count;

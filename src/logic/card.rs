@@ -116,8 +116,8 @@ impl std::fmt::Display for CardColor {
             CardColor::Spades => write!(f, "♠"),
             CardColor::Diamonds => write!(f, "♦"),
             CardColor::Clubs => write!(f, "♣"),
-            CardColor::Empty => panic!("Empty card printed"),
-            // CardColor::Empty => write!(f, "this is only for testing database"),
+            // CardColor::Empty => panic!("Empty card printed"),
+            CardColor::Empty => write!(f, "this is only for debuging, printing EMPTY"),
         }
     }
 }
