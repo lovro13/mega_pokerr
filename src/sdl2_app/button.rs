@@ -202,4 +202,17 @@ impl Button {
             is_clicked: false,
         }
     }
+
+    pub fn init_return_to_main_menu_button(canvas: &mut WindowCanvas) -> Self {
+        let screen_center = get_screen_center(canvas);
+        let offset = 2*(SETTINGS_BUTTON_HEIGTH as i32) + 2*SETTINGS_BUTTON_SPACING;
+        let button_position = screen_center + Point::new(0, offset);
+        Button {
+            center: button_position,
+            height: SETTINGS_BUTTON_HEIGTH,
+            width: SETTINGS_BUTTON_WIDTH,
+            text: String::from("MAIN MENU"),
+            is_clicked: false,
+        }
+    }
 }

@@ -158,7 +158,7 @@ pub const POT_POSITION: (u32, u32) = (0, 100);
 // Settings position
 pub const SETTINGS_WINDOW_POS: (i32, i32) = (0, 0);
 pub const SETTINGS_WINDOW_HEIGHT: u32 = 500;
-pub const SETTINGS_WINDOW_WIDTH: u32 = 300;
+pub const SETTINGS_WINDOW_WIDTH: u32 = 400;
 
 // Settings sizes
 pub const SETTINGS_BUTTON_HEIGTH: u32 = 90;

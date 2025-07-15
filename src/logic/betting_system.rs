@@ -2,6 +2,7 @@ use std::sync::atomic::Ordering;
 
 use crate::logic::constants::BIG_BLIND;
 use crate::logic::constants::SHOULD_QUIT;
+use crate::logic::constants::SHOULD_RETURN_TO_START;
 use crate::logic::game::Game;
 use crate::logic::game::Streets;
 use crate::logic::player;
@@ -91,6 +92,9 @@ pub fn make_bets(game: &mut Game, mut get_bet: impl FnMut(&Game, u32) -> Option<
             };
             if SHOULD_QUIT.load(Ordering::Relaxed) {
                 log::info!("Quit signal received during betting");
+                return;
+            } else if SHOULD_RETURN_TO_START.load(Ordering::Relaxed) {
+                log::info!("signal to return to main menu received during betting");
                 return;
             }
             let curr_player = game.get_player_from_pos(&player_pos);

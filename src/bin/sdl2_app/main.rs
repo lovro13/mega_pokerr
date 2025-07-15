@@ -1,3 +1,4 @@
+use mega_pokerr::logic::constants::SHOULD_RETURN_TO_START;
 use mega_pokerr::logic::round::next_turn;
 use mega_pokerr::sdl2_app::app_context::init_app_context;
 use mega_pokerr::sdl2_app::betting_state::run_betting_state;
@@ -31,9 +32,10 @@ fn main() -> Result<(), String> {
     // GLAVNA ZANKA
     // 'mainloop: loop {
     loop {
+        SHOULD_RETURN_TO_START.store(false, Ordering::Relaxed);
         let game = match start_screen_state(&mut canvas, &mut event_pump, &app_context.ttf_context)?
         {
-            StartScreenAction::Exit => break,
+            StartScreenAction::Exit => break Ok(()),
             StartScreenAction::StartNewGame => {
                 let _ = new_game_start_screen_state(
                     &mut canvas,
@@ -119,6 +121,10 @@ fn main() -> Result<(), String> {
                 log::info!("Quit signal received, stopping game");
                 break;
             }
+            if SHOULD_RETURN_TO_START.load(Ordering::Relaxed) {
+                log::info!("Returning to main menu");
+                break;
+            }
             {
                 let mut mut_game = game.borrow_mut();
                 log::debug!("Showing all cards for showdown");
@@ -139,12 +145,16 @@ fn main() -> Result<(), String> {
 
         if SHOULD_QUIT.load(Ordering::Relaxed) {
             log::info!("Quit signal received, exiting main loop");
-            break;
+            break Ok(());
         }
-    }
-
-    {
-        log::info!("Stopped app at the end of main sdl2_app");
-        Ok(())
+        
+        if SHOULD_QUIT.load(Ordering::Relaxed) {
+            log::info!("Stopped app at the end of main sdl2_app");
+            return Ok(());
+        } else if SHOULD_RETURN_TO_START.load(Ordering::Relaxed) {
+            continue;
+        } else {
+            return Ok(());
+        }
     }
 }

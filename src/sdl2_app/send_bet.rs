@@ -6,15 +6,15 @@ use sdl2::EventPump;
 use std::sync::atomic::Ordering;
 use std::time::Duration;
 
-use crate::logic::constants::{BIG_BLIND, SHOULD_QUIT};
+use crate::logic::constants::{BIG_BLIND, SHOULD_QUIT, SHOULD_RETURN_TO_START};
 use crate::logic::game::Game;
 use crate::logic::player::Player;
 use crate::sdl2_app::button::Button;
 use crate::sdl2_app::constants::*;
-use crate::sdl2_app::render_text::write_info;
 use crate::sdl2_app::menu::{menu_screen_handle_events, menu_screen_render};
+use crate::sdl2_app::render_text::write_info;
 
-use super::render_screen::{render_screen, get_screen_center};
+use super::render_screen::render_screen;
 use super::slider::Slider;
 use super::tactic1::make_decision;
 
@@ -120,19 +120,14 @@ pub fn make_bet(
     let mut resume_button = Button::init_resume_button(canvas);
     let mut save_button = Button::init_save_button(canvas);
     let mut exit_button = Button::init_exit_button(canvas);
-    let mut return_to_start_button = Button::new(
-        get_screen_center(canvas) + sdl2::rect::Point::new(0, 200),
-        BUTTON_HEIGHT,
-        BUTTON_WIDTH * 2,
-        String::from("Main Menu"),
-    );
+    let mut return_to_start_button = Button::init_return_to_main_menu_button(canvas);
 
     loop {
         // Handle events
         for event in event_pump.poll_iter() {
             Button::handle_button_events(&event, &mut settings_button);
             if settings_window {
-                menu_screen_handle_events(
+                let act = menu_screen_handle_events(
                     &event,
                     &mut resume_button,
                     &mut save_button,
@@ -141,6 +136,13 @@ pub fn make_bet(
                     game,
                     &mut settings_window,
                 )?;
+                match act {
+                    crate::sdl2_app::menu::MenuAction::ExitToMainMenu => {
+                        SHOULD_RETURN_TO_START.store(true, Ordering::Relaxed);
+                        return Ok(Some(0));
+                    }
+                    _ => {}
+                }
             }
             match event {
                 Event::Quit { .. }
@@ -216,6 +218,11 @@ pub fn make_bet(
                     check_button,
                     allin_button,
                 );
+                settings_button.draw_button(canvas, ttf_context, BUTTON_FONT_SIZE)?;
+                if settings_button.is_clicked {
+                    settings_window = true;
+                }
+                canvas.present();
                 match bet {
                     Ok(a) => {
                         return Ok(a);

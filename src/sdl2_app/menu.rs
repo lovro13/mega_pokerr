@@ -34,6 +34,7 @@ pub enum MenuAction {
     Resume,
     Save,
     ExitToStartScreen,
+    ExitToMainMenu
 }
 
 pub fn new_game_start_screen_state(
@@ -175,8 +176,9 @@ pub fn menu_screen_render(
 ) -> Result<(), String> {
     let screen_center = get_screen_center(canvas);
 
+    pub const MENU_POS: (i32, i32) = (0, (SETTINGS_BUTTON_HEIGTH / 2) as i32);
     let background_rect = Rect::from_center(
-        screen_center,
+        screen_center + Point::from(MENU_POS),
         SETTINGS_WINDOW_WIDTH,
         SETTINGS_WINDOW_HEIGHT,
     );
