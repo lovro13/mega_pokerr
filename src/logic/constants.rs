@@ -47,5 +47,6 @@ pub const MIN_PLAYERS: usize = 2;
 
 // Threading and control constants
 pub static SHOULD_QUIT: AtomicBool = AtomicBool::new(false);
+pub static SHOULD_RETURN_TO_START: AtomicBool = AtomicBool::new(false);
 
 pub const  DATABASE_PATH: &str = "poker.db";

@@ -99,6 +99,7 @@ pub const SETTINGS_TEXT: &str = "SETTINGS";
 pub const EXIT_TEXT: &str = "EXIT";
 pub const FOLDED_TEXT: &str = "Folded";
 pub const CHIPS_TEXT_PREFIX: &str = "Chips: ";
+pub const START_SCREEN_BUTTON_SPACING: i32 = 120;
 
 // Settings constants
 pub const SETTINGS_START_BUTTON_HEIGHT: u32 = 100;
@@ -118,7 +119,13 @@ pub const SETTINGS_BUTTON_START: (i32, i32) = (0, 75);
 pub const SETTINGS_BUTTON_GAME_WIDTH: u32 = 180; // it was meant to be a square
 pub const SETTINGS_BUTTON_GAME_HEGITH: u32 = 60; // it was meant to be a square
 pub const EXIT_BUTTON: (i32, i32) = (0, 200);
-pub const TITLE_POS: (i32, i32) = (0, -200);
+pub const TITLE_POS: (i32, i32) = (0, -300);
+
+// Load Screen
+pub const LOAD_GAME_SCREEN_TITLE_Y: i32 = -600;
+pub const LOAD_GAME_SCREEN_BUTTON_HEIGHT: u32 = 80;
+pub const LOAD_GAME_SCREEN_BUTTON_WIDTH: u32 = 600;
+pub const LOAD_GAME_SCREEN_BUTTON_SPACING: i32 = 30;
 
 // Card positions on Start Screen
 pub const RIGHT_CARD: (i32, i32) = (500, 0);

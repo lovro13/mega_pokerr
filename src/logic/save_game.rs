@@ -8,7 +8,7 @@ pub fn create_tables(conn: &mut Connection) -> Result<()> {
         "CREATE TABLE IF NOT EXISTS saves (
             game_id INTEGER PRIMARY KEY AUTOINCREMENT,
             game_state TEXT NOT NULL,
-            created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+            created_at TEXT DEFAULT (datetime('now', 'localtime')) 
             );",
     );
     log::debug!("Created table if it didnt exist before");
@@ -52,4 +52,18 @@ pub fn load_game(game_id: i64, tx: &Transaction) -> Result<Option<Game>> {
         Err(rusqlite::Error::QueryReturnedNoRows) => Ok(None),
         Err(e) => Err(e),
     }
+}
+
+pub fn list_saved_games(conn: &Connection) -> Result<Vec<(i64, String)>> {
+    let mut stmt = conn.prepare("SELECT game_id, created_at FROM saves ORDER BY created_at DESC")?;
+    let rows = stmt.query_map([], |row| {
+        let game_id: i64 = row.get(0)?;
+        let created_at: String = row.get(1)?;
+        Ok((game_id, created_at))
+    })?;
+    let mut saves = Vec::new();
+    for row in rows {
+        saves.push(row?);
+    }
+    Ok(saves)
 }

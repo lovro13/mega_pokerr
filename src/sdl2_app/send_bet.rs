@@ -14,7 +14,7 @@ use crate::sdl2_app::constants::*;
 use crate::sdl2_app::render_text::write_info;
 use crate::sdl2_app::menu::{menu_screen_handle_events, menu_screen_render};
 
-use super::render_screen::render_screen;
+use super::render_screen::{render_screen, get_screen_center};
 use super::slider::Slider;
 use super::tactic1::make_decision;
 
@@ -120,6 +120,12 @@ pub fn make_bet(
     let mut resume_button = Button::init_resume_button(canvas);
     let mut save_button = Button::init_save_button(canvas);
     let mut exit_button = Button::init_exit_button(canvas);
+    let mut return_to_start_button = Button::new(
+        get_screen_center(canvas) + sdl2::rect::Point::new(0, 200),
+        BUTTON_HEIGHT,
+        BUTTON_WIDTH * 2,
+        String::from("Main Menu"),
+    );
 
     loop {
         // Handle events
@@ -131,6 +137,7 @@ pub fn make_bet(
                     &mut resume_button,
                     &mut save_button,
                     &mut exit_button,
+                    &mut return_to_start_button,
                     game,
                     &mut settings_window,
                 )?;
@@ -177,6 +184,7 @@ pub fn make_bet(
                 &mut resume_button,
                 &mut save_button,
                 &mut exit_button,
+                &mut return_to_start_button,
                 ttf_context,
             )?;
             canvas.present();

@@ -28,6 +28,14 @@ impl Default for GameSettings {
     }
 }
 
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub enum MenuAction {
+    None,
+    Resume,
+    Save,
+    ExitToStartScreen,
+}
+
 pub fn settings_start_screen_state(
     canvas: &mut Canvas<Window>,
     event_pump: &mut EventPump,
@@ -162,6 +170,7 @@ pub fn menu_screen_render(
     resume_button: &mut Button,
     save_button: &mut Button,
     exit_to_start_screen_button: &mut Button,
+    return_to_start_button: &mut Button,
     ttf_context: &sdl2::ttf::Sdl2TtfContext,
 ) -> Result<(), String> {
     let screen_center = get_screen_center(canvas);
@@ -176,6 +185,7 @@ pub fn menu_screen_render(
     resume_button.draw_button(canvas, ttf_context, SETTINGS_FONT_SIZE)?;
     save_button.draw_button(canvas, ttf_context, SETTINGS_FONT_SIZE)?;
     exit_to_start_screen_button.draw_button(canvas, ttf_context, SETTINGS_FONT_SIZE)?;
+    return_to_start_button.draw_button(canvas, ttf_context, SETTINGS_FONT_SIZE)?;
     Ok(())
 }
 
@@ -184,22 +194,31 @@ pub fn menu_screen_handle_events(
     resume_button: &mut Button,
     save_button: &mut Button,
     exit_to_start_screen_button: &mut Button,
+    return_to_start_button: &mut Button,
     game: &Game,
     settings_window: &mut bool
-) -> Result<(), String> {
+) -> Result<MenuAction, String> {
     Button::handle_button_events(event, resume_button);
     Button::handle_button_events(event, save_button);
     Button::handle_button_events(event, exit_to_start_screen_button);
+    Button::handle_button_events(event, return_to_start_button);
     if resume_button.is_clicked {
         *settings_window = false;
+        return Ok(MenuAction::Resume);
     }
     if save_button.is_clicked {
         let mut connection = Connection::open(DATABASE_PATH).unwrap();
         let _ = save_game::save_game(game, &mut connection).unwrap();
+        return Ok(MenuAction::Save);
     }
     if exit_to_start_screen_button.is_clicked {
-        SHOULD_QUIT.store(true, Ordering::Relaxed);
         *settings_window = false;
+        return Ok(MenuAction::ExitToStartScreen);
     }
-    Ok(())
+    if return_to_start_button.is_clicked {
+        crate::logic::constants::SHOULD_RETURN_TO_START.store(true, std::sync::atomic::Ordering::Relaxed);
+        *settings_window = false;
+        return Ok(MenuAction::ExitToStartScreen);
+    }
+    Ok(MenuAction::None)
 }

@@ -30,11 +30,11 @@ fn main() -> Result<(), String> {
     'mainloop: loop {
         match start_screen_state(&mut canvas, &mut event_pump, &app_context.ttf_context)? {
             StartScreenAction::Exit => break,
-            StartScreenAction::OpenSettings => {
+            StartScreenAction::StartNewGame => {
                 let _ = settings_start_screen_state(&mut canvas, &mut event_pump, &app_context.ttf_context, &mut settings);
                 continue 'mainloop;
             }
-            StartScreenAction::StartGame => {
+            StartScreenAction::LoadGame => {
                 log::info!("Starting game with {} players", settings.player_count);
                 // Ustvari igralce z nastavitvami
                 let player_list = player::Player::init_players_with_count(settings.player_count);
