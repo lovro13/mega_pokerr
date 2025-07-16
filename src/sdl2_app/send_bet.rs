@@ -28,6 +28,11 @@ enum BetState {
         fold_button: Button,
         req_bet: u32
     },
+    UserPostDecision {
+        result: Option<u32>,
+        start_time: std::time::Instant,
+        message: String,
+    },
     BotBet {
         decision: Option<u32>,
         start_time: std::time::Instant,
@@ -139,7 +144,11 @@ pub fn make_bet(
                 match act {
                     crate::sdl2_app::menu::MenuAction::ExitToMainMenu => {
                         SHOULD_RETURN_TO_START.store(true, Ordering::Relaxed);
-                        return Ok(Some(0));
+                        return Ok(None);
+                    }
+                    crate::sdl2_app::menu::MenuAction::Exit => {return Ok(None)}
+                    crate::sdl2_app::menu::MenuAction::Save => {
+                        write_info(canvas, &String::from("Game saved"), ttf_context, WRITE_INFO_SIZE)?
                     }
                     _ => {}
                 }
@@ -173,6 +182,9 @@ pub fn make_bet(
                     Button::handle_button_events(&event, check_button);
                     Button::handle_button_events(&event, allin_button);
                     slider.handle_event(&event);
+                }
+                BetState::UserPostDecision { .. } => {
+                    // No user input needed during post-decision animation
                 }
                 BetState::BotBet { .. } => {
                     // Bot doesn't handle user input events
@@ -223,20 +235,51 @@ pub fn make_bet(
                     settings_window = true;
                 }
                 canvas.present();
-                    match bet {
-                        Ok(a) => {
-                            return Ok(a);
-                        }
-                        Err(e) => {
-                            if e == String::from("CONTINUE") {
-                                continue;
+                match bet {
+                    Ok(a) => {
+                        // Determine message for animation
+                        let message = if fold_button.is_clicked {
+                            format!("{:?} folded", player.id)
+                        } else if call_button.is_clicked {
+                            if *req_bet <= player.chips {
+                                format!("{:?} called", player.id)
                             } else {
-                                return Err(e);
+                                format!("{:?} you dont have enough chips to call full bet, you went all in", player.id)
                             }
+                        } else if raise_button.is_clicked {
+                            if player.chips >= slider.get_value() as u32 {
+                                format!("{:?} raised", player.id)
+                            } else {
+                                format!("{:?} you dont have enough chips, if u want to all in call", player.id)
+                            }
+                        } else {
+                            String::new()
+                        };
+                        state = BetState::UserPostDecision {
+                            result: a,
+                            start_time: std::time::Instant::now(),
+                            message,
+                        };
+                        continue;
+                    }
+                    Err(e) => {
+                        if e == String::from("CONTINUE") {
+                            continue;
+                        } else {
+                            return Err(e);
                         }
                     }
+                }
             }
-
+            BetState::UserPostDecision { result, start_time, message } => {
+                render_screen(canvas, LIGHT_BLUE, game, ttf_context, player_count)?;
+                write_info(canvas, message, ttf_context, WRITE_INFO_SIZE)?;
+                settings_button.draw_button(canvas, ttf_context, BUTTON_FONT_SIZE)?;
+                canvas.present();
+                if start_time.elapsed() >= Duration::from_millis(ANIMATION_DURATION_MS) {
+                    return Ok(*result);
+                }
+            }
             BetState::BotBet {
                 decision,
                 start_time,

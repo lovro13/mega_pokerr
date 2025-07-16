@@ -32,7 +32,7 @@ pub enum MenuAction {
     None,
     Resume,
     Save,
-    ExitToStartScreen,
+    Exit,
     ExitToMainMenu
 }
 
@@ -194,14 +194,14 @@ pub fn menu_screen_handle_events(
     event: &Event,
     resume_button: &mut Button,
     save_button: &mut Button,
-    exit_to_start_screen_button: &mut Button,
+    exit_button: &mut Button,
     return_to_start_button: &mut Button,
     game: &Game,
     settings_window: &mut bool
 ) -> Result<MenuAction, String> {
     Button::handle_button_events(event, resume_button);
     Button::handle_button_events(event, save_button);
-    Button::handle_button_events(event, exit_to_start_screen_button);
+    Button::handle_button_events(event, exit_button);
     Button::handle_button_events(event, return_to_start_button);
     if resume_button.is_clicked {
         *settings_window = false;
@@ -212,14 +212,14 @@ pub fn menu_screen_handle_events(
         let _ = save_game::save_game(game, &mut connection).unwrap();
         return Ok(MenuAction::Save);
     }
-    if exit_to_start_screen_button.is_clicked {
+    if exit_button.is_clicked {
         *settings_window = false;
-        return Ok(MenuAction::ExitToStartScreen);
+        return Ok(MenuAction::Exit);
     }
     if return_to_start_button.is_clicked {
         crate::logic::constants::SHOULD_RETURN_TO_START.store(true, std::sync::atomic::Ordering::Relaxed);
         *settings_window = false;
-        return Ok(MenuAction::ExitToStartScreen);
+        return Ok(MenuAction::ExitToMainMenu);
     }
     Ok(MenuAction::None)
 }

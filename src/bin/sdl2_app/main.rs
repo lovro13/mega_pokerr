@@ -116,6 +116,15 @@ fn main() -> Result<(), String> {
                     );
                     break;
                 }
+
+                if SHOULD_QUIT.load(Ordering::Relaxed) {
+                    log::info!("Stopped app at the end of main sdl2_app");
+                    return Ok(());
+                } else if SHOULD_RETURN_TO_START.load(Ordering::Relaxed) {
+                    continue;
+                } else {
+                    return Ok(());
+                }
             }
             if SHOULD_QUIT.load(Ordering::Relaxed) {
                 log::info!("Quit signal received, stopping game");
@@ -143,11 +152,6 @@ fn main() -> Result<(), String> {
             log::info!("End round completed");
         }
 
-        if SHOULD_QUIT.load(Ordering::Relaxed) {
-            log::info!("Quit signal received, exiting main loop");
-            break Ok(());
-        }
-        
         if SHOULD_QUIT.load(Ordering::Relaxed) {
             log::info!("Stopped app at the end of main sdl2_app");
             return Ok(());
