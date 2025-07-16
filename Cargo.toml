@@ -9,7 +9,7 @@ crate-type = ["cdylib", "rlib"]
 [features]
 default = []
 run_with_sdl2 = ["sdl2", "rusqlite"]
-run_with_sauron = ["sauron"]
+compile_with_sauron = ["sauron"]
 
 [dependencies]
 rand = "0.8"

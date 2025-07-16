@@ -7,12 +7,11 @@ use sdl2::{
 
 use crate::logic::{
     constants::{DATABASE_PATH, DEFAULT_PLAYER_COUNT, MAX_PLAYERS, MIN_PLAYERS, SHOULD_QUIT},
-    game::Game,
-    save_game,
+    game::Game
 };
 
 use super::{
-    button::Button, constants::*, render_screen::get_screen_center, render_text::draw_text,
+    button::Button, constants::*, render_screen::get_screen_center, render_text::draw_text, save_game
 };
 
 #[derive(Debug, Clone)]

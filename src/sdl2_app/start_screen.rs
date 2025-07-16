@@ -11,11 +11,11 @@ use sdl2::{
 
 use crate::logic::constants::{DATABASE_PATH, SHOULD_QUIT};
 use crate::logic::game::Game;
-use crate::logic::save_game::{list_saved_games, load_game};
 use rusqlite::Connection;
 
 use super::{
     button::Button, constants::*, render_screen::get_screen_center, render_text::draw_text,
+    save_game::{list_saved_games, load_game}
 };
 
 pub enum StartScreenAction {

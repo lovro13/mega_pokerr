@@ -12,3 +12,4 @@ pub mod menu;
 pub mod slider;
 pub mod start_screen;
 pub mod tactic1;
+pub mod save_game;
