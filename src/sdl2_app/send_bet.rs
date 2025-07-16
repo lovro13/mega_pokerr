@@ -26,7 +26,7 @@ enum BetState {
         call_button: Button,
         raise_button: Button,
         fold_button: Button,
-        req_bet: u32,
+        req_bet: u32
     },
     BotBet {
         decision: Option<u32>,
@@ -110,7 +110,7 @@ pub fn make_bet(
             call_button: Button::init_call_button(canvas),
             raise_button: Button::init_raise_button(canvas),
             fold_button: Button::init_fold_button(canvas),
-            req_bet,
+            req_bet
         }
     };
 
@@ -202,7 +202,7 @@ pub fn make_bet(
                 call_button,
                 raise_button,
                 fold_button,
-                req_bet,
+                req_bet
             } => {
                 let bet = user_bet(
                     slider,
@@ -223,18 +223,18 @@ pub fn make_bet(
                     settings_window = true;
                 }
                 canvas.present();
-                match bet {
-                    Ok(a) => {
-                        return Ok(a);
-                    }
-                    Err(e) => {
-                        if e == String::from("CONTINUE") {
-                            continue;
-                        } else {
-                            return Err(e);
+                    match bet {
+                        Ok(a) => {
+                            return Ok(a);
+                        }
+                        Err(e) => {
+                            if e == String::from("CONTINUE") {
+                                continue;
+                            } else {
+                                return Err(e);
+                            }
                         }
                     }
-                }
             }
 
             BetState::BotBet {
@@ -284,9 +284,7 @@ pub fn user_bet(
             ttf_context,
             WRITE_INFO_SIZE,
         )?;
-        canvas.present();
-        ::std::thread::sleep(Duration::from_millis(ANIMATION_DURATION_MS));
-        return Ok(None);
+       return Ok(None);
     } else if call_button.is_clicked {
         if req_bet <= player.chips {
             write_info(
@@ -295,8 +293,6 @@ pub fn user_bet(
                 &ttf_context,
                 WRITE_INFO_SIZE,
             )?;
-            canvas.present();
-            ::std::thread::sleep(Duration::from_millis(ANIMATION_DURATION_MS));
             return Ok(Some(req_bet));
         } else {
             write_info(
@@ -308,8 +304,6 @@ pub fn user_bet(
                 &ttf_context,
                 WRITE_INFO_SIZE,
             )?;
-            canvas.present();
-            ::std::thread::sleep(Duration::from_millis(ANIMATION_DURATION_MS));
             return Ok(Some(player.chips));
         }
     } else if raise_button.is_clicked {
@@ -320,8 +314,6 @@ pub fn user_bet(
                 &ttf_context,
                 WRITE_INFO_SIZE,
             )?;
-            canvas.present();
-            ::std::thread::sleep(Duration::from_millis(ANIMATION_DURATION_MS));
             return Ok(Some(raise_value));
         } else {
             write_info(
@@ -333,7 +325,6 @@ pub fn user_bet(
                 &ttf_context,
                 WRITE_INFO_SIZE,
             )?;
-            ::std::thread::sleep(Duration::from_millis(ANIMATION_DURATION_MS));
             return Err(String::from("CONTINUE"));
         }
     }
@@ -352,7 +343,6 @@ pub fn user_bet(
     } else {
         Button::draw_button(&allin_button, canvas, &ttf_context, BUTTON_TEXT_SIZE)?;
     }
-    canvas.present();
 
     if fold_button.is_clicked || call_button.is_clicked || raise_button.is_clicked {
         ::std::thread::sleep(Duration::from_millis(SHORT_ANIMATION_DURATION_MS));
