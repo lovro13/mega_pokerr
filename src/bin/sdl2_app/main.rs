@@ -16,8 +16,6 @@ use mega_pokerr::sdl2_app::menu::new_game_start_screen_state;
 use mega_pokerr::sdl2_app::start_screen::{start_screen_state, StartScreenAction};
 use std::rc::Rc;
 use std::cell::RefCell;
-use mega_pokerr::logic::choose_winner;
-use mega_pokerr::sdl2_app::button::Button;
 
 fn main() -> Result<(), String> {
     env_logger::init();

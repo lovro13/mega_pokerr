@@ -64,7 +64,7 @@ pub fn load_game(game_id: i64, tx: &Transaction) -> Result<Option<Game>> {
             //     player.chips += player.current_bet;
             //     player.current_bet = 0
             // }
-            log::debug!("loaded game with players: {:#?}", game.players);
+            log::debug!("loaded game with players: {:?}", game);
             Ok(Some(game))
         }
         Err(rusqlite::Error::QueryReturnedNoRows) => Ok(None),

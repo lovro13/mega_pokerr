@@ -2,26 +2,22 @@ PRAVILA za funkcijo get_bet
 // vrne Some(u32), če je pravilno vnešeno in če je prazno vrne None ko hoče foldat
 // ne dovoli staviti več denarja kot ga ima player, in če ma dost dnarja vsaj req_bet
 
-
-SDL2 app:
--- option screen -- težko
-
+SDL2:
 -- pokaži pot size
+-- izbolšat ozadje
+-- prikaži 
 
 LOGIC:
 -- treba bl zrihtat bote, ampak kr uredu delajo, če ne gledaš na to kok dobri so
 -- loh bi več stvari avtomatiziral, npr end_round, pa še mal bl uredi
--- game pa player mata pomoje mal preveč stvari v enumu zih bi se ksne dal znebit al pa ksn nov enum narest
--- narest eno funkcijo validate_bet, ki bo olajašala življenje, maybe vrne tipa Option, Option hehe
+-- game pa player mata pomoje mal preveč stvari v enumu zih bi se ksne dal znebit al pa ksn nov enum narest, če ne druzga je treba to pregledat
 
 BOT:
 -- osnovna logika dela, za predstavitev bo več pa ne bom rihtov za zdj
 -- zdaj dela če lahko stavi samo fiksno BIG BLIND, ampka zdaj lahko player stavi kokr hoče
 
 SERVER:
--- cel za narest, pomoje se splaca da se mal backend naucim
--- treba se naucit sploh kaj kj dela, mogoče clo prasat ksnga
--- maybe clo s forkom, da nam use unicu kle
+-- bl ga nau pomoje
 
 ČE BO PREMALO DELA:
 -- bote narediti zeloo dobre

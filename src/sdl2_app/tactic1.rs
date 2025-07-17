@@ -1,4 +1,7 @@
 use crate::logic::{betting_system::validate_bet, card::Card, constants::*};
+use itertools::Itertools;
+use crate::logic::best_combination::best_combination;
+use crate::logic::hand_ranking::HandRanking;
 
 pub fn rank_cards_preflop(pair_of_cards: Vec<Card>) -> u32 {
     assert!(pair_of_cards.len() == 2);
@@ -54,43 +57,98 @@ pub fn rank_cards_preflop(pair_of_cards: Vec<Card>) -> u32 {
     TABLE[i][j]
 }
 
+/// Evaluate the best hand ranking from player and table cards
+fn evaluate_hand(player_cards: &(Card, Card), table_cards: &Vec<Card>) -> HandRanking {
+    let mut all_cards = table_cards.clone();
+    all_cards.push(player_cards.0.clone());
+    all_cards.push(player_cards.1.clone());
+    let mut best: Option<HandRanking> = None;
+    for combo in all_cards.into_iter().combinations(5) {
+        let mut combo = combo;
+        let hand = best_combination(&mut combo);
+        if best.is_none() || hand > best.as_ref().unwrap().clone() {
+            best = Some(hand);
+        }
+    }
+    best.unwrap()
+}
+
 pub fn make_decision(
     player_cards: &(Card, Card),
-    _table_cards: &Vec<Card>, // v planu še uporabit
+    table_cards: &Vec<Card>,
     req_bet: u32,
-    players_curr_bet: u32, // samo za to da nau preveč stavu in da enkrat neha
+    players_curr_bet: u32,
     player_chips: u32,
 ) -> Option<u32> {
     if player_chips == 0 {
         return Some(0);
     }
-    let hand_cards_vec: Vec<_> = vec![player_cards.0.clone(), player_cards.1.clone()];
-    let rank_points = rank_cards_preflop(hand_cards_vec);
-    if (rank_points < BOT_RANK_THRESHOLD_LOW) || (rank_points < BOT_RANK_THRESHOLD_HIGH && req_bet <= BOT_BLIND_MULTIPLIER_LOW * BIG_BLIND) {
-        if req_bet > player_chips {
-            assert!(validate_bet(req_bet, player_chips, player_chips));
-            return Some(player_chips);
+    // Preflop: use old logic
+    if table_cards.is_empty() {
+        let hand_cards_vec: Vec<_> = vec![player_cards.0.clone(), player_cards.1.clone()];
+        let rank_points = rank_cards_preflop(hand_cards_vec);
+        if (rank_points < BOT_RANK_THRESHOLD_LOW) || (rank_points < BOT_RANK_THRESHOLD_HIGH && req_bet <= BOT_BLIND_MULTIPLIER_LOW * BIG_BLIND) {
+            if req_bet > player_chips {
+                assert!(validate_bet(req_bet, player_chips, player_chips));
+                return Some(player_chips);
+            }
+            if players_curr_bet <= BOT_BLIND_MULTIPLIER_MEDIUM * BIG_BLIND && BOT_BLIND_MULTIPLIER_MEDIUM * BIG_BLIND + req_bet <= player_chips {
+                let bet = BOT_BLIND_MULTIPLIER_MEDIUM * BIG_BLIND + req_bet;
+                assert!(validate_bet(req_bet, player_chips, bet));
+                return Some(bet);
+            } else {
+                assert!(validate_bet(req_bet, player_chips, req_bet));
+                return Some(req_bet);
+            }
+        } else if rank_points < BOT_RANK_THRESHOLD_MEDIUM && player_chips <= req_bet && players_curr_bet <= BOT_BLIND_MULTIPLIER_LOW * BIG_BLIND {
+            if req_bet <= player_chips {
+                assert!(validate_bet(req_bet, player_chips, req_bet));
+                return Some(req_bet);
+            } else {
+                assert!(validate_bet(req_bet, player_chips, player_chips));
+                return Some(player_chips);
+            }
+        } else if req_bet == 0 {
+            assert!(validate_bet(req_bet, player_chips, 0));
+            return Some(0);
         }
-        if players_curr_bet <= BOT_BLIND_MULTIPLIER_MEDIUM * BIG_BLIND && BOT_BLIND_MULTIPLIER_MEDIUM * BIG_BLIND + req_bet <= player_chips {
-            let bet = BOT_BLIND_MULTIPLIER_MEDIUM * BIG_BLIND + req_bet;
-            assert!(validate_bet(req_bet, player_chips, bet));
-            Some(bet)
-        } else {
-            assert!(validate_bet(req_bet, player_chips, req_bet));
-            Some(req_bet)
-        }
-    } else if rank_points < BOT_RANK_THRESHOLD_MEDIUM && player_chips <= req_bet && players_curr_bet <= BOT_BLIND_MULTIPLIER_LOW * BIG_BLIND {
-        if req_bet <= player_chips {
-            assert!(validate_bet(req_bet, player_chips, req_bet));
-            Some(req_bet)
-        } else {
-            assert!(validate_bet(req_bet, player_chips, player_chips));
-            Some(player_chips)
-        }
-    } else if req_bet == 0 {
-        assert!(validate_bet(req_bet, player_chips, 0));
-        return Some(0);
     } else {
-        None
+        // Postflop: use hand strength
+        let hand = evaluate_hand(player_cards, table_cards);
+        let hand_value = hand.rank_value();
+        // Simple logic: bet more with stronger hands
+        let bet = if hand_value >= 7 { // Full house or better
+            // Go all-in if strong
+            player_chips
+        } else if hand_value >= 5 { // Straight or flush
+            // Raise moderately
+            let raise = (req_bet + BIG_BLIND * 2).min(player_chips);
+            raise
+        } else if hand_value >= 2 { // Pair or two pair or three of a kind
+            // Call
+            req_bet.min(player_chips)
+        } else {
+            // Weak hand: only call/check
+            req_bet.min(player_chips)
+        };
+        // Always return a valid bet
+        let valid_bet = if bet < req_bet {
+            // If can't call, go all-in if possible, else fold (but never return None)
+            if player_chips >= req_bet {
+                req_bet
+            } else {
+                player_chips
+            }
+        } else if bet > player_chips {
+            player_chips
+        } else {
+            bet
+        };
+        assert!(validate_bet(req_bet, player_chips, valid_bet));
+        return Some(valid_bet);
     }
+    // Fallback: always call or go all-in
+    let fallback_bet = if player_chips >= req_bet { req_bet } else { player_chips };
+    assert!(validate_bet(req_bet, player_chips, fallback_bet));
+    Some(fallback_bet)
 }
