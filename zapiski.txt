@@ -4,14 +4,14 @@ PRAVILA za funkcijo get_bet
 
 SDL2:
 -- pokaži pot size
--- izbolšat ozadje
+-- izbolšat ozadje in nastaviti boljše lokacije igralcev in žetonov
 -- prikaži dolgove
 -- making load_screen better
 -- naredi start new game better
 
 LOGIC:
 -- treba bl zrihtat bote, ampak kr uredu delajo, če ne gledaš na to kok dobri so
--- loh bi več stvari avtomatiziral, npr end_round, pa še mal bl uredi
+-- end_round, pa še mal bl uredi
 -- game pa player mata pomoje mal preveč stvari v enumu zih bi se ksne dal znebit al pa ksn nov enum narest, če ne druzga je treba to pregledat
 
 BOT:
