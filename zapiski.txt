@@ -5,7 +5,9 @@ PRAVILA za funkcijo get_bet
 SDL2:
 -- pokaži pot size
 -- izbolšat ozadje
--- prikaži 
+-- prikaži dolgove
+-- making load_screen better
+-- naredi start new game better
 
 LOGIC:
 -- treba bl zrihtat bote, ampak kr uredu delajo, če ne gledaš na to kok dobri so
