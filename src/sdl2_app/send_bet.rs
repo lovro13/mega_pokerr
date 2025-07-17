@@ -37,7 +37,7 @@ enum BetState {
         decision: Option<u32>,
         start_time: std::time::Instant,
         message: String,
-    },
+    } // New state for end of round
 }
 
 pub fn make_bet(
@@ -46,7 +46,7 @@ pub fn make_bet(
     event_pump: &mut EventPump,
     canvas: &mut Canvas<Window>,
     ttf_context: &sdl2::ttf::Sdl2TtfContext,
-    game: &Game,
+    game: &Game, // samo za izbirati zmagovalca mutable
     player_count: usize,
 ) -> Result<Option<u32>, String> {
     // Check if player is a bot (Player1 is the main player, others are bots)
