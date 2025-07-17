@@ -162,12 +162,10 @@ pub fn render_turn_indicator(player: &Player, canvas: &mut WindowCanvas) -> Resu
 
 pub fn render_screen(
     canvas: &mut WindowCanvas,
-    background_color: Color,
     game: &Game, // tega tudi mogoče dobi iz player lista
     ttf_context: &sdl2::ttf::Sdl2TtfContext,
 ) -> Result<(), String> {
-    canvas.set_draw_color(background_color);
-    canvas.clear();
+    render_background(canvas);
     let players_list = &game.players;
     for player in players_list {
         //naprinta ime in karte igralca
@@ -192,4 +190,56 @@ pub fn render_screen(
         card_position.x += (CARD_WIDTH + 10) as i32;
     }
     Ok(())
+}
+
+pub fn render_background(canvas: &mut WindowCanvas) {
+    canvas.set_draw_color(BACKGROUND_COLOR);
+    canvas.clear();
+    let (width, height) = canvas.output_size().unwrap();
+    let center = Point::new(width as i32 / 2, height as i32 / 2);
+    let table_width = (width as f32 * 0.85) as i32;
+    let table_height = (height as f32 * 0.45) as i32;
+
+    // Draw table felt (ellipse)
+    let mut pixels = vec![];
+    let rx = table_width / 2;
+    let ry = table_height / 2;
+    for y in -ry..=ry {
+        for x in -rx..=rx {
+            if ((x * x * ry * ry) + (y * y * rx * rx)) <= (rx * rx * ry * ry) {
+                pixels.push((center.x + x, center.y + y));
+            }
+        }
+    }
+    canvas.set_draw_color(Color::RGB(34, 139, 34)); // green felt
+    for (x, y) in pixels {
+        let _ = canvas.draw_point(Point::new(x, y));
+    }
+
+    // Draw table border (ellipse outline)
+    canvas.set_draw_color(Color::RGB(139, 69, 19)); // brown border
+    let border_thickness = 12;
+    for t in 0..border_thickness {
+        let rxo = rx + t;
+        let ryo = ry + t;
+        for deg in 0..360 {
+            let rad = (deg as f32).to_radians();
+            let x = (rxo as f32 * rad.cos()) as i32;
+            let y = (ryo as f32 * rad.sin()) as i32;
+            let _ = canvas.draw_point(center + Point::new(x, y));
+        }
+    }
+
+    // Optional: Draw a subtle highlight
+    canvas.set_draw_color(Color::RGBA(255, 255, 255, 30));
+    for t in 0..4 {
+        let rxo = rx - t;
+        let ryo = (ry as f32 * 0.7) as i32 - t;
+        for deg in 30..150 {
+            let rad = (deg as f32).to_radians();
+            let x = (rxo as f32 * rad.cos()) as i32;
+            let y = (ryo as f32 * rad.sin()) as i32 - ry / 3;
+            let _ = canvas.draw_point(center + Point::new(x, y));
+        }
+    }
 }

@@ -58,7 +58,7 @@ pub fn option_state(
             return Ok(true);
         }
 
-        render_screen(canvas, BACKGROUND_COLOR, game, ttf_context)?;
+        render_screen(canvas, game, ttf_context)?;
         // Set the draw color to DARK_BLUE
         canvas.set_draw_color(DARK_BLUE);
 

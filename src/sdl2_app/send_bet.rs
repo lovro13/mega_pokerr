@@ -176,7 +176,7 @@ pub fn make_bet(
                 }
                 
                 // Render user interface
-                render_screen(canvas, LIGHT_BLUE, game, &ttf_context)?;
+                render_screen(canvas, game, &ttf_context)?;
                 Button::draw_button(&fold_button, canvas, &ttf_context, BUTTON_TEXT_SIZE)?;
                 if *req_bet > 0 {
                     Button::draw_button(&call_button, canvas, &ttf_context, BUTTON_TEXT_SIZE)?;
@@ -202,7 +202,7 @@ pub fn make_bet(
                 }
                 
                 // Render bot decision animation
-                render_screen(canvas, LIGHT_BLUE, game, &ttf_context)?;
+                render_screen(canvas, game, &ttf_context)?;
                 write_info(canvas, message, ttf_context, WRITE_INFO_SIZE)?;
                 canvas.present();
                 ::std::thread::sleep(Duration::from_millis(BOT_DECISION_DELAY_MS));
