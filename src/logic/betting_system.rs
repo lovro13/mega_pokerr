@@ -2,6 +2,7 @@ use std::sync::atomic::Ordering;
 
 use crate::logic::constants::BIG_BLIND;
 use crate::logic::constants::SHOULD_QUIT;
+use crate::logic::constants::SHOULD_RETURN_TO_START;
 use crate::logic::game::Game;
 use crate::logic::game::Streets;
 use crate::logic::player;
@@ -24,14 +25,22 @@ pub fn make_bets(game: &mut Game, mut get_bet: impl FnMut(&Game, u32) -> Option<
     // - torej moramo vedeti koliko je največji bet
 
     // še eno zaprtje print info ki poskrbi kaj se izpiše na zaslonu
-    println!("starting make_bets");
+    log::info!("Starting make_bets");
     if game.street == Streets::PreFlop {
-        game.position_on_turn = player::PlayerPosition::UnderTheGun;
+        game.position_on_turn = match game.player_count {
+            2 => player::PlayerPosition::SmallBlind,
+            3 => player::PlayerPosition::BigBlind,
+            4..=8 => player::PlayerPosition::UnderTheGun,
+            _ => player::PlayerPosition::UnderTheGun,
+        };
+        log::debug!("Set initial position for PreFlop: {:?} (player_count: {})", game.position_on_turn, game.player_count);
     } else {
         game.position_on_turn = player::PlayerPosition::SmallBlind;
+        log::debug!("Set initial position for non-PreFlop: {:?}", game.position_on_turn);
     }
 
     let mut start_position = game.player_on_turn().position.clone();
+    log::debug!("Starting betting round from position {:?}", start_position);
 
     let mut betting_players_pos = vec![start_position.clone()];
     game.go_to_next_player();
@@ -42,7 +51,9 @@ pub fn make_bets(game: &mut Game, mut get_bet: impl FnMut(&Game, u32) -> Option<
         }
         game.go_to_next_player();
     }
+    log::debug!("Found {} players in betting round", betting_players_pos.len());
     if betting_players_pos.len() <= 1 {
+        log::warn!("Not enough players for betting round");
         return;
     }
     assert!(game.player_on_turn().position == start_position);
@@ -52,6 +63,7 @@ pub fn make_bets(game: &mut Game, mut get_bet: impl FnMut(&Game, u32) -> Option<
     let mut curr_highest_bet = 0;
     if game.street == Streets::PreFlop {
         curr_highest_bet = BIG_BLIND;
+        log::debug!("PreFlop: starting with big blind amount {}", BIG_BLIND);
     }
     let mut need_another_round = false;
     loop {
@@ -60,7 +72,11 @@ pub fn make_bets(game: &mut Game, mut get_bet: impl FnMut(&Game, u32) -> Option<
             // en krog stav, če nekdo raisa se krog konča in je on nov začetni player
             let player_pos = game.position_on_turn.clone();
             let curr_player = game.get_player_from_pos(&player_pos);
+            log::debug!("Player {:?} at position {:?} is betting (chips: {}, current_bet: {})", 
+                       curr_player.id, player_pos, curr_player.chips, curr_player.current_bet);
+            
             if !curr_player.playing {
+                log::debug!("Player {:?} is not playing, skipping", curr_player.id);
                 game.go_to_next_player();
                 if game.player_on_turn().position == start_position {
                     break;
@@ -68,26 +84,31 @@ pub fn make_bets(game: &mut Game, mut get_bet: impl FnMut(&Game, u32) -> Option<
                 continue;
             }
             let needed_bet = curr_highest_bet - curr_player.current_bet;
+            log::debug!("Player {:?} needs to bet {}", curr_player.id, needed_bet);
 
             let bet = {
                 let game_ref = &mut *game;
                 get_bet(game_ref, needed_bet)
             };
             if SHOULD_QUIT.load(Ordering::Relaxed) {
+                log::info!("Quit signal received during betting");
+                return;
+            } else if SHOULD_RETURN_TO_START.load(Ordering::Relaxed) {
+                log::info!("signal to return to main menu received during betting");
                 return;
             }
             let curr_player = game.get_player_from_pos(&player_pos);
             match bet {
                 None => {
                     // player folded
-                    // println!("{:?} folded", curr_player.name);
+                    log::info!("Player {:?} folded", curr_player.id);
                     curr_player.current_bet = 0;
                     curr_player.playing = false;
                     not_playing_players.push(player_pos.clone());
                 }
                 Some(amount) if amount + curr_player.current_bet > curr_highest_bet => {
                     // player raised
-                    // println!("{:?} raised", curr_player.name);
+                    log::info!("Player {:?} raised to {}", curr_player.id, amount + curr_player.current_bet);
                     curr_highest_bet = amount + curr_player.current_bet;
                     curr_player.chips -= amount;
                     curr_player.current_bet += amount;
@@ -99,7 +120,7 @@ pub fn make_bets(game: &mut Game, mut get_bet: impl FnMut(&Game, u32) -> Option<
                 }
                 Some(amount) => {
                     // player called
-                    // println!("{:?} called", curr_player.name);
+                    log::debug!("Player {:?} called with {}", curr_player.id, amount);
                     curr_player.chips -= amount;
                     curr_player.current_bet += amount;
                     game.pot += amount;
@@ -115,21 +136,21 @@ pub fn make_bets(game: &mut Game, mut get_bet: impl FnMut(&Game, u32) -> Option<
                     playing_players += 1;
                 }
             }
-            // println!("playing players {}", playing_players);
+            log::debug!("{} players still playing", playing_players);
             if playing_players <= 1 {
-                // println!("finished make_bets");
-                println!("finished make_bets beacuse everyone folded but 1 player");
+                log::info!("Only {} player(s) remaining, ending betting round", playing_players);
                 return;
             }
         }
 
         if !need_another_round {
+            log::debug!("No more betting rounds needed");
             break;
         }
         need_another_round = false;
+        log::debug!("Starting another betting round due to raise");
     }
-    println!("finished make_bets");
-    // zdaj imam seznam igralcev ki igrajo
+    log::info!("Betting round finished, pot: {}", game.pot);
 }
 
 pub fn validate_bet(req_bet: u32, chips: u32, bet: u32) -> bool {

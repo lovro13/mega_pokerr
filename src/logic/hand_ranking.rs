@@ -15,20 +15,20 @@ pub enum HandRanking {
 }
 
 impl HandRanking {
-	fn rank_value(&self) -> i32 {
-		match self {
-			HandRanking::RoyalFlush(_) => 10,
-			HandRanking::StraightFlush(_) => 9,
-			HandRanking::FourOfAKind(_) => 8,
-			HandRanking::FullHouse(_) => 7,
-			HandRanking::Flush(_) => 6,
-			HandRanking::Straight(_) => 5,
-			HandRanking::ThreeOfAKind(_) => 4,
-			HandRanking::TwoPair(_) => 3,
-			HandRanking::OnePair(_) => 2,
-			HandRanking::HighCard(_) => 1,
-		}
-	}
+    pub fn rank_value(&self) -> i32 {
+        match self {
+            HandRanking::RoyalFlush(_) => 10,
+            HandRanking::StraightFlush(_) => 9,
+            HandRanking::FourOfAKind(_) => 8,
+            HandRanking::FullHouse(_) => 7,
+            HandRanking::Flush(_) => 6,
+            HandRanking::Straight(_) => 5,
+            HandRanking::ThreeOfAKind(_) => 4,
+            HandRanking::TwoPair(_) => 3,
+            HandRanking::OnePair(_) => 2,
+            HandRanking::HighCard(_) => 1,
+        }
+    }
 }
 
 impl PartialOrd for HandRanking {

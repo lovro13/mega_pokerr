@@ -6,12 +6,13 @@ use mega_pokerr::logic::player;
 use mega_pokerr::terminal_app::get_bet::get_bet;
 use mega_pokerr::terminal_app::prints::print_game_info;
 
+
 fn main() {
     let players = player::Player::init_players();
 
     let game = init_game(players);
     let mut mut_game = game.borrow_mut();
-    begin_round(&mut mut_game);
+    begin_round(&mut mut_game, 8);
     print_game_info(&mut_game);
     make_bets(&mut mut_game, get_bet); // PREFLOP
     print_game_info(&mut_game);

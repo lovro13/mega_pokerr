@@ -21,9 +21,10 @@ pub fn render_player_info(
     player: &player::Player,
     ttf_context: &sdl2::ttf::Sdl2TtfContext,
     color: Color,
+    player_count: usize,
 ) -> Result<(), String> {
     // nariše karte, ime, balance, dealer žeton, če je treba
-    let player_center = player.id.get_player_screen_center(canvas);
+    let player_center = player.id.get_player_screen_center_for_count(canvas, player_count);
     // tukaj je center v player_position z normalnim kartezičnim
     let card2_pos = player_center + Point::new(CARD2_POS, 0);
     if player.playing {
@@ -164,6 +165,7 @@ pub fn render_screen(
     canvas: &mut WindowCanvas,
     game: &Game, // tega tudi mogoče dobi iz player lista
     ttf_context: &sdl2::ttf::Sdl2TtfContext,
+    player_count: usize,
 ) -> Result<(), String> {
     render_background(canvas);
     let players_list = &game.players;
@@ -174,12 +176,12 @@ pub fn render_screen(
         if player.position == game.position_on_turn {
             let background = LIGHT_RED;
             let player_name_position =
-                player.id.get_player_screen_center(canvas) + Point::new(25, 85);
+                player.id.get_player_screen_center_for_count(canvas, player_count) + Point::new(25, 85);
             let text_target = Rect::from_center(player_name_position, PLAYER_NAME_WIDTH, PLAYER_NAME_HEIGHT);
             canvas.set_draw_color(background);
             canvas.fill_rect(text_target)?;
         }
-        let _ = render_player_info(canvas, player, &ttf_context, color);
+        let _ = render_player_info(canvas, player, &ttf_context, color, player_count);
         // nariše karte, imena, balance
     }
 
