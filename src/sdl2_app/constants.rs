@@ -32,6 +32,8 @@ pub const LIGHT_RED: Color = Color { r: 255, g: 105, b: 105, a: 0xff };
 pub const DARK_BLUE: Color = Color { r: 0, g: 0, b: 139, a: 255 };
 pub const GRAY_COLOR: Color = Color { r: 100, g: 100, b: 100, a: 0xff };
 pub const LIGHT_GRAY: Color = Color { r: 200, g: 200, b: 200, a: 0xff };
+pub const LIGHT_GREEN: Color = Color { r: 0, g: 100, b: 0, a: 0xff };
+pub const BROWN: Color = Color {r: 120, g: 42, b: 42, a: 0xff};
 
 
 // Game configuration
@@ -91,6 +93,7 @@ pub const SCREEN_CENTER_Y_OFFSET: i32 = -100;
 pub const FOLDED_TEXT_Y_OFFSET: i32 = -100;
 pub const BET_DISPLAY_X_OFFSET: i32 = 160;
 pub const BET_DISPLAY_Y_OFFSET: i32 = 70;
+pub const TABLE_BORDER_SIZE: i16 = 20;
 
 // Text constants
 pub const GAME_TITLE: &str = "MEGA POKER";

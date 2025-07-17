@@ -192,7 +192,7 @@ pub fn make_bet(
             }
         }
         if settings_window {
-            render_screen(canvas, BACKGROUND_COLOR, game, ttf_context, player_count)?;
+            render_screen(canvas, game, ttf_context, player_count)?;
             menu_screen_render(
                 canvas,
                 &mut resume_button,
@@ -272,7 +272,7 @@ pub fn make_bet(
                 }
             }
             BetState::UserPostDecision { result, start_time, message } => {
-                render_screen(canvas, LIGHT_BLUE, game, ttf_context, player_count)?;
+                render_screen(canvas, game, ttf_context, player_count)?;
                 write_info(canvas, message, ttf_context, WRITE_INFO_SIZE)?;
                 settings_button.draw_button(canvas, ttf_context, BUTTON_FONT_SIZE)?;
                 canvas.present();
@@ -290,7 +290,7 @@ pub fn make_bet(
                 }
 
                 // Render bot decision animation
-                render_screen(canvas, LIGHT_BLUE, game, &ttf_context, player_count)?;
+                render_screen(canvas, game, &ttf_context, player_count)?;
                 write_info(canvas, message, ttf_context, WRITE_INFO_SIZE)?;
                 ::std::thread::sleep(Duration::from_millis(BOT_DECISION_DELAY_MS));
             }
@@ -373,7 +373,7 @@ pub fn user_bet(
     }
 
     // Render user interface
-    render_screen(canvas, LIGHT_BLUE, game, &ttf_context, player_count)?;
+    render_screen(canvas, game, &ttf_context, player_count)?;
     Button::draw_button(&fold_button, canvas, &ttf_context, BUTTON_TEXT_SIZE)?;
     if req_bet > 0 {
         Button::draw_button(&call_button, canvas, &ttf_context, BUTTON_TEXT_SIZE)?;

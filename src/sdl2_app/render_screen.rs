@@ -1,6 +1,7 @@
 use crate::logic::constants::*;
 use crate::logic::game::Game;
 use crate::logic::player::{self, Id, Player};
+use sdl2::gfx::primitives::DrawRenderer;
 use sdl2::image::LoadTexture;
 use sdl2::pixels::Color;
 use sdl2::rect::{Point, Rect};
@@ -24,7 +25,9 @@ pub fn render_player_info(
     player_count: usize,
 ) -> Result<(), String> {
     // nariše karte, ime, balance, dealer žeton, če je treba
-    let player_center = player.id.get_player_screen_center_for_count(canvas, player_count);
+    let player_center = player
+        .id
+        .get_player_screen_center_for_count(canvas, player_count);
     // tukaj je center v player_position z normalnim kartezičnim
     let card2_pos = player_center + Point::new(CARD2_POS, 0);
     if player.playing {
@@ -167,7 +170,7 @@ pub fn render_screen(
     ttf_context: &sdl2::ttf::Sdl2TtfContext,
     player_count: usize,
 ) -> Result<(), String> {
-    render_background(canvas);
+    render_background(canvas)?;
     let players_list = &game.players;
     for player in players_list {
         //naprinta ime in karte igralca
@@ -175,9 +178,12 @@ pub fn render_screen(
         let color = Color::RGB(0, 0, 0);
         if player.position == game.position_on_turn {
             let background = LIGHT_RED;
-            let player_name_position =
-                player.id.get_player_screen_center_for_count(canvas, player_count) + Point::new(25, 85);
-            let text_target = Rect::from_center(player_name_position, PLAYER_NAME_WIDTH, PLAYER_NAME_HEIGHT);
+            let player_name_position = player
+                .id
+                .get_player_screen_center_for_count(canvas, player_count)
+                + Point::new(25, 85);
+            let text_target =
+                Rect::from_center(player_name_position, PLAYER_NAME_WIDTH, PLAYER_NAME_HEIGHT);
             canvas.set_draw_color(background);
             canvas.fill_rect(text_target)?;
         }
@@ -194,54 +200,34 @@ pub fn render_screen(
     Ok(())
 }
 
-pub fn render_background(canvas: &mut WindowCanvas) {
+pub fn render_background(canvas: &mut WindowCanvas) -> Result<(), String> {
     canvas.set_draw_color(BACKGROUND_COLOR);
     canvas.clear();
-    let (width, height) = canvas.output_size().unwrap();
-    let center = Point::new(width as i32 / 2, height as i32 / 2);
-    let table_width = (width as f32 * 0.85) as i32;
-    let table_height = (height as f32 * 0.45) as i32;
 
-    // Draw table felt (ellipse)
-    let mut pixels = vec![];
-    let rx = table_width / 2;
-    let ry = table_height / 2;
-    for y in -ry..=ry {
-        for x in -rx..=rx {
-            if ((x * x * ry * ry) + (y * y * rx * rx)) <= (rx * rx * ry * ry) {
-                pixels.push((center.x + x, center.y + y));
-            }
-        }
-    }
-    canvas.set_draw_color(Color::RGB(34, 139, 34)); // green felt
-    for (x, y) in pixels {
-        let _ = canvas.draw_point(Point::new(x, y));
-    }
+    let center = get_screen_center(canvas);
 
-    // Draw table border (ellipse outline)
-    canvas.set_draw_color(Color::RGB(139, 69, 19)); // brown border
-    let border_thickness = 12;
-    for t in 0..border_thickness {
-        let rxo = rx + t;
-        let ryo = ry + t;
-        for deg in 0..360 {
-            let rad = (deg as f32).to_radians();
-            let x = (rxo as f32 * rad.cos()) as i32;
-            let y = (ryo as f32 * rad.sin()) as i32;
-            let _ = canvas.draw_point(center + Point::new(x, y));
-        }
-    }
+    let radius = canvas.output_size()?;
 
-    // Optional: Draw a subtle highlight
-    canvas.set_draw_color(Color::RGBA(255, 255, 255, 30));
-    for t in 0..4 {
-        let rxo = rx - t;
-        let ryo = (ry as f32 * 0.7) as i32 - t;
-        for deg in 30..150 {
-            let rad = (deg as f32).to_radians();
-            let x = (rxo as f32 * rad.cos()) as i32;
-            let y = (ryo as f32 * rad.sin()) as i32 - ry / 3;
-            let _ = canvas.draw_point(center + Point::new(x, y));
-        }
-    }
+    let base_radius_x = (radius.0 / 3) as i16;
+    let base_radius_y = (radius.1 / 3) as i16;
+
+    // 1. Najprej narišite veliko elipso za rob (rjavo)
+    canvas.filled_ellipse(
+        center.x as i16,
+        center.y as i16,
+        base_radius_x + TABLE_BORDER_SIZE,
+        base_radius_y + TABLE_BORDER_SIZE,
+        BROWN,
+    )?;
+
+    // 2. Nato narišite manjšo elipso za telo (modro)
+    canvas.filled_ellipse(
+        center.x as i16,
+        center.y as i16,
+        base_radius_x,
+        base_radius_y,
+        LIGHT_GREEN,
+    )?;
+
+    Ok(())
 }

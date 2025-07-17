@@ -30,7 +30,7 @@ optional = true
 [dependencies.sdl2]
 version = "0.32.1"
 default-features = false
-features = ["image", "ttf"]
+features = ["image", "ttf", "gfx"]
 optional = true
 
 [dependencies.sauron]

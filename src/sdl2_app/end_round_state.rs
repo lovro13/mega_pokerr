@@ -45,7 +45,7 @@ pub fn end_round(
             }
         }
 
-        render_screen(canvas, game, ttf_context)?;
+        render_screen(canvas, game, ttf_context, player_count)?;
         write_info(
             canvas,
             &format!("{:?} won the round and {} chips", print_winners, winnings),
