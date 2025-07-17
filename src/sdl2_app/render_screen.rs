@@ -1,6 +1,7 @@
 use crate::logic::constants::*;
 use crate::logic::game::Game;
 use crate::logic::player::{self, Id, Player};
+use sdl2::gfx::primitives::DrawRenderer;
 use sdl2::image::LoadTexture;
 use sdl2::pixels::Color;
 use sdl2::rect::{Point, Rect};
@@ -24,7 +25,9 @@ pub fn render_player_info(
     player_count: usize,
 ) -> Result<(), String> {
     // nariše karte, ime, balance, dealer žeton, če je treba
-    let player_center = player.id.get_player_screen_center_for_count(canvas, player_count);
+    let player_center = player
+        .id
+        .get_player_screen_center_for_count(canvas, player_count);
     // tukaj je center v player_position z normalnim kartezičnim
     let card2_pos = player_center + Point::new(CARD2_POS, 0);
     if player.playing {
@@ -163,13 +166,11 @@ pub fn render_turn_indicator(player: &Player, canvas: &mut WindowCanvas) -> Resu
 
 pub fn render_screen(
     canvas: &mut WindowCanvas,
-    background_color: Color,
     game: &Game, // tega tudi mogoče dobi iz player lista
     ttf_context: &sdl2::ttf::Sdl2TtfContext,
     player_count: usize,
 ) -> Result<(), String> {
-    canvas.set_draw_color(background_color);
-    canvas.clear();
+    render_background(canvas)?;
     let players_list = &game.players;
     for player in players_list {
         //naprinta ime in karte igralca
@@ -177,9 +178,12 @@ pub fn render_screen(
         let color = Color::RGB(0, 0, 0);
         if player.position == game.position_on_turn {
             let background = LIGHT_RED;
-            let player_name_position =
-                player.id.get_player_screen_center_for_count(canvas, player_count) + Point::new(25, 85);
-            let text_target = Rect::from_center(player_name_position, PLAYER_NAME_WIDTH, PLAYER_NAME_HEIGHT);
+            let player_name_position = player
+                .id
+                .get_player_screen_center_for_count(canvas, player_count)
+                + Point::new(25, 85);
+            let text_target =
+                Rect::from_center(player_name_position, PLAYER_NAME_WIDTH, PLAYER_NAME_HEIGHT);
             canvas.set_draw_color(background);
             canvas.fill_rect(text_target)?;
         }
@@ -193,5 +197,37 @@ pub fn render_screen(
         card.draw_card(canvas, card_position, true, 0., 1.)?;
         card_position.x += (CARD_WIDTH + 10) as i32;
     }
+    Ok(())
+}
+
+pub fn render_background(canvas: &mut WindowCanvas) -> Result<(), String> {
+    canvas.set_draw_color(BACKGROUND_COLOR);
+    canvas.clear();
+
+    let center = get_screen_center(canvas);
+
+    let radius = canvas.output_size()?;
+
+    let base_radius_x = (radius.0 / 3) as i16;
+    let base_radius_y = (radius.1 / 3) as i16;
+
+    // 1. Najprej narišite veliko elipso za rob (rjavo)
+    canvas.filled_ellipse(
+        center.x as i16,
+        center.y as i16,
+        base_radius_x + TABLE_BORDER_SIZE,
+        base_radius_y + TABLE_BORDER_SIZE,
+        BROWN,
+    )?;
+
+    // 2. Nato narišite manjšo elipso za telo (modro)
+    canvas.filled_ellipse(
+        center.x as i16,
+        center.y as i16,
+        base_radius_x,
+        base_radius_y,
+        LIGHT_GREEN,
+    )?;
+
     Ok(())
 }
