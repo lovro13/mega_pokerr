@@ -197,6 +197,24 @@ pub fn render_screen(
         card.draw_card(canvas, card_position, true, 0., 1.)?;
         card_position.x += (CARD_WIDTH + 10) as i32;
     }
+
+    let pot_text = format!("Pot size : {}", game.pot);
+    pub const POT_CENTER: (i32, i32) = (0, -150);
+    let pot_text_pos = Rect::from_center(
+        Point::from(POT_CENTER) + get_screen_center(canvas),
+        200,
+        200,
+    );
+    draw_text(
+        canvas,
+        &pot_text,
+        pot_text_pos,
+        ttf_context,
+        BUTTON_FONT_SIZE,
+        BLACK,
+        None,
+        false,
+    )?;
     Ok(())
 }
 

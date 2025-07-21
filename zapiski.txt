@@ -3,11 +3,11 @@ PRAVILA za funkcijo get_bet
 // ne dovoli staviti več denarja kot ga ima player, in če ma dost dnarja vsaj req_bet
 
 SDL2:
--- pokaži pot size
 -- izbolšat ozadje in nastaviti boljše lokacije igralcev in žetonov
 -- prikaži dolgove
 -- making load_screen better
 -- naredi start new game better
+-- exit button in settings doenst work
 
 LOGIC:
 -- treba bl zrihtat bote, ampak kr uredu delajo, če ne gledaš na to kok dobri so

@@ -49,23 +49,23 @@ pub fn load_game(game_id: i64, tx: &Transaction) -> Result<Option<Game>> {
                     Box::new(e),
                 )
             })?;
-            // let mut new_game = Game {
-            //     street: crate::logic::game::Streets::PreFlop,
-            //     pot: 0,
-            //     players: game.players,
-            //     deck: game.deck,
-            //     table_cards: vec![],
-            //     position_on_turn: crate::logic::player::PlayerPosition::NotPlaying,
-            //     round_number: game.round_number,
-            //     quit: false,
-            //     player_count: game.player_count,
-            // };
-            // for player in new_game.players.iter_mut() {
-            //     player.chips += player.current_bet;
-            //     player.current_bet = 0
-            // }
-            log::debug!("loaded game with players: {:?}", game);
-            Ok(Some(game))
+            let mut new_game = Game {
+                street: crate::logic::game::Streets::PreFlop,
+                pot: 0,
+                players: game.players,
+                deck: game.deck,
+                table_cards: vec![],
+                position_on_turn: crate::logic::player::PlayerPosition::NotPlaying,
+                round_number: game.round_number,
+                quit: false,
+                player_count: game.player_count,
+            };
+            for player in new_game.players.iter_mut() {
+                player.chips += player.current_bet;
+                player.current_bet = 0
+            }
+            log::debug!("loaded game with players: {:?}", new_game);
+            Ok(Some(new_game))
         }
         Err(rusqlite::Error::QueryReturnedNoRows) => Ok(None),
         Err(e) => Err(e),
