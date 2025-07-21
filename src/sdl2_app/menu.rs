@@ -214,6 +214,7 @@ pub fn menu_screen_handle_events(
     }
     if exit_button.is_clicked {
         *settings_window = false;
+        crate::logic::constants::SHOULD_QUIT.store(true, Ordering::Relaxed);
         return Ok(MenuAction::Exit);
     }
     if return_to_start_button.is_clicked {
