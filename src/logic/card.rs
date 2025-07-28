@@ -128,6 +128,20 @@ impl std::fmt::Debug for CardColor {
     }
 }
 
+impl CardColor {
+    pub fn evaluate_to_str(&self) -> &str {
+        match self {
+            Self::Clubs => {"clubs"},
+            Self::Diamonds => {"diamonds"},
+            Self::Hearts => {"hearts"},
+            Self::Spades => {"spades"},
+            Self::Empty => {
+                panic!("Empty card number, ko hočemo evaluirati CardNumber");
+            }
+        }
+    }
+}
+
 #[derive(Debug, PartialEq, Clone, Serialize, Deserialize)]
 pub struct Card {
     pub color: CardColor,
@@ -194,6 +208,19 @@ impl Card {
             CardNumber::NK,
             CardNumber::NA,
         ]
+    }
+
+    // card -> pravilen png asset string
+    pub fn to_png(&self) -> String {
+        if (self.number == CardNumber::Empty) || (self.color == CardColor::Empty) {
+            panic!("Trying to find png of card with missing values (card)")};
+        match self.number {
+            CardNumber::NJ => {format!("assets/cards/jack_of_{}2.png", self.color.evaluate_to_str())},
+            CardNumber::NQ => {format!("assets/cards/queen_of_{}2.png", self.color.evaluate_to_str())},
+            CardNumber::NK => {format!("assets/cards/king_of_{}2.png", self.color.evaluate_to_str())},
+            CardNumber::NA => {format!("assets/cards/ace_of_{}.png", self.color.evaluate_to_str())},
+            _ => {format!("assets/cards/{}_of_{}.png", self.number.evaluate_to_int(), self.color.evaluate_to_str())},
+        }
     }
 
     pub fn make_ordered_deck() -> Vec<Card> {
