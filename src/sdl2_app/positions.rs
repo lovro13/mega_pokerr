@@ -74,7 +74,7 @@ impl Id {
                 Id::Player4 => PLAYER4_CARDS,
                 Id::Player5 => PLAYER5_CARDS,
                 Id::Player6 => PLAYER6_CARDS,
-                Id::Player7 => PLAYER7_CARDSs,
+                Id::Player7 => PLAYER7_CARDS,
                 _ => panic!("wrong id"),
             },
             8 => match self {
