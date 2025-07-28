@@ -1,10 +1,12 @@
+use std::f32::consts::PI;
+
 use sdl2::{
     rect::Point,
     render::{Canvas, WindowCanvas},
     video::Window,
 };
 
-use crate::logic::player::Id;
+use crate::logic::{constants::MAX_PLAYERS, player::Id};
 use crate::sdl2_app::constants::*;
 
 use super::render_screen::get_screen_center;
@@ -17,17 +19,35 @@ pub struct PlayerScreenPosition {
 }
 
 impl Id {
-    pub fn get_card_position(&self) -> (i32, i32) {
-        match self {
-            Id::Player1 => PLAYER1_CARDS,
-            Id::Player2 => PLAYER2_CARDS,
-            Id::Player3 => PLAYER3_CARDS,
-            Id::Player4 => PLAYER4_CARDS,
-            Id::Player5 => PLAYER5_CARDS,
-            Id::Player6 => PLAYER6_CARDS,
-            Id::Player7 => PLAYER7_CARDS,
-            Id::Player8 => PLAYER8_CARDS,
-        }
+    pub fn get_card_position(&self, canvas: &WindowCanvas) -> (i32, i32) {
+        let canvas_size = canvas.output_size().unwrap();
+        // Calculate table dimensions based on canvas size
+        let (width, height) = canvas_size;
+        let table_width = (width / 3) as f32;
+        let table_height = (height / 3) as f32;
+
+        // Calculate position index (0-based)
+        let index = match self {
+            Id::Player1 => 0,
+            Id::Player2 => 1,
+            Id::Player3 => 2,
+            Id::Player4 => 3,
+            Id::Player5 => 4,
+            Id::Player6 => 5,
+            Id::Player7 => 6,
+            Id::Player8 => 7,
+        };
+
+        // Only calculate if player is in game
+
+        // Calculate angular position around the table
+        let angle = - 2.0 * std::f32::consts::PI * (index as f32) / (MAX_PLAYERS as f32) + 3.0 / 2.0 * PI;
+
+        // Calculate position on ellipse with 10% margin
+        let x = table_width * 1.1 * angle.cos();
+        let y = table_height * 1.1 * angle.sin();
+
+        (x as i32, y as i32)
     }
 
     pub fn get_card_position_for_count(&self, player_count: usize) -> (i32, i32) {
@@ -100,7 +120,7 @@ impl Id {
             width as i32 / 2,
             (height as i32) / 2 + SCREEN_CENTER_Y_OFFSET,
         );
-        let card_position = self.get_card_position();
+        let card_position = self.get_card_position(canvas);
         let player_center = // is on the middle of the first card
         Point::new(card_position.0, -card_position.1) + screen_center;
         return player_center;
@@ -109,7 +129,7 @@ impl Id {
     pub fn get_player_screen_center_for_count(
         &self,
         canvas: &WindowCanvas,
-        player_count: usize,
+        _player_count: usize,
     ) -> Point {
         // is on the middle of the first card
         let (width, height) = canvas.output_size().unwrap();
@@ -117,21 +137,10 @@ impl Id {
             width as i32 / 2,
             (height as i32) / 2 + SCREEN_CENTER_Y_OFFSET,
         );
-        let card_position = self.get_card_position_for_count(player_count);
+        let card_position = self.get_card_position(canvas);
         let player_center = // is on the middle of the first card
         Point::new(card_position.0, -card_position.1) + screen_center;
         return player_center;
-    }
-}
-
-impl PlayerScreenPosition {
-    pub fn new(id: Id) -> Self {
-        let card_center = Point::from(Id::get_card_position(&id));
-        PlayerScreenPosition {
-            cards: card_center,
-            name: card_center + Point::new(0, CARD_HEIGHT as i32 / 2 + 10),
-            balance: card_center,
-        }
     }
 }
 

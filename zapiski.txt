@@ -3,7 +3,7 @@ PRAVILA za funkcijo get_bet
 // ne dovoli staviti več denarja kot ga ima player, in če ma dost dnarja vsaj req_bet
 
 SDL2:
--- izbolšat ozadje in nastaviti boljše lokacije igralcev in žetonov in vsega
+-- js ne bi vec spremnijov vec lokacij ker je tezko, bom naredu nek trasnaprent ozadje za player info
 -- prikaži dolgove
 -- making load_screen better
 -- naredi start new game better
@@ -11,16 +11,15 @@ SDL2:
 LOGIC:
 -- pri hand ranking flush sem popravil en bug, in moram zdaj pogleadti če je uredu porpavljen
 
+OPTIONAL:
+
 -- treba bl zrihtat bote, ampak kr uredu delajo, če ne gledaš na to kok dobri so
--- end_round, pa še mal bl uredi
--- game pa player mata pomoje mal preveč stvari v enumu zih bi se ksne dal znebit al pa ksn nov enum narest, če ne druzga je treba to pregledat
+--  BOT:
+    -- osnovna logika dela, za predstavitev bo več pa ne bom rihtov za zdj
+    -- zdaj dela če lahko stavi samo fiksno BIG BLIND, ampka zdaj lahko player stavi kokr hoče
 
-BOT:
--- osnovna logika dela, za predstavitev bo več pa ne bom rihtov za zdj
--- zdaj dela če lahko stavi samo fiksno BIG BLIND, ampka zdaj lahko player stavi kokr hoče
+--  SERVER:
+    -- bl ga nau pomoje
 
-SERVER:
--- bl ga nau pomoje
-
-ČE BO PREMALO DELA:
--- bote narediti zeloo dobre
+--  ČE BO PREMALO DELA:
+    -- bote narediti zeloo dobre
