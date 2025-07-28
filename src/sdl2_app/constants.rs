@@ -141,7 +141,7 @@ pub const CARD: Card = Card {
 pub const ANGLE: f64 = 20.;
 
 // Player card positions
-pub const PLAYER1_CARDS: (i32, i32) = (-50, -300);
+pub const PLAYER1_CARDS: (i32, i32) = (-50, -330);
 pub const PLAYER2_CARDS: (i32, i32) = (-500, -300);
 pub const PLAYER3_CARDS: (i32, i32) = (-775, 50);
 pub const PLAYER4_CARDS: (i32, i32) = (-500, 325);
