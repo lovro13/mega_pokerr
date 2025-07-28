@@ -75,7 +75,7 @@ mod tests {
 		];
 		assert_eq!(
 			best_combination(&mut cards),
-			HandRanking::Flush(vec![CardNumber::NQ])
+			HandRanking::Flush(vec![CardNumber::N3, CardNumber::N6, CardNumber::N8, CardNumber::NJ, CardNumber::NQ])
 		);
 	}
 
@@ -223,7 +223,7 @@ mod tests {
 		];
 		assert_eq!(
 			best_combination(&mut cards),
-			HandRanking::Flush(vec![CardNumber::NK])
+			HandRanking::Flush(vec![CardNumber::N2, CardNumber::N5, CardNumber::N9, CardNumber::NJ, CardNumber::NK])
 		);
 	}
 

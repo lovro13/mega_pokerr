@@ -9,6 +9,8 @@ SDL2:
 -- naredi start new game better
 
 LOGIC:
+-- pri hand ranking flush sem popravil en bug, in moram zdaj pogleadti če je uredu porpavljen
+
 -- treba bl zrihtat bote, ampak kr uredu delajo, če ne gledaš na to kok dobri so
 -- end_round, pa še mal bl uredi
 -- game pa player mata pomoje mal preveč stvari v enumu zih bi se ksne dal znebit al pa ksn nov enum narest, če ne druzga je treba to pregledat

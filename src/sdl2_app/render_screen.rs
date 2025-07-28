@@ -229,7 +229,7 @@ pub fn render_background(canvas: &mut WindowCanvas) -> Result<(), String> {
     let base_radius_x = (radius.0 / 3) as i16;
     let base_radius_y = (radius.1 / 3) as i16;
 
-    // 1. Najprej narišite veliko elipso za rob (rjavo)
+
     canvas.filled_ellipse(
         center.x as i16,
         center.y as i16,
@@ -238,7 +238,7 @@ pub fn render_background(canvas: &mut WindowCanvas) -> Result<(), String> {
         BROWN,
     )?;
 
-    // 2. Nato narišite manjšo elipso za telo (modro)
+
     canvas.filled_ellipse(
         center.x as i16,
         center.y as i16,

@@ -48,7 +48,7 @@ pub fn best_combination(cards: &mut Vec<Card>) -> HandRanking {
         return HandRanking::FullHouse(high_card);
     } else if is_flush(cards) {
         nums.sort();
-        return HandRanking::Flush(vec![nums.remove(4)]); // pomembna samo najvišja karta
+        return HandRanking::Flush(nums); // pomembnih vseh pet kart, saj so lahko najvišje 4 na mizi
     } else if is_straight(cards) {
         let mut nums = Vec::new();
         for card in cards.iter() {

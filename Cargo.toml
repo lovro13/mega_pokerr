@@ -40,6 +40,7 @@ optional = true
 [[bin]]
 name = "sdl2_app"
 path = "src/bin/sdl2_app/main.rs"
+required-features = ["run_with_sdl2"]
 
 [[bin]]
 name = "terminal_app"
