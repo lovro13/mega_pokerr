@@ -64,12 +64,28 @@ pub fn new_game_start_screen_state(
         String::from(APPLY_AND_START_NEW_GAME_TEXT),
     );
 
+    let mut increase_button = Button::new(
+        screen_center + Point::from((300, -50)),
+        50,
+        80,
+        String::from("+"),
+    );
+
+    let mut decrease_button = Button::new(
+        screen_center + Point::from((100, -50)),
+        50,
+        80,
+        String::from("-"),
+    );
+
     let mut player_count = settings.player_count;
 
     loop {
         for event in event_pump.poll_iter() {
             Button::handle_button_events(&event, &mut back_button);
             Button::handle_button_events(&event, &mut apply_button);
+            Button::handle_button_events(&event, &mut increase_button);
+            Button::handle_button_events(&event, &mut decrease_button);
 
             match event {
                 Event::Quit { .. }
@@ -79,22 +95,6 @@ pub fn new_game_start_screen_state(
                 } => {
                     SHOULD_QUIT.store(true, Ordering::Relaxed);
                     return Ok(false);
-                }
-                Event::KeyDown {
-                    keycode: Some(Keycode::Up),
-                    ..
-                } => {
-                    if player_count < MAX_PLAYERS {
-                        player_count += 1;
-                    }
-                }
-                Event::KeyDown {
-                    keycode: Some(Keycode::Down),
-                    ..
-                } => {
-                    if player_count > MIN_PLAYERS {
-                        player_count -= 1;
-                    }
                 }
                 _ => {}
             }
@@ -106,6 +106,16 @@ pub fn new_game_start_screen_state(
             settings.player_count = player_count;
             log::info!("Settings applied: player_count = {}", player_count);
             return Ok(true);
+        } else if increase_button.is_clicked {
+            if player_count < MAX_PLAYERS {
+                player_count += 1;
+            }
+            increase_button.is_clicked = false; // Reset button state
+        } else if decrease_button.is_clicked {
+            if player_count > MIN_PLAYERS {
+                player_count -= 1;
+            }
+            decrease_button.is_clicked = false; // Reset button state
         }
 
         canvas.set_draw_color(BACKGROUND_COLOR);
@@ -163,6 +173,12 @@ pub fn new_game_start_screen_state(
             .draw_button(canvas, &ttf_context, SETTINGS_START_FONT_SIZE)
             .unwrap();
         apply_button
+            .draw_button(canvas, &ttf_context, SETTINGS_START_FONT_SIZE)
+            .unwrap();
+        increase_button
+            .draw_button(canvas, &ttf_context, SETTINGS_START_FONT_SIZE)
+            .unwrap();
+        decrease_button
             .draw_button(canvas, &ttf_context, SETTINGS_START_FONT_SIZE)
             .unwrap();
 

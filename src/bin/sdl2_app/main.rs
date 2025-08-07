@@ -7,8 +7,9 @@ use mega_pokerr::sdl2_app::constants::MAIN_PLAYER;
 use mega_pokerr::sdl2_app::end_round_state::end_round;
 use mega_pokerr::sdl2_app::menu::GameSettings;
 use std::sync::atomic::Ordering;
+use rusqlite::Connection;
 
-use mega_pokerr::logic::constants::SHOULD_QUIT;
+use mega_pokerr::logic::constants::{SHOULD_QUIT, DATABASE_PATH};
 use mega_pokerr::logic::game;
 use mega_pokerr::logic::player;
 use mega_pokerr::logic::round::begin_round;
@@ -17,9 +18,55 @@ use mega_pokerr::sdl2_app::start_screen::{start_screen_state, StartScreenAction}
 use std::rc::Rc;
 use std::cell::RefCell;
 
+fn init_database() -> Result<(), String> {
+    let conn = Connection::open(DATABASE_PATH).map_err(|e| e.to_string())?;
+    
+    // Create saves table if it doesn't exist
+    conn.execute(
+        "CREATE TABLE IF NOT EXISTS saves (
+            game_id INTEGER PRIMARY KEY AUTOINCREMENT,
+            game_state TEXT NOT NULL,
+            created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+        )",
+        [],
+    ).map_err(|e| e.to_string())?;
+    
+    // Check if saves table is empty
+    let count: i64 = conn.query_row(
+        "SELECT COUNT(*) FROM saves",
+        [],
+        |row| row.get(0)
+    ).map_err(|e| e.to_string())?;
+    
+    // If table is empty, create and save a default game with 8 players
+    if count == 0 {
+        log::info!("Saves table is empty, creating default game with 8 players");
+        let player_list = player::Player::init_players_with_count(8);
+        let default_game = game::init_game(player_list);
+        
+        // Serialize the game
+        let game_data = serde_json::to_string(&*default_game.borrow()).map_err(|e| e.to_string())?;
+        
+        // Save to database
+        conn.execute(
+            "INSERT INTO saves (game_state) VALUES (?1)",
+            [game_data],
+        ).map_err(|e| e.to_string())?;
+        
+        log::info!("Default game saved to database");
+    }
+    
+    log::info!("Database initialized successfully");
+    Ok(())
+}
+
 fn main() -> Result<(), String> {
     env_logger::init();
     log::info!("Starting Mega Poker SDL2 app");
+    
+    // Initialize database and create saves table if they don't exist
+    init_database()?;
+    
     let app_context = init_app_context()?;
     // dobiš platno !! POMEMBNO, canvas.set_color(); canvas.clear() - zaslon v eno bravo
     // canvas.copy(...), texture -> riše slike, ali tekst

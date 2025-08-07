@@ -73,7 +73,7 @@ fn load_game_screen(
             ttf_context,
             TITLE_SIZE / 2,
             BLACK,
-            None,
+            None, 
             false,
         )?;
         for (btn, _) in buttons.iter_mut() {
