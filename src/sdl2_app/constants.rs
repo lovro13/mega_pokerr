@@ -151,7 +151,7 @@ pub const PLAYER7_CARDS: (i32, i32) = (700, 50);
 pub const PLAYER8_CARDS: (i32, i32) = (500, -300);
 
 // Button positions
-pub const CALL_BUTTON: (i32, i32) = (0, 440);
+pub const CALL_BUTTON: (i32, i32) = (0, 500);
 pub const BUTTON_END_OF_ROUND: (i32, i32) = (0, 125);
 pub const SETTINGS_BUTTON_GAME: (i32, i32) = (0, 125);
 

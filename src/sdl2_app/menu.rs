@@ -1,17 +1,23 @@
 use std::{sync::atomic::Ordering, time::Duration};
 
-use rusqlite::{Connection};
+use rusqlite::Connection;
 use sdl2::{
-    event::Event, keyboard::Keycode, rect::{Point, Rect}, render::{Canvas, WindowCanvas}, video::Window, EventPump
+    event::Event,
+    keyboard::Keycode,
+    rect::{Point, Rect},
+    render::{Canvas, WindowCanvas},
+    video::Window,
+    EventPump,
 };
 
 use crate::logic::{
     constants::{DATABASE_PATH, DEFAULT_PLAYER_COUNT, MAX_PLAYERS, MIN_PLAYERS, SHOULD_QUIT},
-    game::Game
+    game::Game,
 };
 
 use super::{
-    button::Button, constants::*, render_screen::get_screen_center, render_text::draw_text, save_game
+    button::Button, constants::*, render_screen::get_screen_center, render_text::draw_text,
+    save_game,
 };
 
 #[derive(Debug, Clone)]
@@ -33,7 +39,7 @@ pub enum MenuAction {
     Resume,
     Save,
     Exit,
-    ExitToMainMenu
+    ExitToMainMenu,
 }
 
 pub fn new_game_start_screen_state(
@@ -175,7 +181,7 @@ pub fn menu_screen_render(
 ) -> Result<(), String> {
     let screen_center = get_screen_center(canvas);
 
-    pub const MENU_POS: (i32, i32) = (0, (SETTINGS_BUTTON_HEIGTH / 2) as i32);
+    pub const MENU_POS: (i32, i32) = (0, (SETTINGS_BUTTON_HEIGTH / 2) as i32 + 10);
     let background_rect = Rect::from_center(
         screen_center + Point::from(MENU_POS),
         SETTINGS_WINDOW_WIDTH,
@@ -197,7 +203,7 @@ pub fn menu_screen_handle_events(
     exit_button: &mut Button,
     return_to_start_button: &mut Button,
     game: &Game,
-    settings_window: &mut bool
+    settings_window: &mut bool,
 ) -> Result<MenuAction, String> {
     Button::handle_button_events(event, resume_button);
     Button::handle_button_events(event, save_button);
@@ -218,7 +224,8 @@ pub fn menu_screen_handle_events(
         return Ok(MenuAction::Exit);
     }
     if return_to_start_button.is_clicked {
-        crate::logic::constants::SHOULD_RETURN_TO_START.store(true, std::sync::atomic::Ordering::Relaxed);
+        crate::logic::constants::SHOULD_RETURN_TO_START
+            .store(true, std::sync::atomic::Ordering::Relaxed);
         *settings_window = false;
         return Ok(MenuAction::ExitToMainMenu);
     }

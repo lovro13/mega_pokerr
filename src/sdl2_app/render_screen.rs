@@ -23,11 +23,13 @@ pub fn render_player_info(
     ttf_context: &sdl2::ttf::Sdl2TtfContext,
     color: Color,
     player_count: usize,
+    is_on_turn: bool,
 ) -> Result<(), String> {
     // nariše karte, ime, balance, dealer žeton, če je treba
     let player_center = player
         .id
         .get_player_screen_center_for_count(canvas, player_count);
+
     // tukaj je center v player_position z normalnim kartezičnim
     let card2_pos = player_center + Point::new(CARD2_POS, 0);
     if player.playing {
@@ -48,6 +50,13 @@ pub fn render_player_info(
     let text_target =
         Rect::from_center(player_name_position, PLAYER_NAME_WIDTH, PLAYER_NAME_HEIGHT);
 
+    // Use different background color if player is on turn
+    let name_background = if is_on_turn {
+        Some(Color::RGBA(255, 102, 102, 100)) // Light red with more opacity for turn indicator
+    } else {
+        Some(Color::RGBA(173, 216, 230, 25)) // Light blue, very transparent background
+    };
+
     draw_text(
         canvas,
         &name_text,
@@ -55,7 +64,7 @@ pub fn render_player_info(
         ttf_context,
         PLAYER_INFO_FONT_SIZE,
         color,
-        None,
+        name_background,
         false,
     )?;
 
@@ -64,6 +73,14 @@ pub fn render_player_info(
     let balance_screen_position = player_name_position + Point::new(0, BALANCE_POS);
     let balance_text_target =
         Rect::from_center(balance_screen_position, BALANCE_WIDTH, BALANCE_HEIGHT);
+    
+    // Use same background logic for balance text
+    let balance_background = if is_on_turn {
+        Some(Color::RGBA(255, 102, 102, 100)) // Light red with more opacity for turn indicator
+    } else {
+        Some(Color::RGBA(173, 216, 230, 25)) // Light blue, very transparent background
+    };
+    
     draw_text(
         canvas,
         &balance_text,
@@ -71,7 +88,7 @@ pub fn render_player_info(
         ttf_context,
         PLAYER_INFO_FONT_SIZE,
         BALANCE_COLOR,
-        None,
+        balance_background,
         false,
     )?;
 
@@ -176,18 +193,8 @@ pub fn render_screen(
         //naprinta ime in karte igralca
         // let _ = player::Player::render_player_info(canvas, player, font);
         let color = Color::RGB(0, 0, 0);
-        if player.position == game.position_on_turn {
-            let background = LIGHT_RED;
-            let player_name_position = player
-                .id
-                .get_player_screen_center_for_count(canvas, player_count)
-                + Point::new(25, 85);
-            let text_target =
-                Rect::from_center(player_name_position, PLAYER_NAME_WIDTH, PLAYER_NAME_HEIGHT);
-            canvas.set_draw_color(background);
-            canvas.fill_rect(text_target)?;
-        }
-        let _ = render_player_info(canvas, player, &ttf_context, color, player_count);
+        let is_on_turn = player.position == game.position_on_turn;
+        let _ = render_player_info(canvas, player, &ttf_context, color, player_count, is_on_turn);
         // nariše karte, imena, balance
     }
 
@@ -215,6 +222,77 @@ pub fn render_screen(
         None,
         false,
     )?;
+
+    // Display all players' debts in top right corner
+    let (screen_width, _) = canvas.output_size()?;
+    let mut debt_y_offset = 20;
+    let debt_panel_width = 180; // Consistent width for all elements
+    let debt_panel_x = screen_width as i32 - debt_panel_width - 10; // 10px margin from edge
+    
+    // Calculate total height needed for the debt panel
+    let total_height = 30 + 40 + (game.players.len() * 35); // title + spacing + players
+    
+    // Draw single background for entire debt panel
+    let panel_background = Rect::new(
+        debt_panel_x - 5, // Slightly larger for padding
+        debt_y_offset - 5,
+        (debt_panel_width + 10) as u32,
+        total_height as u32
+    );
+    canvas.set_draw_color(Color::RGBA(255, 255, 255, 180));
+    canvas.fill_rect(panel_background)?;
+    
+    // Draw title "Debts:"
+    let title_text = "Debts:";
+    let title_pos = Rect::new(
+        debt_panel_x,
+        debt_y_offset,
+        debt_panel_width as u32,
+        30
+    );
+    
+    draw_text(
+        canvas,
+        title_text,
+        title_pos,
+        ttf_context,
+        30, // Slightly larger font for title
+        Color::RGB(0, 0, 0), // Black color for title
+        None, // No individual background
+        true, // Use custom background
+    )?;
+    
+    debt_y_offset += 40; // Move down after title
+    
+    for player in &game.players {
+        let debt_text = format!("{}: {}", player::Player::player_id_to_str(player), player.debt);
+        let debt_pos = Rect::new(
+            debt_panel_x,
+            debt_y_offset,
+            debt_panel_width as u32,
+            30
+        );
+        
+        let debt_color = if player.debt > 0 {
+            Color::RGB(128, 0, 0) // Dark red for players with debt
+        } else {
+            Color::RGB(0, 128, 0) // Dark green for players with no debt
+        };
+        
+        draw_text(
+            canvas,
+            &debt_text,
+            debt_pos,
+            ttf_context,
+            25, // Smaller font size for corner display
+            debt_color,
+            None, // No individual background
+            true, // Use custom background
+        )?;
+        
+        debt_y_offset += 35; // Move down for next player
+    }
+
     Ok(())
 }
 

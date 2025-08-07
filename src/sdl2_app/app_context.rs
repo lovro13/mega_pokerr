@@ -21,6 +21,7 @@ pub fn init_app_context() -> Result<AppContext, String> {
     let window = video_subsystem
         .window("POKEEEER", SCREEN_WIDTH, SCREEN_HEIGHT)
         .position_centered()
+        .resizable()
         .opengl()
         .build()
         .map_err(|e| e.to_string())?;
