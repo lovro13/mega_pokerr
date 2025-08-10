@@ -8,7 +8,9 @@ matematično pravilno, če bo pa še to prelahko pa se lahko tudi
 vzpostavi server na katerem bo možno igrati igrico proti drugim igralcem.
 
 # Usage
-## 1. Namestitev SDL2 knjižnic
+## 1. Namestitev
+
+### 1.1. Namestitev SDL2 knjižnic
 Odprite terminal in zaženite na linux debian:
 ```bash
 sudo apt update
@@ -17,9 +19,24 @@ sudo apt install -y \
   libsdl2-image-dev \    # Podpora za slike (PNG, JPG itd.)
   libsdl2-ttf-dev        # Podpora za TrueType font
 ```
-Na macu podobno lahko (treba pogooglat), na Windowsih pa mi ni uspelo namestiti SDL2
+Na macu podobno lahko (treba pogooglat).
+Namestitev SDL2 knjižnice na windowsih je nekoliko bolj zakomplicirana. Nalodila za namestitev se nahajajo na 
+[https://github.com/Rust-SDL2/rust-sdl2](https://github.com/Rust-SDL2/rust-sdl2)
+
+### 1.2. Sauron app
+
+Za izgraditev projekta Sauron app potrebuje wasm-pack:
+```bash
+cargo install wasm-pack
+```
+Za zagon aplikacije Sauron app potrebuje osnovni HTTP server:
+```bash
+cargo install basic-http-server
+```
+
+
 ## 2. Grajenje projekta
-Imamo 2 frontenda, prvi za sdl2 app, drugi za terminal app, sauron web app je še v nastajanju. Vse je še v nastajanju.
+Imamo 3 frontende, prvi za sdl2 app, drugi za terminal app in tretji za sauron app.
 
 Terminal app:
 ```bash
@@ -32,7 +49,7 @@ cargo run --bin sdl2_app --features run_with_sdl2
 ```
 
 Sauron app:
-* posodobitev sauron verzije:
+* grajenje projekta:
 ```bash
 wasm-pack build --release --target=web --features compile_with_sauron
 ```
