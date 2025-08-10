@@ -15,6 +15,21 @@ pub enum Id {
     Player8,
 }
 
+impl Id {
+    pub fn to_str(&self) -> String {
+        match self {
+            Id::Player1 => String::from("Player 1"),
+            Id::Player2 => String::from("Player 2"),
+            Id::Player3 => String::from("Player 3"),
+            Id::Player4 => String::from("Player 4"),
+            Id::Player5 => String::from("Player 5"),
+            Id::Player6 => String::from("Player 6"),
+            Id::Player7 => String::from("Player 7"),
+            Id::Player8 => String::from("Player 8"),
+        }
+    }
+}
+
 #[derive(PartialEq, Debug, Clone, Serialize, Deserialize)]
 pub enum PlayerPosition {
     Dealer,
