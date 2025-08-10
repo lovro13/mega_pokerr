@@ -1,0 +1,68 @@
+body { 
+    font-family: verdana, arial, monospace; 
+}
+main {
+    width: auto;
+    margin: auto;
+    text-align: center;
+}
+input, .count{
+    width: 100px;
+    font-size: 40px;
+    padding: 10px;
+    margin: 0px;
+}
+
+/* Animation for bet notifications */
+.bet-animation-a {
+    animation: betNotificationA 3s ease-in-out;
+}
+
+.bet-animation-b {
+    animation: betNotificationB 3s ease-in-out;
+}
+
+@keyframes betNotificationA {
+    0% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.8);
+    }
+    20% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1.1);
+    }
+    80% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+    }
+    100% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.9);
+    }
+}
+
+@keyframes betNotificationB {
+    0% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.8);
+    }
+    20% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1.1);
+    }
+    80% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+    }
+    100% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.9);
+    }
+}
+
+/* Base styles for animation overlay */
+.animation-overlay {
+    z-index: 1000;
+    pointer-events: none;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}

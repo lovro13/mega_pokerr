@@ -26,7 +26,6 @@ default-features = false
 features = ["bundled"]
 optional = true
 
-
 [dependencies.sdl2]
 version = "0.32.1"
 default-features = false
