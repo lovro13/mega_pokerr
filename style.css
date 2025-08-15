@@ -1,5 +1,113 @@
 body { 
-    font-family: verdana, arial, monospace; 
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #fff;
+    color: #000000;
+}
+
+.folded {
+    white-space: nowrap;
+    text-align: center;
+    margin: 0 auto;
+    background-color: #b8a5a5ef;
+    color: #f44336;
+    font-size: large;
+    border-radius: 4px;
+    padding: 5px;
+    display: inline-block;
+    border: 1px solid red;
+    min-width: 80;
+}
+
+/* Player info text container */
+.player-info-text {
+    white-space: nowrap;
+    text-align: center;
+    margin: 0 auto;
+    background-color: #b8a5a5ef;
+    border-radius: 4px;
+    padding: 5px;
+    display: inline-block;
+    border: 1px solid red;
+    min-width: 80;
+}
+
+.player-info-text p {
+    margin: 5px 0;
+}
+
+
+/* New round btn */
+.new-round-btn {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 10px auto;
+    padding: 10px 20px;
+    min-width: 150px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+    white-space: nowrap;
+}
+
+.new-round-btn:hover {
+    background-color: #45a049;
+}
+
+/* Input aktivnega igralca */
+.player-input-container {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    align-items: center;
+    margin: 80px 0;
+}
+
+.player-input-container button {
+    padding: 15px 30px;
+    font-size: 16px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.player-input-container button:hover {
+    opacity: 0.9;
+}
+
+.player-input-container .raise-btn {
+    background-color: #4CAF50;
+    color: white;
+}
+
+.player-input-container .call-btn {
+    background-color: #2196F3;
+    color: white;
+}
+
+.player-input-container .fold-btn {
+    background-color: #f44336;
+    color: white;
+}
+
+.raise-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.raise-controls input[type="button"] {
+    width: 50px;
+    height: 30px;
+    font-size: 18px;
+    padding: 0;
+    margin: 0;
+    line-height: 1;
 }
 main {
     width: auto;
@@ -13,13 +121,155 @@ input, .count{
     margin: 0px;
 }
 
-/* Animation for bet notifications */
+/* Začetni meni */
+.main-menu {
+    background: rgba(26, 32, 44, 0.9);
+    border-radius: 15px;
+    padding: 2.5rem 3rem;
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    text-align: center;
+    max-width: 500px;
+    width: 90%;
+    margin: auto;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.main-menu h1 {
+    color: #fff;
+    margin-bottom: 2rem;
+    font-size: 2.5rem;
+}
+
+.player-count {
+    margin-bottom: 2rem;
+    background: #ffffff2c;
+    padding: 1.5rem;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.player-count p {
+    margin: 0 0 1rem 0;
+    font-size: 1.2rem;
+    color: #e0e0e0;
+    text-align: center;
+}
+
+.player-count-selection {
+    display: flex;
+    height: 60px;
+}
+
+.player-count-selection .decrement-btn,
+.player-count-selection .increment-btn,
+.player-count-selection .count-btn {
+    height: 100%;
+    margin: 0;
+    padding: 0 2rem;
+    font-size: 1.5rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid #4a6da7;
+}
+
+.player-count-selection .decrement-btn {
+    background: #4a6da7;
+    color: white;
+    border-radius: 8px 0 0 8px;
+    border-right: none;
+}
+
+.player-count-selection .count-btn {
+    background: #2c3e50;
+    color: white;
+    border-left: none;
+    border-right: none;
+    min-width: 80px;
+}
+
+.player-count-selection .increment-btn {
+    background: #4a6da7;
+    color: white;
+    border-radius: 0 8px 8px 0;
+    border-left: none;
+}
+
+.player-count-selection .decrement-btn:hover,
+.player-count-selection .increment-btn:hover {
+    background: #3a5a8c;
+    transform: translateY(-2px);
+}
+
+button.start {
+    background: linear-gradient(45deg, #4CAF50, #45a049);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 1rem 3rem;
+    font-size: 1.2rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-top: 1rem;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+button.start:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+    background: linear-gradient(45deg, #45a049, #4CAF50);
+}
+
+@media (max-width: 600px) {
+    .main-menu {
+        padding: 1.5rem;
+    }
+    
+    .main-menu h1 {
+        font-size: 2rem;
+    }
+    
+    .player-count {
+        padding: 1rem;
+    }
+}
+
+/* Animations */
+.animation-overlay {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    background-color: green;
+    padding: 20px;
+    border-radius: 8px;
+    color: white;
+    font-weight: bold;
+    font-size: 24px;
+    pointer-events: none;
+    z-index: 1000;
+    pointer-events: none;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
 .bet-animation-a {
-    animation: betNotificationA 3s ease-in-out;
+    animation: betNotificationA 2s ease-in-out forwards;
 }
 
 .bet-animation-b {
-    animation: betNotificationB 3s ease-in-out;
+    animation: betNotificationB 2s ease-in-out forwards;
 }
 
 @keyframes betNotificationA {
@@ -58,11 +308,4 @@ input, .count{
         opacity: 0;
         transform: translate(-50%, -50%) scale(0.9);
     }
-}
-
-/* Base styles for animation overlay */
-.animation-overlay {
-    z-index: 1000;
-    pointer-events: none;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }

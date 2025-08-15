@@ -11,9 +11,12 @@ use crate::logic::game::{
     Game,
     Streets
 };
+use crate::logic::tactics1::make_decision;
+
+
 
 pub fn get_bet(game: &Game, req_bet: u32) -> Option<u32> {
-    get_bet_1(game, req_bet, ai_1)
+    get_bet_1(game, req_bet, make_decision)
 }
 
 

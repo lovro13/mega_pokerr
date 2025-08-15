@@ -1,13 +1,9 @@
 
-use crate::logic::constants::{BIG_BLIND, SHOULD_QUIT, SHOULD_RETURN_TO_START};
 use crate::logic::game::{
     Game,
-    Streets
 };
-use crate::logic::card::Card;
-use crate::logic::player::{Player, PlayerPosition, Id};
+use crate::logic::player::{PlayerPosition, Id};
 use crate::sauron_app::constants::MAIN_PLAYER;
-use std::thread::sleep;
 
 #[derive(Clone, Debug)]
 pub enum Response {
@@ -42,7 +38,7 @@ pub fn active_bet(game: &mut Game, current_req_bet: u32, raise: u32) -> Response
     };
     if raise != 0 {game.round_number = 2};
     let new_req_bet = current_req_bet + raise;
-    let actual_diff= {
+    let (actual_raise, actual_diff)= {
         let player = game.player_on_turn();
         let diff = new_req_bet - player.current_bet;
         if player.chips < diff {
@@ -51,12 +47,12 @@ pub fn active_bet(game: &mut Game, current_req_bet: u32, raise: u32) -> Response
             let all_in_amount = player.current_bet + player.chips;
             player.current_bet = all_in_amount;
             player.chips = 0;
-            remaining
+            (remaining - current_req_bet, remaining)
         } else {
             // Normal bet
             player.current_bet = new_req_bet;
             player.chips -= diff;
-            diff
+            (raise, diff)
         }
     };
     game.pot += actual_diff;
@@ -73,21 +69,14 @@ pub fn active_bet(game: &mut Game, current_req_bet: u32, raise: u32) -> Response
     
     if finished {
         game.position_on_turn = PlayerPosition::SmallBlind;
-        Response::StreetFinished(player_id, Some(raise))
+        Response::StreetFinished(player_id, Some(actual_raise))
     } else {
-        Response::BetPlaced(player_id, max_bet, Some(raise))
+        Response::BetPlaced(player_id, max_bet, Some(actual_raise))
     }
 }
 
 pub fn make_bets(game: &mut Game, req_bet: u32, mut get_bet: impl FnMut(&Game, u32) -> Option<u32>) -> Response {
     game.round_number += 1;
-    let current_req_bet = match game.street {
-        Streets::PreFlop => match game.position_on_turn {
-            PlayerPosition::UnderTheGun => BIG_BLIND,
-            _ => req_bet
-        },
-        _ => req_bet
-    };
     let (player_id, is_playing) = {
         let player = game.player_on_turn_immutable();
         (player.id.clone(), player.playing)
@@ -100,12 +89,12 @@ pub fn make_bets(game: &mut Game, req_bet: u32, mut get_bet: impl FnMut(&Game, u
         if player_id == MAIN_PLAYER {
             Response::WaitingPlayer1(req_bet)
         } else {
-            match get_bet(&game, current_req_bet) {
+            match get_bet(&game, req_bet) {
                 None => {
                     fold_bet(game)
                 },
                 Some(raise) => {
-                    active_bet(game, current_req_bet, raise)
+                    active_bet(game, req_bet, raise)
                 }
             }
         }
@@ -115,7 +104,7 @@ pub fn make_bets(game: &mut Game, req_bet: u32, mut get_bet: impl FnMut(&Game, u
         if finished {
             Response::EndRound
         } else {
-            make_bets(game, current_req_bet, get_bet)
+            make_bets(game, req_bet, get_bet)
         }
         
     }
