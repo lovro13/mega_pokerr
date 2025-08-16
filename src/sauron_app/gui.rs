@@ -19,8 +19,6 @@ use crate::sauron_app::{
     ai::{get_bet,},
     };
 
-
-
 struct Settings {
     player_count: usize,
     animation_speed: u32,
@@ -111,10 +109,6 @@ impl App {
         }
     }
 
-    // Player chips
-    // fn player_chips(&Self, chips: &u32) -> Node<Msg> {
-    // }
-
     // Player node
     fn render_player(&self, player_id: usize) -> Node<Msg> {
         let player = match self.game {
@@ -131,6 +125,13 @@ impl App {
                     Some(player) => player
                 }
             }
+        };
+        let player_on_turn = match &self.game {
+            None => {
+                console::log(&Array::of1(&JsValue::from_str("Game failed to render (gui - render_player)")));
+                &Player::new()
+            },
+            Some(game) => game.player_on_turn_immutable()
         };
         let (card1_a, card2_a) = &player.hand_cards;
         let (card1, card2) = if self.ui.waiting_new_round || (player_id == 1)  {
@@ -163,8 +164,11 @@ impl App {
             (x + 2.), y
         );
         let style_text = format!(
-            "position: absolute; left: {}%; top: {}%; transform: translate(-50%, -50%);",
-            (x - 4.), (y + 15.)
+            "position: absolute; left: {}%; top: {}%; transform: translate(-50%, -50%);
+            background: {};",
+            (x - 4.), (y + 15.), {
+                if player_on_turn.id == player.id {"#59f566ef"} else {"#b8a5a5ef"}
+            }
         );
         let style_token = format!(
             "position: absolute; left: {}%; top: {}%; transform: translate(-50%, -50%);",
@@ -202,7 +206,6 @@ impl App {
                         </div>
                     }  
                 }}
-
                 <div class="player-info-text"
                 style={style_text}>
                     <p>
@@ -296,13 +299,13 @@ impl App {
                     }}
                 </div>
                 <div class="animation-container">
-                    {if !self.animations.css_class.is_empty() {node!{<div 
-                        class={format!("animation-overlay {}", self.animations.css_class)
-                        }
-                        on_animationend=|_| {
-                            web_sys::console::log_1(&"Animation ended".into());
-                            Msg::EndAnimation
-                        }>
+                    {if !self.animations.css_class.is_empty() {node!{
+                        <div class={format!("animation-overlay {}", self.animations.css_class)}
+                            on_animationend=|_| {
+                                web_sys::console::log_1(&"Animation ended".into());
+                                Msg::EndAnimation
+                            }
+                        >
                         <p>{text(self.animations.message.clone())}</p>
                     </div>}} 
                     else {node!{<div></div>}}
@@ -467,7 +470,6 @@ impl App {
             Animated::EndRound => {
                 self.ui.waiting_new_round = true;
                 self.animations.animation_type = Animated::EndRound;
-
                 self.req_bet = 0;
                 let winners_str = match self.game {
                     None => {
@@ -667,7 +669,6 @@ impl Application for App {
                         self.ui.waiting_input = true;
                     },
                     Response::OnePlayerRemaning => {
-                        // end round
                         self.debug = "1 player remaining".to_string();
                         self.animate(Animated::EndRound);
                     },
@@ -679,14 +680,12 @@ impl Application for App {
                             },
                             Some(ref mut game) => {
                                 let response = make_bets(game, self.req_bet, get_bet);
-                                // Debug: log what make_bets returned
                                 response
                             }
                         };
                         self.animate(Animated::Bet(response));
                     },
                     Response::StreetFinished(_, _) => {
-                        // new bet
                         self.req_bet = 0;
                         let msg = match self.game {
                             None => {
@@ -694,9 +693,8 @@ impl Application for App {
                                 Msg::None
                             },
                             Some(ref mut game) => {
-                                // end street
                                 next_turn(game);
-                                game.round_number = 0;
+                                game.round_number = 1;
                                 match game.street {
                                     Streets::Showdown => {
                                         Msg::NewRound
@@ -785,6 +783,7 @@ impl Application for App {
                         console::log(&Array::of1(&JsValue::from_str("Game not found (gui - EndRound)")));
                     },
                     Some(ref mut game) => {
+                        game.position_on_turn = PlayerPosition::SmallBlind;
                         for player in &mut game.players {
                             player.opened_cards = false;
                             player.playing = true;
@@ -814,6 +813,14 @@ impl Application for App {
                 self.start_round();
             },
             Msg::EndAnimation => {
+                match self.game {
+                    None => {
+                        console::log(&Array::of1(&JsValue::from_str("Game not found (gui - EndRound)")));
+                    },
+                    Some(ref mut game) => {
+                    game.position_on_turn = game.position_on_turn.next_player_on_turn_for_count(game.player_count);
+                    }
+                };
                 let msg = match self.animations.animation_type.clone() {
                     Animated::Bet(response) => {
                         Msg::BetResponse(response)

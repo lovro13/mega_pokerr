@@ -1,19 +1,13 @@
 use crate::logic::{
-    player::Player,
     card::{
-        CardColor,
-        CardNumber,
         Card
     },
 };
-use crate::logic::constants::{BIG_BLIND, SHOULD_QUIT, SHOULD_RETURN_TO_START};
 use crate::logic::game::{
     Game,
-    Streets
 };
+
 use crate::logic::tactics1::make_decision;
-
-
 
 pub fn get_bet(game: &Game, req_bet: u32) -> Option<u32> {
     get_bet_1(game, req_bet, make_decision)
@@ -31,6 +25,7 @@ fn get_bet_1(game: &Game, req_bet: u32,
         ai(player_hand, table_cards, req_bet, players_curr_bet, player_chips)
     }
 
+// Testni AI
 fn ai_1(
     player_cards: &(Card, Card),
     table_cards: &Vec<Card>, 

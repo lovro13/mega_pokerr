@@ -1,7 +1,5 @@
 
-use crate::logic::game::{
-    Game,
-};
+use crate::logic::game::Game;
 use crate::logic::player::{PlayerPosition, Id};
 use crate::sauron_app::constants::MAIN_PLAYER;
 
@@ -21,7 +19,6 @@ pub fn fold_bet(game: &mut Game, req_bet: u32) -> Response {
         player.id.clone()
     };
     let active_players: Vec<_> = game.players.iter().filter(|p| p.playing).collect();
-    game.position_on_turn = game.position_on_turn.next_player_on_turn_for_count(game.player_count);
     let finished = if game.round_number as usize > active_players.len() {true} else {false};
     
     if finished {
@@ -61,9 +58,7 @@ pub fn active_bet(game: &mut Game, current_req_bet: u32, raise: u32) -> Response
     
     if actual_raise != 0 {game.round_number = 2};
     game.pot += actual_diff;
-    game.position_on_turn = game.position_on_turn.next_player_on_turn_for_count(game.player_count);
     
-    // Check if round is finished
     let active_players: Vec<_> = game.players.iter().filter(|p| p.playing).collect();
     let finished = if game.round_number as usize > active_players.len() {true} else {false};
     let max_bet = game.players.iter()
@@ -72,9 +67,7 @@ pub fn active_bet(game: &mut Game, current_req_bet: u32, raise: u32) -> Response
         .max()
         .unwrap_or(0);
     
-    
     if finished {
-        game.position_on_turn = PlayerPosition::SmallBlind;
         Response::StreetFinished(player_id, Some(actual_raise))
     } else {
         Response::BetPlaced(player_id, max_bet, Some(actual_raise))
@@ -105,18 +98,13 @@ pub fn make_bets(game: &mut Game, req_bet: u32, mut get_bet: impl FnMut(&Game, u
             }
         }
     } else {
-        game.position_on_turn = game.position_on_turn.next_player_on_turn_for_count(game.player_count);
         let active_players: Vec<_> = game.players.iter().filter(|p| p.playing).collect();
         let finished = if game.round_number as usize > active_players.len() {true} else {false};
         if finished {
             Response::EndRound
         } else {
+            game.position_on_turn = game.position_on_turn.next_player_on_turn_for_count(game.player_count);
             make_bets(game, req_bet, get_bet)
-        }
-        
+        }   
     }
-
-
-    
-    
 }
