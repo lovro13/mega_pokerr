@@ -264,6 +264,28 @@ impl Id {
 }
 
 impl Player {
+    pub fn new() -> Player {
+        Player {
+            id: Id::Player1,
+            hand_cards: (
+                card::Card {
+                    color: card::CardColor::Empty,
+                    number: card::CardNumber::Empty,
+                },
+                card::Card {
+                    color: card::CardColor::Empty,
+                    number: card::CardNumber::Empty,
+                },
+            ),
+            position: PlayerPosition::NotPlaying,
+            chips: BUY_IN,
+            playing: true,
+            current_bet: 0,
+            debt: 0,
+            opened_cards: false,
+        }
+    }
+
     pub fn init_players() -> Vec<Player> {
         Self::init_players_with_count(crate::logic::constants::DEFAULT_PLAYER_COUNT)
     }

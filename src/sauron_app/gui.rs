@@ -1,10 +1,11 @@
 
-use core::panic;
+use sauron::js_sys::Array;
 use sauron::prelude::*;
+use sauron::web_sys::console;
 use web_sys::KeyboardEvent;
 
 use crate::logic::choose_winner::choose_winner;
-use crate::logic::constants::BIG_BLIND;
+use crate::logic::constants::{BIG_BLIND,};
 use crate::logic::{
     card::{Card, CardColor, CardNumber}, 
     constants::DEFAULT_PLAYER_COUNT, 
@@ -12,7 +13,7 @@ use crate::logic::{
     player::{self, Player, PlayerPosition}, 
     round::{begin_round, next_turn}
 };
-use crate::sauron_app::constants::{DEFAULT_ANIMATION_TIME, DEFAULT_RAISE, DEBUG_VIEW};
+use crate::sauron_app::constants::{DEBUG_VIEW, DEFAULT_ANIMATION_TIME, DEFAULT_RAISE};
 use crate::sauron_app::{
     make_bets::{Response, make_bets, active_bet, fold_bet},
     ai::{get_bet,},
@@ -117,10 +118,16 @@ impl App {
     // Player node
     fn render_player(&self, player_id: usize) -> Node<Msg> {
         let player = match self.game {
-            None => panic!("Game failed to render (gui - render_player)"),
+            None => {
+                console::log(&Array::of1(&JsValue::from_str("Game failed to render (gui - render_player)")));
+                &Player::new()
+            },
             Some(ref game) => {
                 match game.players.get(player_id - 1) {
-                    None => panic!("Player not found (gui - render_player)"),
+                    None => {
+                        console::log(&Array::of1(&JsValue::from_str("Game failed to render (gui - render_player)")));
+                        &Player::new()
+                    },
                     Some(player) => player
                 }
             }
@@ -253,10 +260,16 @@ impl App {
     // Igralna miza
     fn render_game(&self) -> Node<Msg> { 
         let table_cards = match self.game {
-            None => panic!("Game failed to render (gui - render_player)"),
+            None => {
+                console::log(&Array::of1(&JsValue::from_str("Game failed to render (gui - render_player)")));
+                &Vec::new()
+            },
             Some(ref game) => &game.table_cards};
         let game_pot = match self.game {
-            None => panic!("Game failed to render (gui - render_player)"),
+            None => {
+                console::log(&Array::of1(&JsValue::from_str("Game failed to render (gui - render_player)")));
+                &0
+            },
             Some(ref game) => &game.pot};
         let mut i = 0;
         node! {
@@ -284,13 +297,7 @@ impl App {
                 </div>
                 <div class="animation-container">
                     {if !self.animations.css_class.is_empty() {node!{<div 
-                        class={
-                            let base = "animation-overlay";
-                            if self.animations.toggle {
-                                format!("{} bet-animation-a", base)
-                            } else {
-                                format!("{} bet-animation-b", base)
-                            }
+                        class={format!("animation-overlay {}", self.animations.css_class)
                         }
                         on_animationend=|_| {
                             web_sys::console::log_1(&"Animation ended".into());
@@ -390,7 +397,10 @@ impl App {
     fn start_round(&mut self) {
         self.debug = "start round".to_string();
         let response = match self.game {
-            None => {panic!("Faild to start game - no game exists(gui - start_game)")},
+            None => {
+                console::log(&Array::of1(&JsValue::from_str("Faild to start game - no game exists(gui - start_game)")));
+                Response::EndRound
+            },
             Some(ref mut game) => {
                 begin_round(game, self.settings.player_count);
                 make_bets(game, BIG_BLIND, get_bet)
@@ -406,13 +416,16 @@ impl App {
                 self.animations.animation_type = Animated::Bet(response.clone());
                 match response.clone() {
                     Response::WaitingPlayer1(req_bet) => {
+                        console::log(&Array::of1(&JsValue::from_str("Waiting player 1")));
                         self.req_bet = req_bet;
                         self.update(Msg::BetResponse(Response::WaitingPlayer1(req_bet)));
                     },
                     Response::OnePlayerRemaning => {
-                        self.update(Msg::BetResponse(Response::OnePlayerRemaning));
+                        console::log(&Array::of1(&JsValue::from_str("One player left")));
+                        self.animate(Animated::EndRound);
                     },
                     Response::BetPlaced(id, req_bet, decision ) => {
+                        console::log(&Array::of1(&JsValue::from_str("Bet placed")));
                         self.debug = "bet placed".to_string();
                         self.req_bet = req_bet;
                         let animating_player = id.to_str();
@@ -430,6 +443,7 @@ impl App {
                         };
                     },
                     Response::StreetFinished(id, decision) => {
+                        console::log(&Array::of1(&JsValue::from_str("Street finished")));
                         let animating_player = id.to_str();
                         let decision_text = match decision {
                             None => {String::from("folded")},
@@ -445,6 +459,7 @@ impl App {
                         };
                     },
                     Response::EndRound => {
+                        console::log(&Array::of1(&JsValue::from_str("End round")));
                         self.animate(Animated::EndRound);
                     }
                 }
@@ -455,10 +470,24 @@ impl App {
 
                 self.req_bet = 0;
                 let winners_str = match self.game {
-                    None => {panic!("Game not found (gui - EndRound)")},
+                    None => {
+                        console::log(&Array::of1(&JsValue::from_str("Game not found (gui - EndRound)")));
+                        "error".to_string()
+                    },
                     Some(ref mut game) => {
                         let pot = game.pot;
-                        let winners = choose_winner(game);
+                        let winners ={
+                            let active_players: Vec<_> = 
+                                game.players.iter_mut().filter(|p| p.playing).collect();
+                            match active_players.len() {
+                                0 => {
+                                    console::log(&Array::of1(&JsValue::from_str("Error: no active players at EndRound")));
+                                    vec![]
+                                },
+                                1 => active_players,
+                                _ => choose_winner(game)
+                            }
+                        }; 
                         let winner_names = Vec::from_iter(winners.iter().map(|player| player.id.to_str()));
                         let n = winners.len() as u32;
                         for player in winners {
@@ -466,7 +495,10 @@ impl App {
                         };
                         //game.pot = 0;
                         match winner_names.len() {
-                            0 => panic!("No winners found (gui - animate EndRound)"),
+                            0 => {
+                                console::log(&Array::of1(&JsValue::from_str("No winners found (gui - animate EndRound)")));
+                                "error".to_string()
+                            },
                             1 => format!("{} wins {} chips", winner_names[0].clone(), pot),
                             2 => format!("{} and {} win {} chips", winner_names[0], winner_names[1], pot),
                             _ => {
@@ -620,6 +652,7 @@ impl Application for App {
                     self.ui.pause = false;
                     self.ui.main_menu = false;
                     self.last_key = "Enter (StartGame)".to_string();
+                    console::log(&Array::of1(&JsValue::from_str("Starting game")));
                     self.start_game();
                 } else if self.ui.waiting_new_round {
                     self.ui.waiting_new_round = false;
@@ -635,11 +668,15 @@ impl Application for App {
                     },
                     Response::OnePlayerRemaning => {
                         // end round
+                        self.debug = "1 player remaining".to_string();
                         self.animate(Animated::EndRound);
                     },
                     Response::BetPlaced(_, _, _) => {
                         let response = match self.game {
-                            None => {panic!("Failed to start game - no game exists(gui - Msg::BetResponse(BetPlaced))")},
+                            None => {
+                                console::log(&Array::of1(&JsValue::from_str("Failed to start game - no game exists(gui - Msg::BetResponse(BetPlaced))")));
+                                Response::EndRound
+                            },
                             Some(ref mut game) => {
                                 let response = make_bets(game, self.req_bet, get_bet);
                                 // Debug: log what make_bets returned
@@ -652,7 +689,10 @@ impl Application for App {
                         // new bet
                         self.req_bet = 0;
                         let msg = match self.game {
-                            None => panic!("Failed to start game - no game exists(gui - Msg::BetResponse(RoundFinished))"),
+                            None => {
+                                console::log(&Array::of1(&JsValue::from_str("Failed to start game - no game exists(gui - Msg::BetResponse(RoundFinished))")));
+                                Msg::None
+                            },
                             Some(ref mut game) => {
                                 // end street
                                 next_turn(game);
@@ -674,7 +714,9 @@ impl Application for App {
                             Msg::NewRound => {
                                 self.animate(Animated::EndRound);
                             },
-                            _ => {panic!("Unexpected message type in Msg::BetResponse(RoundFinished)")}
+                            _ => {
+                                console::log(&Array::of1(&JsValue::from_str("Unexpected message type in Msg::BetResponse(RoundFinished)")));
+                            },
                         }
                     },
                     Response::EndRound => {
@@ -683,25 +725,34 @@ impl Application for App {
                 }
             },
             Msg::Fold => {
+                self.debug = "player fold".to_string();
                 self.last_key = "f (Fold)".to_string();
                 if self.ui.waiting_input {
                     self.ui.waiting_input = false;
                     let response = match self.game {
-                        None => {panic!("Faild to start game - no game exists(gui - Msg::Fold)")},
+                        None => {
+                            console::log(&Array::of1(&JsValue::from_str("Faild to start game - no game exists(gui - Msg::Fold)")));
+                            Response::EndRound
+                        },
                         Some(ref mut game) => {
-                            fold_bet(game)
+                            fold_bet(game, self.req_bet)
                         }
                     };
                     self.animate(Animated::Bet(response));
                 }
             },
             Msg::Raise => {
+                self.debug = "player raise".to_string();
                 self.last_key = "v (Raise)".to_string();
                 if self.ui.waiting_input {
                     self.ui.waiting_input = false;
                     let response = match self.game {
-                        None => {panic!("Faild to start game - no game exists(gui - Msg::Raise)")},
-                        Some(ref mut game) => {  
+                        None => {
+                            console::log(&Array::of1(&JsValue::from_str("Faild to start game - no game exists(gui - Msg::Raise)")));
+                            Response::EndRound
+                        },
+                        Some(ref mut game) => {
+                            game.round_number += 1;
                             active_bet(game, self.req_bet, self.raise)
                         }
                     };
@@ -709,12 +760,17 @@ impl Application for App {
                 };
             },
             Msg::Call => {
+                self.debug = "player call".to_string();
                 self.last_key = "c (Call)".to_string();
                 if self.ui.waiting_input {
                     self.ui.waiting_input = false;
                     let response = match self.game {
-                        None => {panic!("Faild to start game - no game exists(gui - Msg::Raise)")},
+                        None => {
+                            console::log(&Array::of1(&JsValue::from_str("Faild to start game - no game exists(gui - Msg::Call)")));
+                            Response::EndRound
+                        },
                         Some(ref mut game) => {
+                            game.round_number += 1;
                             active_bet(game, self.req_bet, 0)
                         }
                     };
@@ -725,7 +781,9 @@ impl Application for App {
                 self.req_bet = 0;
                 self.ui.waiting_new_round = false;
                 match self.game {
-                    None => {panic!("Game not found (gui - EndRound)")},
+                    None => {
+                        console::log(&Array::of1(&JsValue::from_str("Game not found (gui - EndRound)")));
+                    },
                     Some(ref mut game) => {
                         for player in &mut game.players {
                             player.opened_cards = false;
@@ -756,7 +814,6 @@ impl Application for App {
                 self.start_round();
             },
             Msg::EndAnimation => {
-                self.animations.css_class.clear();
                 let msg = match self.animations.animation_type.clone() {
                     Animated::Bet(response) => {
                         Msg::BetResponse(response)
@@ -765,7 +822,6 @@ impl Application for App {
                         Msg::NewRound
                     }
                 };
-                self.debug = "test Msg::end".to_string();
                 self.update(msg);
             },
             _ => return Cmd::none(),
@@ -776,5 +832,6 @@ impl Application for App {
 
 #[wasm_bindgen(start)]
 pub fn start() {
+    console::log(&Array::of1(&JsValue::from_str("Program started")));
     Program::mount_to_body(App::new());
 }
