@@ -25,11 +25,11 @@ Namestitev SDL2 knjižnice na windowsih je nekoliko bolj zakomplicirana. Nalodil
 
 ### 1.2. Sauron app
 
-Za izgraditev projekta Sauron app potrebuje wasm-pack:
+Za izgraditev projekta Sauron app je potreben wasm-pack:
 ```bash
 cargo install wasm-pack
 ```
-Za zagon aplikacije Sauron app potrebuje osnovni HTTP server:
+Za zagon aplikacije Sauron app je potreben osnovni HTTP server:
 ```bash
 cargo install basic-http-server
 ```
