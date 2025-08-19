@@ -6,7 +6,6 @@ Naredila sva jo z rust knjižnico za delo z grafikami SDL2, ki naredijo "desktop
 Nasprotniki proti katerim uporabnik igra so boti, ki igrajo na podlagi tega kako dobre karte so dobili. Na SDL2-app pa je implementirano tudi shranjevanje igre, torej če je uporabnik premagal bote in veliko
 zasložil si lahko shrani igro, in nadaljuje to isto igro kasneje.
 
-# Usage
 ## 1. Namestitev
 
 ### 1.1. Namestitev SDL2 knjižnic
