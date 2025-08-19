@@ -19,8 +19,9 @@ sudo apt install -y \
   libsdl2-ttf-dev \
   libsdl2-gfx-dev    # Podpora za TrueType font
 ```
-Na MacOs sistemu podobno lahko namestimo sdl2 knjižnice v parih komandah.
-Namestitev SDL2 knjižnice na windowsih je nekoliko bolj zakomplicirana. Nalodila za namestitev se nahajajo na 
+Na MacOs sistemu podobno lahko namestimo SLD2 knjižnice v parih komandah, ampak ker nimava MacOs, nisva dala navodil za 
+namestitve saj ne bi mogla preveriti če dela.
+Namestitev SDL2 knjižnice na windowsih je nekoliko bolj zakomplicirana. Nalodila za namestitev za vse podprte sisteme se nahajajo na 
 [https://github.com/Rust-SDL2/rust-sdl2](https://github.com/Rust-SDL2/rust-sdl2)
 
 ### 1.2. Sauron app
