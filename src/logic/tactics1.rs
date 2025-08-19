@@ -56,7 +56,7 @@ pub fn rank_cards_preflop(pair_of_cards: Vec<Card>) -> u32 {
 
 pub fn make_decision(
     player_cards: &(Card, Card),
-    table_cards: &Vec<Card>, // v planu še uporabit
+    _table_cards: &Vec<Card>, // v planu še uporabit
     req_bet: u32,
     players_curr_bet: u32, // samo za to da nau preveč stavu in da enkrat neha
     player_chips: u32,
