@@ -1,4 +1,4 @@
-# projektna_prog_2
+# Projektna naloga za programiranje 2 - POKER
 Lovro Zupan Škrlj, Matevž Jaušovec
 
 Za projektno nalogo pri Programinju 2 sva naredila igrico v Rustu, ki je Poker Texas hold'em. 
