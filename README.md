@@ -2,7 +2,7 @@
 Lovro Zupan Škrlj, Matevž Jaušovec
 
 Za projektno nalogo pri Programinju 2 sva naredila igrico v Rustu, ki je Poker Texas hold'em. 
-Naredila sva jo z rust knjižnico za delo z grafikami SDL2, ki naredijo "desktop-app", in pa ker je SDL2 zahtevno naložiti na sistem Windows, sva naredila še "web" verzijo, ki je narejena z knižnico sauron.
+Naredila sva jo z rust knjižnico za delo z grafikami SDL2, ki naredijo "desktop-app", in pa ker je SDL2 zahtevno naložiti na sistem Windows, sva naredila še "web" verzijo, ki je narejena z knižnico Sauron.
 Nasprotniki proti katerim uporabnik igra so boti, ki igrajo na podlagi tega kako dobre karte so dobili. Na SDL2-app pa je implementirano tudi shranjevanje igre, torej če je uporabnik premagal bote in veliko
 zasložil si lahko shrani igro, in nadaljuje to isto igro kasneje.
 
@@ -36,7 +36,7 @@ cargo install basic-http-server
 
 
 ## 2. Grajenje projekta
-Imamo 3 frontende, prvi za sdl2 app, drugi za terminal app in tretji za sauron app.
+Imamo 3 aplikacije, prva za sdl2 app, druga za terminal app, ki sva jo uprabljala za razvijanje logike, in tretja za sauron app.
 
 Terminal app (za razvijanje logike):
 ```bash
