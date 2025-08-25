@@ -600,7 +600,7 @@ impl Application for App {
                 autofocus=true
             >
                 <main>
-                    {
+                    { 
                         if self.ui.main_menu {
                             self.render_menu()
                         } else {
