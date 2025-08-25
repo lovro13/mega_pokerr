@@ -16,7 +16,7 @@ use crate::sdl2_app::render_text::write_info;
 
 use super::render_screen::render_screen;
 use super::slider::Slider;
-use super::tactic1::make_decision;
+use crate::logic::tactics1::make_decision;
 
 enum BetState {
     UserBet {

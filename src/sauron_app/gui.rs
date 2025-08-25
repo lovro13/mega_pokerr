@@ -589,9 +589,9 @@ impl Application for App {
                         "-" => Msg::PlayerCountDown,
                         "r" | "R" => Msg::PlayerCountReset,
                         "Enter" => Msg::Confirm,
-                        "v" | "V" => Msg::Fold,
+                        "f" | "F" => Msg::Fold,
                         "c" | "C" => Msg::Call,
-                        "l" | "L" => Msg::Raise,
+                        "v" | "V" => Msg::Raise,
                         _ => Msg::KeyPressed(key),
                     }
                 }}
