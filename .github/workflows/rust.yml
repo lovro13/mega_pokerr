@@ -60,6 +60,6 @@ jobs:
       - name: Build sauron app
         run: wasm-pack build --release --target=web --features compile_with_sauron
       - name: Run tests (show println!)
-        run: cargo test --workspaces --features "run_with_sdl2 run_with_sauron" -- --nocapture
+        run: cargo test --features "run_with_sdl2 run_with_sauron"
 
         shell: bash
