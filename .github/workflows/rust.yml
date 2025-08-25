@@ -39,11 +39,16 @@ jobs:
           rustup target add wasm32-unknown-unknown || true
           cargo install --locked wasm-pack || true
 
-      - name: Build (all targets)
-        run: cargo build --workspace --all-targets --verbose
+      - name: Build sdl2
+        run: cargo build --bin sdl2_app --features run_with_sdl2
+      - name: Build terminal app
+        run: cargo build --bin terminal_app
+      - name: Build sauron app
+        run: wasm-pack build --release --target=web --features compile_with_sauron
+  
 
       - name: Run tests (show println!)
-        run: cargo test --workspace -- --nocapture
+        run: cargo test --workspace -- --nocapture --features run_with_sdl2 run_with_sauron
 
       - name: Try build Sauron WASM (optional, non-fatal)
         run: |
